@@ -151,14 +151,16 @@
 
   <!-- Logo -->
   <div class="logo-banner">
-    <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+    <a href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
+    </a>
   </div>
 
   <div class="container">
-    <h1>Blogs</h1>
+    <!-- <h1>Blogs</h1> -->
 
     <div class="tabs">
-    <a href="{{ url_for('home') }}" style="text-decoration:none; font-weight:bold; color:black; font-size: 0.95rem;">🏠 Home</a>
+    <!-- <a href="{{ url_for('home') }}" style="text-decoration:none; font-weight:bold; color:black; font-size: 0.95rem;">🏠 Home</a> -->
       <a href="{{ url_for('blog') }}">All</a>
       {% for cat in categories %}
         <a href="{{ url_for('blog', category=cat[0]) }}">{{ cat[0] }}</a>

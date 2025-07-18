@@ -128,73 +128,138 @@
 
     .blog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: 1fr;
       gap: 1.5rem;
       margin-top: 1rem;
+      justify-content: center;
+    }
+    @media(min-width: 640px) {
+      .blog-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media(min-width: 1024px) {
+      .blog-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
     }
 
+    /* Updated blog-post card styles */
     .blog-post {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
+      background: #fff;
+      border: 1px solid #e5e7eb; /* gray-200 */
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+      overflow: hidden;
+      max-width: 600px;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      color: inherit;
     }
-
+    .blog-post:hover {
+      background-color: #f3f4f6; /* gray-100 */
+    }
+    @media(min-width: 768px) {
+      .blog-post {
+        flex-direction: row;
+        max-width: 40rem;
+      }
+    }
     .blog-post img {
-      width: 100%;
-      height: 200px;
       object-fit: cover;
+      width: 100%;
+      height: 24rem;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      flex-shrink: 0;
     }
-
+    @media(min-width: 768px) {
+      .blog-post img {
+        width: 12rem;
+        height: auto;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 0.5rem;
+      }
+    }
     .blog-post-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       padding: 1rem;
+      line-height: 1.25;
       flex-grow: 1;
     }
-
+    .blog-post-content strong {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+    }
     .blog-post-content p {
-      font-size: 0.9rem;
-      color: #555;
-    }
-
-    .blog-post button {
-      background: #ffd700;
-      border: none;
-      padding: 0.5rem 1rem;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      font-weight: bold;
-      border-radius: 6px;
-      width: 100%;
-      transition: background 0.3s ease;
-    }
-
-    .blog-post button:hover {
-      background: #e6c200;
+      color: #4b5563;
+      font-weight: 400;
+      margin-bottom: 1rem;
     }
 
     /* Caption and credit below images */
     .image-caption {
       font-size: 0.85rem;
       color: #666;
-      margin: 0.3rem 1rem 0 1rem;
+      /* margin: 0.3rem 1rem 0 1rem; */
       font-style: italic;
     }
     .image-credit {
       font-size: 0.75rem;
       color: #aaa;
-      margin: 0 1rem 0.5rem 1rem;
+      /* margin: 0 1rem 0.5rem 1rem; */
     }
 
-    .cta {
+    /* Buttons - dark theme */
+    button,
+    .view-product-btn {
+      background-color: #111;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    button:hover,
+    .view-product-btn:hover {
+      background-color: #333;
+    }
+
+    /* Specific button adjustments */
+    .blog-post button {
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+
+    /* View all news button in blog */
+    section.blog > div > a > button {
+      padding: 0.75rem 1.5rem;
+    }
+
+    /* CTA button */
+     .cta {
       text-align: center;
     }
     .cta h3 {
       font-size: 1.3rem;
     }
     .cta button {
-      background: #ffd700;
+      background: #111;
       padding: 1rem 2rem;
       border: none;
       font-size: 1rem;
@@ -205,7 +270,7 @@
       transition: background 0.3s ease;
     }
     .cta button:hover {
-      background: #e6c200;
+      background: #333;
     }
     .shop-cards {
       display: flex;
@@ -245,20 +310,6 @@
       margin: 0 0 1rem;
       min-height: 2.5em;
     }
-    .view-product-btn {
-      background-color: #ffd700;
-      color: #000;
-      padding: 0.75rem 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      display: inline-block;
-      transition: background 0.3s ease;
-    }
-    .view-product-btn:hover {
-      background-color: #e6c200;
-    }
     footer {
       background: #000;
       color: #fff;
@@ -284,7 +335,9 @@
 
   <!-- Logo -->
   <div class="logo-banner">
-    <img src="static/arena.png" alt="TCR Arena Logo" />
+    <a href="{{ url_for('home') }}">
+      <img src="static/arena.png" alt="TCR Arena Logo" />
+    </a>
   </div>
 
   <!-- Header / Nav -->
@@ -296,7 +349,7 @@
         <span></span>
       </div>
       <nav id="navMenu">
-        <a href="{{ url_for('home') }}">Home</a>
+        <!-- <a href="{{ url_for('home') }}">Home</a> -->
         <a href="{{ url_for('blog') }}">Blog</a>
         <a href="#">Live Scores</a>
         <a href="#">Partnerships</a>
@@ -314,40 +367,37 @@
       <iframe src="https://www.livescore.in/widget" width="100%" height="200" style="border:none;overflow:hidden;"></iframe>
     </div>
   </section>
-
+  
   <!-- Blog Section -->
   <section class="blog">
-    <h3>LATEST FREE BLOG POSTS</h3>
+    <h3>LATEST FROM THE TcR ARENA</h3>
     <div class="blog-grid">
       {% for item in news_items %}
-      <div class="blog-post">
-        <img src="{{ item.image_url }}" alt="News image">
-
-        {% if item.image_caption %}
-          <p class="image-caption">{{ item.image_caption }}</p>
-        {% endif %}
-        
-        {% if item.image_credit %}
-          <p class="image-credit">Photo Credit: {{ item.image_credit }}</p>
-        {% endif %}
-
+      <a href="{{ url_for('view_news', news_id=item.id) }}" class="blog-post" >
+        <img src="{{ item.image_url }}" alt="News image" />
         <div class="blog-post-content">
           <strong>{{ item.title }}</strong>
           <p>{{ item.date }} — {{ item.category }}</p>
-          <a href="{{ url_for('view_news', news_id=item.id) }}">
-            <button>READ MORE</button>
-          </a>
+          <p>{{ item.summary or '' }}</p>
+
+          {% if item.image_caption %}
+            <p class="image-caption">{{ item.image_caption }}</p>
+          {% endif %}
+          {% if item.image_credit %}
+            <p class="image-credit">Photo Credit: {{ item.image_credit }}</p>
+          {% endif %}
         </div>
-      </div>
+      </a>
       {% endfor %}
     </div>
     <div style="text-align: center; margin-top: 1rem;">
       <a href="{{ url_for('blog') }}">
-        <button style="padding: 0.75rem 1.5rem; background: #021638; color: #fff; border: none; border-radius: 6px;">VIEW ALL NEWS</button>
+        <button>VIEW MORE...</button>
       </a>
     </div>
   </section>
-
+  
+  
   <!-- Call to Action -->
   <section class="cta">
     <h3>UNLOCK PREMIUM ACCESS – FIRST 3 MONTHS ARE ON US!</h3>
@@ -357,7 +407,7 @@
 
   <!-- Products Section -->
   <section class="shop">
-    <h3>TRENDING PRODUCTS</h3>
+    <h3>CURATED EXCLUSIVES</h3>
     <div class="shop-cards">
       {% for product in products %}
       <div class="shop-card">

@@ -45,7 +45,7 @@
     nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 6.8rem;
+      gap: 6.4rem;
       justify-content: center;
       flex-grow: 1;
     }
@@ -53,7 +53,7 @@
       color: #fff;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 1.0rem;
     }
     .nav-toggle {
       display: none;
@@ -105,7 +105,7 @@
       }
     }
 
-    .scores {
+    /* .scores {
       background: #021638;
       color: #fff;
       padding: 2rem 1rem;
@@ -114,7 +114,7 @@
       text-align: center;
       margin-bottom: 1rem;
       font-size: 1.5rem;
-    }
+    } */
     .premium, .blog, .cta, .shop {
       padding: 2rem 1rem;
     }
@@ -275,7 +275,7 @@
     .shop-cards {
       display: flex;
       flex-wrap: wrap;
-      gap: 2rem;
+      gap: 2  rem;
       justify-content: center;
       margin-top: 2rem;
     }
@@ -350,23 +350,26 @@
       </div>
       <nav id="navMenu">
         <!-- <a href="{{ url_for('home') }}">Home</a> -->
-        <a href="{{ url_for('blog') }}">Blog</a>
-        <a href="#">Live Scores</a>
+        <!-- <a href="{{ url_for('blog') }}">Sports</a> -->
+        
+        <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
+        <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
+        <!-- <a href="#">Live Scores</a> -->
         <a href="#">Partnerships</a>
         <a href="#">Influencers</a>
-        <a href="#">Shop</a>
+        <a href="https://www.thecollectroom.com/">Shop</a>
         <a href="#">Contact</a>
       </nav>
     </div>
   </header>
 
   <!-- Live Scores -->
-  <section class="scores">
+  <!-- <section class="scores">
     <h2>LIVE SCORES – REAL-TIME UPDATES</h2>
     <div style="text-align: center;">
       <iframe src="https://www.livescore.in/widget" width="100%" height="200" style="border:none;overflow:hidden;"></iframe>
     </div>
-  </section>
+  </section> -->
   
   <!-- Blog Section -->
   <section class="blog">
@@ -404,6 +407,8 @@
     <p>✅ Insider Picks • 🧠 Fantasy analysis • 📦 Early Product Drops</p>
     <button>JOIN FREE</button>
   </section>
+ 
+
 
   <!-- Products Section -->
   <section class="shop">

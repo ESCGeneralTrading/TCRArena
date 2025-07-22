@@ -55,8 +55,20 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for each page */
       gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screen sizes */
+      }
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr; /* 1 column for smaller screens */
+      }
     }
 
     .blog-post {
@@ -157,10 +169,7 @@
   </div>
 
   <div class="container">
-    <!-- <h1>Blogs</h1> -->
-
     <div class="tabs">
-    <!-- <a href="{{ url_for('home') }}" style="text-decoration:none; font-weight:bold; color:black; font-size: 0.95rem;">🏠 Home</a> -->
       <a href="{{ url_for('blog') }}">All</a>
       {% for cat in categories %}
         <a href="{{ url_for('blog', category=cat[0]) }}">{{ cat[0] }}</a>
@@ -211,5 +220,6 @@
       <a href="#">Contact</a>
     </p>
   </footer>
+
 </body>
 </html>

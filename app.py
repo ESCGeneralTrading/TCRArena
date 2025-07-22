@@ -261,23 +261,6 @@ def view_news(news_id):
 
 
 
-# New route for blog page with optional category filtering
-# @app.route('/blog')
-# def blog():
-#     category = request.args.get('category')
-#     page = request.args.get('page', 1, type=int)
-
-#     if category:
-#         query = News.query.filter_by(category=category)
-#     else:
-#         query = News.query
-
-#     pagination = query.order_by(News.id.desc()).paginate(page=page, per_page=6)
-#     news_items = pagination.items
-
-#     categories = db.session.query(News.category).distinct().all()
-
-#     return render_template('blog.html', news_items=news_items, categories=categories, pagination=pagination)
 @app.route('/blog')
 def blog():
     category = request.args.get('category')

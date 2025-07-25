@@ -14,7 +14,9 @@
       font-family: 'Roboto', sans-serif;
       background-color: #fff;
       color: #111;
+      font-size: 1rem;
     }
+
     .logo-banner {
       background: #fff;
       text-align: center;
@@ -25,6 +27,7 @@
       height: 170px;
       width: auto;
     }
+
     header {
       background: #000;
       color: #fff;
@@ -33,6 +36,7 @@
       top: 0;
       z-index: 1000;
     }
+
     .header-container {
       max-width: 1200px;
       margin: 0 auto;
@@ -42,6 +46,7 @@
       justify-content: space-between;
       flex-wrap: wrap;
     }
+
     nav {
       display: flex;
       flex-wrap: wrap;
@@ -53,8 +58,9 @@
       color: #fff;
       text-decoration: none;
       font-weight: bold;
-      font-size: 1.0rem;
+      font-size: 1rem;
     }
+
     .nav-toggle {
       display: none;
       flex-direction: column;
@@ -64,37 +70,27 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+
     .nav-toggle span {
       display: block;
       height: 3px;
       background: #fff;
       border-radius: 2px;
     }
-    @media (max-width: 768px) {
-      nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background: #000;
-        margin-top: 0.5rem;
-        padding: 1rem 2rem;
-        border-radius: 4px;
-      }
-      nav.active {
-        display: flex;
-      }
-      .nav-toggle {
-        display: flex;
-      }
-    }
+
+    /* Tablet + Mobile Nav */
     @media (max-width: 1024px) {
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
       nav {
         display: none;
         flex-direction: column;
         width: 100%;
         background: #000;
         margin-top: 0.5rem;
-        padding: 1rem 2rem;
+        padding: 1rem;
         border-radius: 4px;
       }
       nav.active {
@@ -102,19 +98,11 @@
       }
       .nav-toggle {
         display: flex;
+        align-self: flex-end;
+        margin-bottom: 0.5rem;
       }
     }
 
-    /* .scores {
-      background: #021638;
-      color: #fff;
-      padding: 2rem 1rem;
-    }
-    .scores h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 1.5rem;
-    } */
     .premium, .blog, .cta, .shop {
       padding: 2rem 1rem;
     }
@@ -131,7 +119,6 @@
       grid-template-columns: 1fr;
       gap: 1.5rem;
       margin-top: 1rem;
-      justify-content: center;
     }
     @media(min-width: 640px) {
       .blog-grid {
@@ -144,12 +131,11 @@
       }
     }
 
-    /* Updated blog-post card styles */
     .blog-post {
       display: flex;
       flex-direction: column;
       background: #fff;
-      border: 1px solid #e5e7eb; /* gray-200 */
+      border: 1px solid #e5e7eb;
       border-radius: 0.5rem;
       box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
       overflow: hidden;
@@ -160,15 +146,18 @@
       text-decoration: none;
       color: inherit;
     }
+
     .blog-post:hover {
-      background-color: #f3f4f6; /* gray-100 */
+      background-color: #f3f4f6;
     }
+
     @media(min-width: 768px) {
       .blog-post {
         flex-direction: row;
         max-width: 40rem;
       }
     }
+
     .blog-post img {
       object-fit: cover;
       width: 100%;
@@ -177,6 +166,7 @@
       border-top-right-radius: 0.5rem;
       flex-shrink: 0;
     }
+
     @media(min-width: 768px) {
       .blog-post img {
         width: 12rem;
@@ -185,6 +175,24 @@
         border-bottom-left-radius: 0.5rem;
       }
     }
+
+    /* Improve blog responsiveness on tablets */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .blog-post {
+        flex-direction: column;
+        max-width: 90%;
+        margin: 0 auto;
+      }
+      .blog-post img {
+        width: 100%;
+        height: auto;
+        border-radius: 0.5rem 0.5rem 0 0;
+      }
+      .blog-post-content {
+        padding: 1rem;
+      }
+    }
+
     .blog-post-content {
       display: flex;
       flex-direction: column;
@@ -193,32 +201,35 @@
       line-height: 1.25;
       flex-grow: 1;
     }
+
     .blog-post-content strong {
       font-size: 1.5rem;
       font-weight: 700;
       color: #111827;
       margin-bottom: 0.5rem;
     }
+
     .blog-post-content p {
       color: #4b5563;
       font-weight: 400;
       margin-bottom: 1rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
 
-    /* Caption and credit below images */
     .image-caption {
       font-size: 0.85rem;
       color: #666;
-      /* margin: 0.3rem 1rem 0 1rem; */
       font-style: italic;
     }
+
     .image-credit {
       font-size: 0.75rem;
       color: #aaa;
-      /* margin: 0 1rem 0.5rem 1rem; */
     }
 
-    /* Buttons - dark theme */
     button,
     .view-product-btn {
       background-color: #111;
@@ -239,25 +250,24 @@
       background-color: #333;
     }
 
-    /* Specific button adjustments */
     .blog-post button {
       width: 100%;
       margin-top: 0.5rem;
       padding: 0.5rem 1rem;
     }
 
-    /* View all news button in blog */
     section.blog > div > a > button {
       padding: 0.75rem 1.5rem;
     }
 
-    /* CTA button */
-     .cta {
+    .cta {
       text-align: center;
     }
+
     .cta h3 {
       font-size: 1.3rem;
     }
+
     .cta button {
       background: #111;
       padding: 1rem 2rem;
@@ -269,16 +279,175 @@
       border-radius: 6px;
       transition: background 0.3s ease;
     }
+
     .cta button:hover {
       background: #333;
     }
+    .memorabilia-section {
+      padding: 2rem 1rem;
+      background-color: #f7f7f7;
+    }
+
+    .memorabilia-section h2 {
+      text-align: left;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .memorabilia-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      grid-template-areas:
+        "item1 item1 item2 item3"
+        "item1 item1 item4 item5"
+        "item6 item6 item4 item5";
+    }
+
+    .item1 { grid-area: item1; }
+    .item2 { grid-area: item2; }
+    .item3 { grid-area: item3; }
+    .item4 { grid-area: item4; }
+    .item5 { grid-area: item5; }
+    .item6 { grid-area: item6; }
+
+    .memorabilia-item {
+      width: 100%;
+      height: 100%;
+      align-self: stretch;
+    }
+
+    .news-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 100%;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .news-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+      flex-shrink: 0;
+    }
+
+    .news-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .news-content .author {
+      font-size: 0.9rem;
+      color: #888;
+      margin-bottom: 0.3rem;
+    }
+
+    .news-content h3 {
+      font-size: 1.2rem;
+      margin: 0.3rem 0 0.5rem;
+    }
+
+    .news-content p {
+      font-size: 0.95rem;
+      color: #444;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; /* Clamp to 3 lines */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .news-meta {
+      margin-top: auto;
+    }
+
+    .news-meta span {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+
+    /* Responsive fallback */
+    @media (max-width: 1024px) {
+      .memorabilia-grid {
+        grid-template-areas: unset;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+
+      .memorabilia-item {
+        grid-area: unset;
+      }
+    }
+
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .news-card {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+      border: 1px solid #333;
+    }
+
+    .news-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .news-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .news-content {
+      padding: 1rem;
+      color: #fff;
+    }
+
+    .news-content .author {
+      font-size: 0.9em;
+      color: #aaa;
+    }
+
+    .news-content h3 {
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+    }
+
+    .news-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8em;
+      color: #777;
+    }
+
     .shop-cards {
       display: flex;
       flex-wrap: wrap;
-      gap: 2  rem;
+      gap: 2rem;
       justify-content: center;
       margin-top: 2rem;
     }
+
     .shop-card {
       background: #ffffff;
       border: 2px solid #eee;
@@ -292,10 +461,12 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
     .shop-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
+
     .shop-card img {
       width: 100%;
       height: 200px;
@@ -303,6 +474,7 @@
       border-radius: 12px;
       margin-bottom: 1rem;
     }
+
     .shop-card p {
       font-size: 1.1rem;
       font-weight: 700;
@@ -310,6 +482,101 @@
       margin: 0 0 1rem;
       min-height: 2.5em;
     }
+
+    @media (max-width: 1024px) {
+      .shop-card {
+        width: 45%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .shop-card {
+        width: 90%;
+      }
+
+      .shop-card img {
+        height: 160px;
+      }
+    }
+    #subscriptionPopup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.3s ease;
+    }
+
+    #subscriptionPopup.show {
+      display: flex;
+    }
+
+    #subscriptionPopup .popup-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      animation: popupFade 0.4s ease-out;
+    }
+
+    @keyframes popupFade {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    #subscriptionPopup h3 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      text-align: center;
+      color: #111;
+    }
+
+    #subscriptionPopup input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    #subscriptionPopup button[type="submit"] {
+      background: #000;
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #subscriptionPopup button[type="submit"]:hover {
+      background: #333;
+    }
+
+    #subscriptionPopup .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    #subscriptionPopup .close-btn:hover {
+      color: #000;
+    }
+
     footer {
       background: #000;
       color: #fff;
@@ -317,17 +584,10 @@
       padding: 2rem 1rem;
       font-size: 0.9rem;
     }
+
     footer a {
       color: #ffd700;
       text-decoration: underline;
-    }
-    @media (max-width: 480px) {
-      .shop-card {
-        width: 90%;
-      }
-      .shop-card img {
-        height: 160px;
-      }
     }
   </style>
 </head>
@@ -349,28 +609,15 @@
         <span></span>
       </div>
       <nav id="navMenu">
-        <!-- <a href="{{ url_for('home') }}">Home</a> -->
-        <!-- <a href="{{ url_for('blog') }}">Sports</a> -->
-        
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <!-- <a href="#">Live Scores</a> -->
-        <a href="#">Partnerships</a>
-        <a href="#">Influencers</a>
+        <!-- <a href="#">Partnerships</a> -->
+        <!-- <a href="#">Influencers</a> -->
         <a href="https://www.thecollectroom.com/">Shop</a>
-        <a href="#">Contact</a>
       </nav>
     </div>
   </header>
 
-  <!-- Live Scores -->
-  <!-- <section class="scores">
-    <h2>LIVE SCORES – REAL-TIME UPDATES</h2>
-    <div style="text-align: center;">
-      <iframe src="https://www.livescore.in/widget" width="100%" height="200" style="border:none;overflow:hidden;"></iframe>
-    </div>
-  </section> -->
-  
   <!-- Blog Section -->
   <section class="blog">
     <h3>LATEST FROM THE TcR ARENA</h3>
@@ -380,14 +627,12 @@
         <img src="{{ item.image_url }}" alt="News image" />
         <div class="blog-post-content">
           <strong>{{ item.title }}</strong>
-          <p>{{ item.date }} — {{ item.category }}</p>
           <p>{{ item.summary or '' }}</p>
-
           {% if item.image_caption %}
             <p class="image-caption">{{ item.image_caption }}</p>
           {% endif %}
           {% if item.image_credit %}
-            <p class="image-credit">Photo Credit: {{ item.image_credit }}</p>
+            <p class="image-credit">Photo Credits: {{ item.image_credit }}</p>
           {% endif %}
         </div>
       </a>
@@ -395,24 +640,38 @@
     </div>
     <div style="text-align: center; margin-top: 1rem;">
       <a href="{{ url_for('blog') }}">
-        <button>VIEW MORE...</button>
+        <button>VIEW MORE</button>
       </a>
     </div>
   </section>
-  
-  
-  <!-- Call to Action -->
-  <section class="cta">
-    <h3>UNLOCK PREMIUM ACCESS – FIRST 3 MONTHS ARE ON US!</h3>
-    <p>✅ Insider Picks • 🧠 Fantasy analysis • 📦 Early Product Drops</p>
-    <button>JOIN FREE</button>
+
+  <!-- Memorabilia Section -->
+  <section class="memorabilia-section">
+    <h2>Sporting Memorabilia Through the Ages</h2>
+    <div class="memorabilia-grid">
+      {% for item in memorabilia_stories[:6] %}
+      <div class="memorabilia-item item{{ loop.index }}">
+        <div class="news-card">
+          <img src="{{ item.display_image }}" alt="{{ item.title }}">
+          <div class="news-content">
+            <span class="author">{{ item.author }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.subtitle }}</p>
+            <div class="news-meta">
+              <span>{{ item.date }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </section>
- 
 
 
-  <!-- Products Section -->
+
+  <!-- Shop Section -->
   <section class="shop">
-    <h3>CURATED EXCLUSIVES</h3>
+    <h3>BEST DEALS</h3>
     <div class="shop-cards">
       {% for product in products %}
       <div class="shop-card">
@@ -424,15 +683,67 @@
     </div>
   </section>
 
+  <!-- Subscription Popup -->
+  <div id="subscription-popup" style="display: block; position: fixed; top: 50%; left: 50%; transform: translateX(-50%); background: white; padding: 2em; border-radius: 12px; border: 1px solid #ccc; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 420px; width: 90%; font-family: 'Roboto', sans-serif; position: fixed;">
+    <!-- Close Button -->
+
+    <button onclick="document.getElementById('subscription-popup').style.display='none';"
+      aria-label="Close"
+      style="
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 1px;
+        height: 50px;
+        background: #ffffff;
+        color: #555;
+        font-size: 2rem;
+        font-weight: bold;
+        border: 1px solid #ddd;
+        border-radius: 70%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 1001;
+      "
+      onmouseover="this.style.background='#f0f0f0'; this.style.color='#000';"
+      onmouseout="this.style.background='#ffffff'; this.style.color='#555';"
+    >
+      &times;
+    </button>
+
+    <h3 style="text-align: center; font-size: 1.4rem; margin-top: 0;">Subscribe to Our Newsletter</h3>
+      <form method="POST" action="{{ url_for('subscribe') }}">
+        <input type="email" name="email" placeholder="Your Email" required style="width: 100%; padding: 0.75rem; margin: 1rem 0; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;" />
+        <button type="submit" style="width: 100%; background: #000; color: #fff; padding: 0.75rem; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Subscribe</button>
+      </form>
+    </div>
+
+
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="#">Privacy</a> |
-      <a href="#">Contact</a>
+      <a href="{{ url_for('join') }}">Contact</a>
     </p>
   </footer>
 
   <!-- JS -->
+  <script>
+    function closePopup() {
+        document.getElementById('subscriptionPopup').style.display = 'none';
+        localStorage.setItem('popupClosed', 'true');
+    }
+
+    window.addEventListener('load', function () {
+        if (!localStorage.getItem('popupClosed')) {
+            document.getElementById('subscriptionPopup').style.display = 'flex';
+        }
+    });
+  </script>
   <script>
     const navToggle = document.getElementById('navToggle');
     const navMenu = document.getElementById('navMenu');
@@ -448,5 +759,6 @@
       }
     });
   </script>
+
 </body>
 </html>

@@ -184,6 +184,7 @@
           <div>
             <h3>{{ item.title }}</h3>
             <small>{{ item.date }} | {{ item.category }}</small>
+            <p style="color: #555; font-size: 0.95rem;">{{ item.summary }}</p>
           </div>
           <a href="{{ url_for('view_news', news_id=item.id) }}">Read More</a>
         </div>
@@ -217,7 +218,7 @@
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="#">Privacy</a> |
-      <a href="#">Contact</a>
+      <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
     </p>
   </footer>
 

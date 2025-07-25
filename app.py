@@ -11,6 +11,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from markupsafe import Markup
 from flask_migrate import Migrate
+from flask import session
+import re
 
 app = Flask(__name__)
 
@@ -19,6 +21,7 @@ try:
     os.makedirs(app.instance_path)
 except OSError:
     pass
+
 
 db_path = os.path.join(app.instance_path, 'news.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
@@ -55,6 +58,7 @@ class News(db.Model):
     content = db.Column(db.Text)
     image_caption = db.Column(db.String(255))
     image_credit = db.Column(db.String(255))
+    summary = db.Column(db.String(300))
 
     @property
     def image_url(self):
@@ -82,9 +86,43 @@ class Product(db.Model):
             return "/static/uploads/default-placeholder.png"
 
 
+class Contact(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=False)
+    contact_number = db.Column(db.String(20), nullable=False)
+    message = db.Column(db.String(200), nullable=False, server_default="")
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+class Subscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+class MemorabiliaStory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    subtitle = db.Column(db.String(255))
+    image_url = db.Column(db.String(512))  # optional external URL
+    image_filename = db.Column(db.String(255))  # uploaded image filename
+    author = db.Column(db.String(100))
+    date = db.Column(db.String(50))  # e.g., '2h', '5m'
+
+    def __repr__(self):
+        return f"<MemorabiliaStory {self.title}>"
+
+    @property
+    def display_image(self):
+        if self.image_filename:
+            return f"/static/uploads/{self.image_filename}"
+        elif self.image_url:
+            return self.image_url
+        else:
+            return "/static/uploads/default-placeholder.png"
+
 
 
 # Admin Views
@@ -119,7 +157,7 @@ class NewsAdmin(ModelView):
         )
     }
 
-    column_list = ('id', 'title', 'date', 'category', 'image_filename', 'image_caption', 'image_credit', 'content')
+    column_list = ('id', 'title', 'date', 'category', 'image_filename', 'image_caption','summary', 'image_credit', 'content')
     column_searchable_list = ['title', 'category', 'content']
     column_filters = ['category', 'date']
     column_editable_list = ['title', 'category', 'date']
@@ -139,6 +177,7 @@ class NewsAdmin(ModelView):
         'date': {'placeholder': 'e.g. July 14, 2025'},
         'category': {'style': 'width: 30%;'},
         'image_caption': {'style': 'width: 70%;'},
+        'summary': {'rows': 3, 'style': 'width: 80%; font-size: 0.9em; font-family: monospace;'},
         'image_credit': {'style': 'width: 70%;'},
         'content': {'rows': 6, 'style': 'font-family: monospace; font-size: 0.9em;'},
     }
@@ -210,18 +249,99 @@ admin = Admin(
 admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
 
+class MemorabiliaAdmin(ModelView):
+    upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+    form_extra_fields = {
+        'image_filename': FileUploadField(
+            'Upload Image',
+            base_path=upload_path,
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        )
+    }
+
+    column_list = ('id', 'title', 'subtitle', 'author', 'date', 'image_filename', 'image_url')
+    column_searchable_list = ['title', 'author']
+    column_filters = ['author', 'date']
+    form_columns = ['title', 'subtitle', 'author', 'date', 'image_filename', 'image_url']
+
+    def _list_thumbnail(self, context, model, name):
+        if model.image_filename:
+            return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:100px;">')
+        elif model.image_url:
+            return Markup(f'<img src="{model.image_url}" style="max-height:100px;">')
+        return ''
+
+    column_formatters = {
+        'image_filename': _list_thumbnail,
+        'image_url': _list_thumbnail
+    }
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
+
+
+class ContactAdmin(ModelView):
+    column_list = ('id', 'name', 'email', 'contact_number','message')
+    form_columns = ['name', 'email', 'contact_number','message']
+    column_searchable_list = ['name', 'email', 'contact_number']
+    column_filters = ['email']
+    page_size = 20
+
+    can_edit = False
+    can_create = False
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(ContactAdmin(Contact, db.session))
+
 from flask_admin.menu import MenuLink
 admin.add_link(MenuLink(name='Visit Site', category='', url='/'))
+admin.add_link(MenuLink(name='Logout', category='', url='logout/'))
+
+class SubscriberAdmin(ModelView):
+    column_list = ('id', 'email')
+    form_columns = ['email']
+    can_edit = False
+    can_create = False
+    can_delete = True
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(SubscriberAdmin(Subscriber, db.session))
+
 
 
 # Routes
-
 @app.route('/')
 def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
     products = Product.query.order_by(Product.id.desc()).limit(4).all()
+    memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-    return render_template('index.html', news_items=news_items, products=products, welcome_text=welcome_text)
+    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,welcome_text=welcome_text)
+
+
+# @app.route('/')
+# def home():
+#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
+#     products = Product.query.order_by(Product.id.desc()).limit(4).all()
+#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
+#     return render_template('index.html', news_items=news_items, products=products, welcome_text=welcome_text)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -252,13 +372,20 @@ def logout():
 
 
 # New route to show full news article
+# @app.route('/news/<int:news_id>')
+# def view_news(news_id):
+#     news = News.query.get_or_404(news_id)
+#     # Show 3 other latest articles from the same category (excluding current)
+#     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
+#     return render_template('news_detail.html', news=news, suggestions=suggestions)
 @app.route('/news/<int:news_id>')
 def view_news(news_id):
+    if not session.get('joined'):
+        return redirect(url_for('join', next=request.path))
+
     news = News.query.get_or_404(news_id)
-    # Show 3 other latest articles from the same category (excluding current)
     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
     return render_template('news_detail.html', news=news, suggestions=suggestions)
-
 
 
 @app.route('/blog')
@@ -278,6 +405,90 @@ def blog():
 
     return render_template('blog.html', news_items=news_items, categories=categories, pagination=pagination)
 
+
+
+def validate_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
+def validate_phone(phone):
+    return re.match(r"^\+?\d{7,15}$", phone)
+
+
+@app.route('/join', methods=['GET', 'POST'])
+def join():
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        contact_number = request.form.get('contact_number', '').strip()
+        message = request.form.get('message', '').strip()
+
+        # Validation
+        if not name or not email or not contact_number:
+            flash("All fields are required.", "danger")
+        elif not validate_email(email):
+            flash("Invalid email address.", "danger")
+        elif not validate_phone(contact_number):
+            flash("Invalid phone number format.", "danger")
+        else:
+            new_contact = Contact(name=name, email=email, contact_number=contact_number, message=message)
+            db.session.add(new_contact)
+            db.session.commit()
+            session['joined'] = True
+            flash("Thanks for the submission!", "success")
+            return redirect(request.args.get("next") or url_for('home'))
+
+    return render_template('join.html')
+
+@app.route('/subscribe', methods=['POST'])
+def subscribe():
+    email = request.form.get('email', '').strip()
+
+    if not email:
+        flash("Email is required.", "danger")
+    elif not validate_email(email):
+        flash("Invalid email address.", "danger")
+    else:
+        # Prevent duplicate subscriptions
+        if Subscriber.query.filter_by(email=email).first():
+            flash("You are already subscribed!", "info")
+        else:
+            new_subscriber = Subscriber(email=email)
+            db.session.add(new_subscriber)
+            db.session.commit()
+            flash("Thank you for subscribing!", "success")
+
+    return redirect(url_for('home'))
+
+@app.route('/add-memorabilia', methods=['GET', 'POST'])
+def add_memorabilia():
+    if request.method == 'POST':
+        title = request.form['title']
+        subtitle = request.form.get('subtitle')
+        author = request.form.get('author')
+        date = request.form.get('date')
+        image_url = request.form.get('image_url')
+        image = request.files.get('image')
+
+        filename = None
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        story = MemorabiliaStory(
+            title=title,
+            subtitle=subtitle,
+            author=author,
+            date=date,
+            image_url=image_url if not filename else None,
+            image_filename=filename
+        )
+        db.session.add(story)
+        db.session.commit()
+        flash("Memorabilia story added!", "success")
+        return redirect(url_for('home'))
+
+    return render_template('add_memorabilia.html')
+    
 
 
 # Terminal command to create admin user
@@ -311,3 +522,7 @@ if __name__ == '__main__':
         create_admin()
     else:
         app.run(debug=True)
+
+
+
+

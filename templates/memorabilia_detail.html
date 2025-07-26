@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>{{ news.title }} - TCR Arena</title>
+  <meta charset="UTF-8">
+  <title>{{ item.title }} - TCR Arena</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
   <style>
@@ -35,26 +35,49 @@
       border-radius: 12px;
     }
 
-    h1.news-title {
+    h1 {
       font-size: 2rem;
       font-weight: bold;
       margin-bottom: 0.5rem;
     }
 
-    .news-meta {
+    h2 {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .meta {
       font-size: 0.9rem;
       color: #777;
       margin-bottom: 1.5rem;
     }
 
-    .news-image {
+    /* .main-image {
       width: 100%;
       height: auto;
       border-radius: 10px;
       margin-bottom: 0.5rem;
       object-fit: cover;
       object-position: top;
+      max-width: 500px;
+
+    } */
+    .main-image {
+        width: 100%;
+        /* max-width: 500px; */
+        height: auto;
+        min-height: 500px;
+        max-height: 800px;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
     }
+
 
     .caption-credit {
       font-size: 0.85rem;
@@ -63,12 +86,12 @@
       font-style: italic;
     }
 
-    .news-content {
+    .content {
       font-size: 1.05rem;
       color: #333;
     }
 
-    .news-content p {
+    .content p {
       text-align: justify;
       margin-bottom: 1.2rem;
     }
@@ -124,7 +147,7 @@
 
     .suggestion-item img {
       width: 100%;
-      height: 140px;
+      height: 200px;
       object-fit: cover;
       object-position: top;
     }
@@ -149,6 +172,11 @@
       font-size: 0.85rem;
       color: #555;
       margin-top: auto;
+    }
+    .suggestion-meta a {
+      color: #0077cc;
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .suggestion-meta a {
@@ -176,11 +204,11 @@
     }
 
     @media (max-width: 600px) {
-      h1.news-title {
+      h1 {
         font-size: 1.6rem;
       }
 
-      .news-content {
+      .content {
         font-size: 1rem;
       }
     }
@@ -195,58 +223,60 @@
     </a>
   </div>
 
+  <!-- Memorabilia Content -->
+  <div class="container">
+    <h1>{{ item.title }}</h1>
+    <div class="meta">{{ item.date }}</div>
 
-  <!-- News Content -->
-   <div class="container">
-    <!-- <a href="{{ url_for('home') }}" style="text-decoration:none; font-weight:bold; color:#0077cc; font-size: 0.95rem;">🏠 Home</a> -->
-    <h1 class="news-title">{{ news.title }}</h1>
-    <div class="news-meta">{{ news.date }} | {{ news.category }}</div>
-
-    <img src="{{ news.image_url }}" alt="{{ news.title }}" class="news-image">
-    {% if news.image_caption %}
-      <div class="caption-credit">{{ news.image_caption }}</div>
-    {% endif %}
-    {% if news.image_credit %}
-      <div class="caption-credit">Photo Credits: {{ news.image_credit }}</div>
+    {% if item.display_image %}
+      <img src="{{ item.display_image }}" alt="{{ item.title }}" class="main-image">
     {% endif %}
 
-    <div class="news-content">
-      {% for paragraph in news.content.replace('\r\n', '\n').split('\n') %}
+    {% if item.image_caption %}
+      <div class="caption-credit">{{ item.image_caption }}</div>
+    {% endif %}
+    {% if item.image_credit %}
+      <div class="caption-credit">Photo Credit: {{ item.image_credit }}</div>
+    {% endif %}
+
+    <div class="content">
+      {% for paragraph in item.content.replace('\r\n', '\n').split('\n') %}
         {% if paragraph.strip() %}
           <p>{{ paragraph.strip() }}</p>
         {% endif %}
       {% endfor %}
     </div>
-
+    
+    <!-- SHARE BUTTONS -->
     <div class="share-buttons">
-      Share:
-      <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ news.title }}" target="_blank">Twitter</a>
-      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">Facebook</a>
-      <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" target="_blank">LinkedIn</a>
-      <a href="mailto:?subject={{ news.title }}&body=Check this out: {{ request.url }}">Email</a>
-      <a href="https://www.instagram.com/" target="_blank">Instagram</a> 
+    Share:
+    <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ item.title }}" target="_blank">Twitter</a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">Facebook</a>
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" target="_blank">LinkedIn</a>
+    <a href="mailto:?subject={{ item.title }}&body=Check this out: {{ request.url }}">Email</a>
+    <a href="https://www.instagram.com/" target="_blank">Instagram</a>
     </div>
+    <a href="{{ url_for('memorabilia') }}" class="back-link">Back to Artifact Arena</a>
 
-    <a href="{{ url_for('blog') }}" class="back-link">Back to Blogs</a>
-
-    <!-- News Suggestions -->
-    <div class="suggestions">
-      <h3>You may also like</h3>
-      <div class="suggestion-grid">
-        {% for item in suggestions %}
-        <div class="suggestion-item">
-          <img src="{{ item.image_url }}" alt="{{ item.title }}">
-          <div class="suggestion-content">
-            <h4>{{ item.title }}</h4>
-            <div class="suggestion-meta">
-              <span>{{ item.date }} — {{ item.category }}</span>
-              <a href="{{ url_for('view_news', news_id=item.id) }}">Read More </a>
+    {% if suggestions %}
+        <div class="suggestions">
+        <h3>You may also like</h3>
+        <div class="suggestion-grid">
+            {% for s in suggestions %}
+            <div class="suggestion-item">
+            <img src="{{ s.display_image }}" alt="{{ s.title }}">
+            <div class="suggestion-content">
+                <h4>{{ s.title }}</h4>
+                <div class="suggestion-meta">
+                <span>{{ item.date }}</span>
+                <a href="{{ url_for('view_memorabilia', item_id=s.id) }}">Read More</a>
+                </div>
             </div>
-          </div>
-        </div>
+            </div>
         {% endfor %}
       </div>
     </div>
+    {% endif %}
   </div>
 
   <!-- Footer -->

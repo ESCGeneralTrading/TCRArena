@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Artifact Arena - Memorabilia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #222;
+    }
+
+    .logo-banner {
+      background: #ffffff;
+      text-align: center;
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-banner img {
+      height: 130px;
+      width: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: #021638;
+      font-weight: normal;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.03);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .blog-post {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog-post:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .blog-post img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        object-position: top; /* ✅ This makes the image crop from the top */
+    }
+
+
+    .blog-post-content {
+      padding: 1rem 1.2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .blog-post-content h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      font-weight: normal;
+      color: #333;
+    }
+
+    .blog-post-content small {
+      color: #888;
+      font-size: 0.85rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .blog-post-content p {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin: 0 0 1rem;
+    }
+
+    .blog-post-content a {
+      background: #021638;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .blog-post-content a:hover {
+      background: #054a9a;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    .pagination a {
+      display: inline-block;
+      margin: 0 0.3rem;
+      padding: 0.5rem 0.9rem;
+      background: #021638;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.3s ease;
+    }
+
+    .pagination a.active {
+      background: #054a9a;
+      font-weight: normal;
+    }
+
+    .pagination a:hover {
+      background: #003366;
+    }
+
+    footer {
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 4rem;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #ffd700;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-banner">
+    <a href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+    </a>
+  </div>
+
+  <div class="container">
+    <h1>Relive Greatness in the Artifact Arena</h1>
+
+    <div class="grid">
+      {% for item in memorabilia_stories %}
+      <div class="blog-post">
+        <img src="{{ item.display_image }}" alt="{{ item.title }}">
+        <div class="blog-post-content">
+          <div>
+            <h3>{{ item.title }}</h3>
+            <small>{{ item.date }} | {{ item.image_credit }}</small>
+            <p>{{ item.subtitle }}</p>
+          </div>
+          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if not memorabilia_stories %}
+      <p style="text-align:center; color:#777; margin-top:2rem;">No memorabilia stories found.</p>
+    {% endif %}
+
+    {% if pagination %}
+    <div class="pagination">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
+      {% endif %}
+      {% for page_num in pagination.iter_pages() %}
+        {% if page_num %}
+          <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if pagination.has_next %}
+        <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    <p>&copy; 2025 TcR Arena. All rights reserved. |
+      <a href="#">Privacy</a> |
+      <a href="{{ url_for('join') }}">Contact</a>
+    </p>
+  </footer>
+
+</body>
+</html>

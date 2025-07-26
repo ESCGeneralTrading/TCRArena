@@ -102,14 +102,16 @@ class Subscriber(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
+
 class MemorabiliaStory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    subtitle = db.Column(db.String(255))
+    subtitle = db.Column(db.String(300))
     image_url = db.Column(db.String(512))  # optional external URL
     image_filename = db.Column(db.String(255))  # uploaded image filename
-    author = db.Column(db.String(100))
+    image_credit = db.Column(db.String(100))
     date = db.Column(db.String(50))  # e.g., '2h', '5m'
+    content = db.Column(db.Text)  # <-- NEW field
 
     def __repr__(self):
         return f"<MemorabiliaStory {self.title}>"
@@ -261,10 +263,18 @@ class MemorabiliaAdmin(ModelView):
         )
     }
 
-    column_list = ('id', 'title', 'subtitle', 'author', 'date', 'image_filename', 'image_url')
-    column_searchable_list = ['title', 'author']
-    column_filters = ['author', 'date']
-    form_columns = ['title', 'subtitle', 'author', 'date', 'image_filename', 'image_url']
+    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url')
+    column_searchable_list = ['title', 'image_credit']
+    column_filters = ['image_credit', 'date']
+    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'content']
+
+    form_widget_args = {
+    'content': {
+        'rows': 6,
+        'style': 'font-family: monospace; font-size: 0.9em;'
+        }
+    }
+
 
     def _list_thumbnail(self, context, model, name):
         if model.image_filename:
@@ -335,15 +345,6 @@ def home():
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
     return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,welcome_text=welcome_text)
 
-
-# @app.route('/')
-# def home():
-#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
-#     products = Product.query.order_by(Product.id.desc()).limit(4).all()
-#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-#     return render_template('index.html', news_items=news_items, products=products, welcome_text=welcome_text)
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -372,12 +373,6 @@ def logout():
 
 
 # New route to show full news article
-# @app.route('/news/<int:news_id>')
-# def view_news(news_id):
-#     news = News.query.get_or_404(news_id)
-#     # Show 3 other latest articles from the same category (excluding current)
-#     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
-#     return render_template('news_detail.html', news=news, suggestions=suggestions)
 @app.route('/news/<int:news_id>')
 def view_news(news_id):
     if not session.get('joined'):
@@ -413,6 +408,15 @@ def validate_email(email):
 def validate_phone(phone):
     return re.match(r"^\+?\d{7,15}$", phone)
 
+@app.route('/memorabilia')
+def memorabilia():
+    page = request.args.get('page', 1, type=int)
+    pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=9)
+    return render_template(
+        'memorabilia.html',
+        memorabilia_stories=pagination.items,
+        pagination=pagination
+    )
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -464,7 +468,7 @@ def add_memorabilia():
     if request.method == 'POST':
         title = request.form['title']
         subtitle = request.form.get('subtitle')
-        author = request.form.get('author')
+        image_credit = request.form.get('image_credit')
         date = request.form.get('date')
         image_url = request.form.get('image_url')
         image = request.files.get('image')
@@ -477,7 +481,7 @@ def add_memorabilia():
         story = MemorabiliaStory(
             title=title,
             subtitle=subtitle,
-            author=author,
+            image_credit=image_credit,
             date=date,
             image_url=image_url if not filename else None,
             image_filename=filename
@@ -489,7 +493,18 @@ def add_memorabilia():
 
     return render_template('add_memorabilia.html')
     
+@app.route('/memorabilia/<int:item_id>')
+def view_memorabilia(item_id):
+    item = MemorabiliaStory.query.get_or_404(item_id)
+    suggestions = MemorabiliaStory.query.filter(MemorabiliaStory.id != item_id).order_by(MemorabiliaStory.id.desc()).limit(3).all()
+    return render_template('memorabilia_detail.html', item=item, suggestions=suggestions)
 
+
+# @app.route('/memorabilia/<int:item_id>')
+# def view_memorabilia(item_id):
+#     item = MemorabiliaStory.query.get_or_404(item_id)
+#     suggestions = MemorabiliaStory.query.filter(MemorabiliaStory.id != item_id).order_by(MemorabiliaStory.id.desc()).limit(3).all()
+#     return render_template('memorabilia_detail.html', item=item, suggestions=suggestions)
 
 # Terminal command to create admin user
 

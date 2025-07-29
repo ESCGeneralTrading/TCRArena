@@ -125,6 +125,13 @@ class MemorabiliaStory(db.Model):
         else:
             return "/static/uploads/default-placeholder.png"
 
+class YouTubeVideo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    video_id = db.Column(db.String(50), nullable=False)  # YouTube video ID only (not full URL)
+
+    def __repr__(self):
+        return f"<YouTubeVideo {self.title}>"
 
 
 # Admin Views
@@ -334,6 +341,19 @@ class SubscriberAdmin(ModelView):
 
 admin.add_view(SubscriberAdmin(Subscriber, db.session))
 
+class YouTubeVideoAdmin(ModelView):
+    column_list = ('id', 'title', 'video_id')
+    form_columns = ['title', 'video_id']
+    column_searchable_list = ['title']
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 
 
 # Routes
@@ -342,8 +362,9 @@ def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
     products = Product.query.order_by(Product.id.desc()).limit(4).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
+    youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,welcome_text=welcome_text)
+    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,welcome_text=welcome_text)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -500,13 +521,11 @@ def view_memorabilia(item_id):
     return render_template('memorabilia_detail.html', item=item, suggestions=suggestions)
 
 
-# @app.route('/memorabilia/<int:item_id>')
-# def view_memorabilia(item_id):
-#     item = MemorabiliaStory.query.get_or_404(item_id)
-#     suggestions = MemorabiliaStory.query.filter(MemorabiliaStory.id != item_id).order_by(MemorabiliaStory.id.desc()).limit(3).all()
-#     return render_template('memorabilia_detail.html', item=item, suggestions=suggestions)
+@app.route('/videos')
+def all_videos():
+    videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).all()
+    return render_template('all_videos.html', videos=videos)
 
-# Terminal command to create admin user
 
 def create_admin():
     with app.app_context():

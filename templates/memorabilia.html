@@ -31,7 +31,22 @@
       margin: 2rem auto;
       padding: 1rem;
     }
+    .tabs {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
 
+    .tabs a {
+      margin: 0 0.6rem;
+      text-decoration: none;
+      /* font-weight: bold; */
+      color: #021638;
+    }
+
+    .tabs a:hover {
+      text-decoration: underline;
+    }
+    
     h1 {
       text-align: center;
       margin-bottom: 2.5rem;
@@ -165,7 +180,15 @@
   </div>
 
   <div class="container">
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+      <a href="{{ url_for('blog') }}">Blogs</a>
+      <a href="{{ url_for('all_videos') }}">Arena Play</a>
+      <a href="{{ url_for('memorabilia') }}">Artifact Arena</a>
+    </div>
+
     <h1>Relive Greatness in the Artifact Arena</h1>
+
 
     <div class="grid">
       {% for item in memorabilia_stories %}

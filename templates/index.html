@@ -111,7 +111,7 @@
     }
     .premium h3, .blog h3, .shop h3 {
       margin-top: 0;
-      font-size: 1.7rem;
+      font-size: 1.6rem;
     }
 
     .blog-grid {
@@ -292,7 +292,7 @@
 
     .memorabilia-section h2 {
       text-align: left;
-      font-size: 2rem;
+      font-size: 1.6rem;
       margin-bottom: 2rem;
     }
 
@@ -335,13 +335,6 @@
       transform: translateY(-4px);
     }
 
-    /* .news-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 12px 12px 0 0;
-      flex-shrink: 0;
-    } */
     .news-card img {
       width: 100%;
       height: 350px;
@@ -540,6 +533,111 @@
       to { transform: translateY(0); opacity: 1; }
     }
 
+    .youtube-section {
+      padding: 2rem 1rem;
+      background-color: #f7f7f7;
+    }
+    .youtube-section h2 {
+        text-align: left;
+        font-size: 1.6rem;
+        margin-bottom: 2rem;
+    }
+
+    .youtube-featured {
+      display: flex;
+      flex-direction: row; /* Always horizontal */
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      background-color: #2b2b2b; /* Black background */
+      color: #fff;            /* White text */
+      padding: 1.5rem;
+      border-radius: 10px;
+    }
+
+
+    .youtube-featured .youtube-embed {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .youtube-featured .youtube-info {
+      flex: 1;
+      padding-left: 1rem;
+    }
+
+    .youtube-featured .youtube-embed iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .youtube-info h3 {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+    }
+
+    .youtube-info p {
+      color: #ccc;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    
+
+    /* .youtube-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    } */
+    .youtube-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 1024px) {
+      .youtube-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .youtube-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .youtube-card {
+      background: #2b2b2b;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .youtube-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .youtube-thumbnail iframe {
+      width: 100%;
+      height: 180px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    .youtube-title {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+
+
     #subscriptionPopup h3 {
       margin-top: 0;
       font-size: 1.4rem;
@@ -623,7 +721,7 @@
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
         <a href="{{ url_for('memorabilia') }}">Artifact Arena</a>
-        <!-- <a href="#">Influencers</a> -->
+        <a href="{{ url_for('all_videos') }}">Arena Play</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
       </nav>
     </div>
@@ -657,62 +755,35 @@
   </section>
 
   <!-- Memorabilia Section -->
-  <!-- <section class="memorabilia-section">
-    <h2>Sporting Memorabilia Through the Ages</h2>
+  <section class="memorabilia-section">
+    <h2>SPORTING MEMPRABILIA THROUGH THE AGES</h2>
     <div class="memorabilia-grid">
       {% for item in memorabilia_stories[:6] %}
       <div class="memorabilia-item item{{ loop.index }}">
-        <div class="news-card {% if loop.index == 1 or loop.index == 6 %}horizontal-card{% endif %}">
-          <img src="{{ item.display_image }}" alt="{{ item.title }}">
-          <div class="news-content">
-            <span class="image-credit">Photo Credits: {{ item.image_credit }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.subtitle }}</p>
-            <div class="news-meta">
-              <span>{{ item.date }}</span>
+        <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" style="text-decoration: none; color: inherit;">
+          <div class="news-card {% if loop.index == 1 or loop.index == 6 %}horizontal-card{% endif %}">
+            <img src="{{ item.display_image }}" alt="{{ item.title }}">
+            <div class="news-content">
+              <span class="image-credit">Photo Credits: {{ item.image_credit }}</span>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.subtitle }}</p>
+              <div class="news-meta">
+                <span>{{ item.date }}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </a>
       </div>
       {% endfor %}
-    </div> -->
+    </div>
+
     <!-- View More Button -->
-    <!-- <div style="text-align: center; margin-top: 2rem;">
+    <div style="text-align: center; margin-top: 2rem;">
       <a href="{{ url_for('memorabilia') }}">
         <button>VIEW MORE</button>
       </a>
     </div>
-  </section> -->
-  <!-- Memorabilia Section -->
-<section class="memorabilia-section">
-  <h2>Sporting Memorabilia Through the Ages</h2>
-  <div class="memorabilia-grid">
-    {% for item in memorabilia_stories[:6] %}
-    <div class="memorabilia-item item{{ loop.index }}">
-      <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" style="text-decoration: none; color: inherit;">
-        <div class="news-card {% if loop.index == 1 or loop.index == 6 %}horizontal-card{% endif %}">
-          <img src="{{ item.display_image }}" alt="{{ item.title }}">
-          <div class="news-content">
-            <span class="image-credit">Photo Credits: {{ item.image_credit }}</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.subtitle }}</p>
-            <div class="news-meta">
-              <span>{{ item.date }}</span>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- View More Button -->
-  <div style="text-align: center; margin-top: 2rem;">
-    <a href="{{ url_for('memorabilia') }}">
-      <button>VIEW MORE</button>
-    </a>
-  </div>
-</section>
+  </section>
 
   
 
@@ -768,6 +839,40 @@
         <button type="submit" style="width: 100%; background: #000; color: #fff; padding: 0.75rem; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer;">Subscribe</button>
       </form>
     </div>
+
+
+    <!-- YouTube Section -->
+    <section class="youtube-section">
+      <h2>COLLECTING STORIES IN MOTION</h2>
+      {% if youtube_videos %}
+        <!-- Featured Video -->
+        <div class="youtube-featured">
+          <div class="youtube-embed">
+            <iframe src="https://www.youtube.com/embed/{{ youtube_videos[0].video_id }}" allowfullscreen></iframe>
+          </div>
+          <div class="youtube-info">
+            <h3>{{ youtube_videos[0].title }}</h3>
+            <p>{{ youtube_videos[0].description or '' }}</p>
+          </div>
+        </div>
+
+        <!-- Grid Videos -->
+        <div class="youtube-grid">
+          {% for video in youtube_videos[1:] %}
+            <div class="youtube-card">
+              <div class="youtube-thumbnail">
+                <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
+              </div>
+              <p class="youtube-title">{{ video.title }}</p>
+            </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <div style="text-align: center; margin-top: 20px;">
+          <a href="{{ url_for('all_videos') }}" class="view-product-btn">VIEW MORE</a>
+        </div>
+
+      </section>
 
 
   <!-- Footer -->

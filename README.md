@@ -10,7 +10,7 @@
 - 📰 News & Blogs with category filtering and full-page views
 - 📺 Dynamic YouTube Video integration (@TheCollectRoom)
 - 🛍️ Memorabilia Product Showcase
-- 🛍️ Memorabilia history 
+- 📜 Memorabilia history 
 - 📬 “Join Free” Pop-up Form to Access Premium Content
 - 📱 Responsive Layout with Custom Styling
 

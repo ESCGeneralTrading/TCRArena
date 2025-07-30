@@ -526,6 +526,10 @@ def all_videos():
     videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).all()
     return render_template('all_videos.html', videos=videos)
 
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
 
 def create_admin():
     with app.app_context():

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TCR Arena Privacy Policy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f9;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    .logo-banner {
+      background: #ffffff;
+      text-align: center;
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo-banner img {
+      height: 130px;
+      width: auto;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto 4rem;
+      padding: 1rem 1.5rem;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .tabs {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .tabs a {
+      margin: 0 0.8rem;
+      text-decoration: none;
+      font-weight: 600;
+      color: #021638;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .tabs a:hover,
+    .tabs a.active {
+      text-decoration: underline;
+      color: #054a9a;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: #021638;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    h2 {
+      color: #021638;
+      margin-top: 2rem;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* p {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      color: #333;
+    } */
+
+    ul {
+      margin-top: 0.8rem;
+      margin-left: 1.5rem;
+      color: #333;
+      font-size: 1rem;
+      list-style-type: disc;
+    }
+
+    a.email-link {
+      color: #021638;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    /* footer {
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 2rem 1rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    footer a {
+      color: #ffd700;
+      text-decoration: underline;
+      margin: 0 0.5rem;
+    } */
+    footer {
+      background: #000;
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #ffd700;
+      text-decoration: underline;
+      margin: 0 0.5rem;
+    }
+    /* Responsive tweaks */
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem 1rem 3rem;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .tabs a {
+        margin: 0 0.4rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo-banner">
+    <a href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
+    </a>
+  </div>
+
+  <div class="container">
+    <!-- <div class="tabs">
+      <a href="{{ url_for('blog') }}">Blogs</a>
+      <a href="{{ url_for('all_videos') }}">Arena Play</a>
+      <a href="{{ url_for('memorabilia') }}">Artifact Arena</a>
+      <a href="{{ url_for('privacy') }}" class="active">Privacy Policy</a>
+    </div> -->
+
+    <h1>TCR Arena Privacy Policy</h1>
+
+    <p>At TCR Arena, your privacy is important to us. This privacy policy outlines how we collect, use, and protect your personal information when you interact with us—whether online or in person.</p>
+
+    <h2>Information We Collect</h2>
+    <p>To provide you with the best possible experience, we may collect personal details such as your name, email address, contact number, and other relevant information when you register for events, make purchases, enter giveaways, or subscribe to our updates.</p>
+    <p>We only collect the information necessary to deliver our services and enhance your experience. We will never collect sensitive personal data without your explicit consent.</p>
+
+    <h2>User Content & Media</h2>
+    <p>By attending TCR Arena events or engaging with us online, you may be photographed or filmed. We may use this content (including event footage, interviews, photos, and social media tags) for marketing, promotion, or archival purposes across our platforms including social media, websites, and printed materials.</p>
+    <p>If you submit or tag us in content (such as photos, reels, or reviews), you are giving us permission to share or repurpose it, unless you explicitly request otherwise.</p>
+    <p>We will always respect your right to privacy and will honor any request to remove content that features you.</p>
+
+    <h2>How We Use Your Information</h2>
+    <p>Your information is used to:</p>
+    <ul>
+      <li>Communicate with you regarding event details, updates, or promotions</li>
+      <li>Process event registrations or product purchases</li>
+      <li>Improve and personalize your experience at TCR Arena</li>
+      <li>Share relevant updates, offers, or content from our partners (with your permission)</li>
+    </ul>
+    <p>You always have the option to opt out of marketing communications at any time.</p>
+
+    <h2>Cookies & Tracking Technologies</h2>
+    <p>Our website uses cookies, tracking pixels, and similar technologies to ensure smooth functionality and improve your user experience. Cookies allow us and our third-party partners to:</p>
+    <ul>
+      <li>Personalize content and ads</li>
+      <li>Measure website usage</li>
+      <li>Deliver relevant advertising across other websites</li>
+    </ul>
+    <p>By using our site, you agree to the use of these technologies. You can manage your cookie preferences through your browser settings.</p>
+
+    <h2>Your Privacy Choices</h2>
+    <p>You have full control over your personal data. If at any time you wish to stop receiving communications from us, remove content, or ask questions regarding your privacy, please contact us.</p>
+
+    <h2>Contact Us</h2>
+    <p>📧 Email: <a href="mailto:info@thecollectroom.com" class="email-link">info@thecollectroom.com</a></p>
+  </div>
+
+  <footer>
+    <p>
+      &copy; 2025 TCR Arena. All rights reserved. |
+      <a href="{{ url_for('privacy') }}">Privacy</a> |
+      <a href="{{ url_for('join') }}">Contact</a>
+    </p>
+  </footer>
+
+</body>
+</html>

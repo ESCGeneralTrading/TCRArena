@@ -13,6 +13,10 @@ from markupsafe import Markup
 from flask_migrate import Migrate
 from flask import session
 import re
+from extensions import db
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -23,12 +27,17 @@ except OSError:
     pass
 
 
-db_path = os.path.join(app.instance_path, 'news.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# db_path = os.path.join(app.instance_path, 'news.db')
+# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
+# db = SQLAlchemy(app)
+# migrate = Migrate(app, db)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = ""
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
-
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)

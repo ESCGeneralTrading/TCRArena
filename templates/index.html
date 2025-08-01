@@ -538,14 +538,14 @@
       background-color: #f7f7f7;
     }
     .youtube-section h2 {
-        text-align: left;
-        font-size: 1.6rem;
-        margin-bottom: 2rem;
+      text-align: left;
+      font-size: 1.6rem;
+      margin-bottom: 2rem;
     }
 
     .youtube-featured {
       display: flex;
-      flex-direction: row; /* Always horizontal */
+      flex-direction: column; /* Always horizontal */
       gap: 1.5rem;
       margin-bottom: 2rem;
       align-items: flex-start;
@@ -569,11 +569,12 @@
 
     .youtube-featured .youtube-embed iframe {
       width: 100%;
-      height: 100%;
-      min-height: 280px;
-      border-radius: 10px;
+      height: 500px; /* Portrait height */
+      aspect-ratio: 9 / 16; /* Portrait ratio */
+      border-radius: 18px;
       border: none;
     }
+
 
     .youtube-info h3 {
       font-size: 1rem;
@@ -587,15 +588,12 @@
     }
     
 
-    /* .youtube-grid {
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    } */
     .youtube-grid {
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(4, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px; /* Less spacing between cards */
+      padding: 20px 0;
     }
 
     @media (max-width: 1024px) {
@@ -611,31 +609,41 @@
     }
 
     .youtube-card {
-      background: #2b2b2b;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.2s ease;
-    }
+        background: none; /* Remove dark card background */
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
 
     .youtube-card:hover {
       transform: translateY(-4px);
     }
 
+
     .youtube-thumbnail iframe {
       width: 100%;
-      height: 180px;
-      border-radius: 8px;
+      max-width: 300px;         /* Keeps vertical video compact */
+      aspect-ratio: 9 / 16;
+      height: auto;
       border: none;
+      border-radius: 12px;       /* Soft corners */
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Subtle modern shadow */
     }
 
+
     .youtube-title {
-      margin-top: 0.8rem;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      text-align: center;
+        font-size: 0.95rem;
+        color: black;
+        margin-top: 10px;
+        max-width: 280px;
+        line-height: 1.4;
     }
+
 
 
     #subscriptionPopup h3 {
@@ -720,8 +728,8 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('memorabilia') }}">Artifact Arena</a>
-        <a href="{{ url_for('all_videos') }}">Arena Play</a>
+        <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
+        <a href="{{ url_for('all_videos') }}">TCR Originals</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
       </nav>
     </div>
@@ -789,7 +797,7 @@
 
   <!-- Shop Section -->
   <section class="shop">
-    <h3>BEST DEALS</h3>
+    <h3>TRENDING MEMORABILIA</h3>
     <div class="shop-cards">
       {% for product in products %}
       <div class="shop-card">
@@ -844,35 +852,26 @@
     <!-- YouTube Section -->
     <section class="youtube-section">
       <h2>COLLECTING STORIES IN MOTION</h2>
-      {% if youtube_videos %}
-        <!-- Featured Video -->
-        <div class="youtube-featured">
-          <div class="youtube-embed">
-            <iframe src="https://www.youtube.com/embed/{{ youtube_videos[0].video_id }}" allowfullscreen></iframe>
-          </div>
-          <div class="youtube-info">
-            <h3>{{ youtube_videos[0].title }}</h3>
-            <p>{{ youtube_videos[0].description or '' }}</p>
-          </div>
-        </div>
 
-        <!-- Grid Videos -->
+      {% if youtube_videos %}
+        <!-- Grid Videos (including the previous "featured" video as #1) -->
         <div class="youtube-grid">
-          {% for video in youtube_videos[1:] %}
+          {% for video in youtube_videos[:5] %}
             <div class="youtube-card">
               <div class="youtube-thumbnail">
                 <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
               </div>
-              <p class="youtube-title">{{ video.title }}</p>
+              <!-- <p class="youtube-title">{{ video.title }}</p> -->
             </div>
-            {% endfor %}
-          </div>
-        {% endif %}
-        <div style="text-align: center; margin-top: 20px;">
-          <a href="{{ url_for('all_videos') }}" class="view-product-btn">VIEW MORE</a>
+          {% endfor %}
         </div>
+      {% endif %}
 
-      </section>
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('all_videos') }}" class="view-product-btn">VIEW MORE</a>
+      </div>
+    </section>
+
 
 
   <!-- Footer -->

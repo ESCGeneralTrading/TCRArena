@@ -34,9 +34,7 @@ except OSError:
 # db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = ""
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
+
 db.init_app(app)
 migrate = Migrate(app, db)
 
@@ -369,7 +367,7 @@ admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 @app.route('/')
 def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
-    products = Product.query.order_by(Product.id.desc()).limit(4).all()
+    products = Product.query.order_by(Product.id.desc()).limit(5).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"

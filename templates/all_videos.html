@@ -55,34 +55,27 @@
 
     .youtube-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, 1fr); /* fewer columns for portrait */
       gap: 1.5rem;
-    }
-
-    @media (max-width: 1024px) {
-      .youtube-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
     }
 
     @media (max-width: 768px) {
       .youtube-grid {
-        grid-template-columns: 1fr;
+       grid-template-columns: 1fr; /* single column on small screens */
       }
-    }
-
-    .youtube-card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.06);
-      padding-bottom: 1rem;
     }
 
     .youtube-card iframe {
       width: 100%;
-      height: 180px;
+      height: 360px; /* taller for portrait orientation */
       border: none;
+    }
+
+    .youtube-card {
+       background: #fff;
+       border-radius: 8px;
+       overflow: hidden;
+       padding-bottom: 1rem;
     }
 
     .youtube-title {
@@ -136,12 +129,12 @@
     <!-- Tabs Navigation -->
     <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
-      <a href="{{ url_for('all_videos') }}">Arena Play</a>
-      <a href="{{ url_for('memorabilia') }}">Artifact Arena</a>
+      <a href="{{ url_for('all_videos') }}">TCR Originals</a>
+      <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
     </div>
 
     <!-- Page Title -->
-    <h1>Arena Play</h1>
+    <h1>TCR Originals</h1>
 
     <!-- YouTube Video Grid -->
     <section class="youtube-grid">

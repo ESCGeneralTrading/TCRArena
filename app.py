@@ -1,7 +1,7 @@
 import os
 import sys
 import getpass
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, jsonify, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
@@ -114,11 +114,11 @@ class MemorabiliaStory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     subtitle = db.Column(db.String(300))
-    image_url = db.Column(db.String(512))  # optional external URL
+    image_url = db.Column(db.String(512)) 
     image_filename = db.Column(db.String(255))  # uploaded image filename
     image_credit = db.Column(db.String(100))
     date = db.Column(db.String(50))  # e.g., '2h', '5m'
-    content = db.Column(db.Text)  # <-- NEW field
+    content = db.Column(db.Text)  
 
     def __repr__(self):
         return f"<MemorabiliaStory {self.title}>"
@@ -390,6 +390,21 @@ def login():
         else:
             flash('Invalid username or password.', 'danger')
     return render_template('login.html')
+
+import requests
+from flask import jsonify
+
+@app.route('/api/live-scores')
+def live_scores():
+    url = "https://www.scorebat.com/video-api/v3/"
+    try:
+        response = requests.get(url)
+        if response.status_code == 200 and response.text.strip():
+            return jsonify(response.json())
+        else:
+            return jsonify({'error': 'Empty or invalid API response.'})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 @app.route('/logout')

@@ -11,7 +11,7 @@
     }
     body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       background-color: #fff;
       color: #111;
       font-size: 1rem;
@@ -729,15 +729,19 @@
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
         <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
-        <a href="{{ url_for('all_videos') }}">TCR Originals</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
+        <a href="{{ url_for('all_videos') }}">TCR Videos</a>
       </nav>
     </div>
   </header>
+  
+  <!-- LIVE SCORES SECTION -->
+
 
   <!-- Blog Section -->
   <section class="blog">
-    <h3>LATEST FROM THE COLLECTROOM ARENA</h3>
+    <!-- <h2>LATEST FROM THE COLLECT ROOM ARENA</h2> -->
+    <p style=" font-size: 1.0rem;">LATEST FROM THE COLLECT ROOM ARENA</p>
     <div class="blog-grid">
       {% for item in news_items %}
       <a href="{{ url_for('view_news', news_id=item.id) }}" class="blog-post" >
@@ -764,7 +768,8 @@
 
   <!-- Memorabilia Section -->
   <section class="memorabilia-section">
-    <h2>SPORTING MEMORABILIA THROUGH THE AGES</h2>
+    <p style=" font-size: 1.0rem;">COLLECTIBLE STORIES</p>
+    <!-- <h2>COLLECTIBLE STORIES</h2> -->
     <div class="memorabilia-grid">
       {% for item in memorabilia_stories[:6] %}
       <div class="memorabilia-item item{{ loop.index }}">
@@ -797,7 +802,8 @@
 
   <!-- Shop Section -->
   <section class="shop">
-    <h3>TRENDING MEMORABILIA</h3>
+    <p style=" font-size: 1.0rem;">TRENDING MEMORABILIA</p>
+    <!-- <h3>TRENDING MEMORABILIA</h3> -->
     <div class="shop-cards">
       {% for product in products %}
       <div class="shop-card">
@@ -812,7 +818,6 @@
   <!-- Subscription Popup -->
   <div id="subscription-popup" style="display: block; position: fixed; top: 50%; left: 50%; transform: translateX(-50%); background: white; padding: 2em; border-radius: 12px; border: 1px solid #ccc; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: 420px; width: 90%; font-family: 'Roboto', sans-serif; position: fixed;">
     <!-- Close Button -->
-
     <button onclick="document.getElementById('subscription-popup').style.display='none';"
       aria-label="Close"
       style="
@@ -851,7 +856,8 @@
 
     <!-- YouTube Section -->
     <section class="youtube-section">
-      <h2>COLLECTING STORIES IN MOTION</h2>
+      <p style=" font-size: 1.0rem;">COLLECTING STORIES IN MOTION</p>
+      <!-- <h2>COLLECTING STORIES IN MOTION</h2> -->
 
       {% if youtube_videos %}
         <!-- Grid Videos (including the previous "featured" video as #1) -->
@@ -877,7 +883,6 @@
   <!-- Footer -->
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
-      <!-- <a href="#">Privacy</a> | -->
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
       <a href="{{ url_for('join') }}">Contact</a>
     </p>

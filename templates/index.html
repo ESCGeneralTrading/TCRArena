@@ -50,7 +50,7 @@
     nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 6.4rem;
+      gap: 5.5rem;
       justify-content: center;
       flex-grow: 1;
     }
@@ -729,6 +729,7 @@
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
         <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
+        <a href="#">Collectible Community</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
         <a href="{{ url_for('all_videos') }}">TCR Videos</a>
       </nav>
@@ -736,6 +737,48 @@
   </header>
   
   <!-- LIVE SCORES SECTION -->
+  <div id="live-scores-container" style="background:#222; color:#eee; padding: 10px; text-align:center;">
+    <h5>Live Soccer Scores</h5>
+    <ul id="live-scores-list" style="list-style:none; padding-left:0;">
+        <li>Loading live scores...</li>
+      </ul>
+  </div>
+ 
+  <script>
+  async function fetchLiveScores() {
+      try {
+          const response = await fetch('/live-scores');
+          const scores = await response.json();
+
+          const list = document.getElementById('live-scores-list');
+          list.innerHTML = '';
+
+          if (scores.error) {
+              list.innerHTML = `<li>Error loading live scores: ${scores.error}</li>`;
+              return;
+          }
+
+          if (scores.length === 0) {
+              list.innerHTML = '<li>No live matches at the moment.</li>';
+              return;
+          }
+
+          scores.forEach(score => {
+              const li = document.createElement('li');
+              li.textContent = `[${score.country} - ${score.league}] ${score.teams} — ${score.score} (${score.status})`;
+              list.appendChild(li);
+          });
+      } catch (error) {
+          const list = document.getElementById('live-scores-list');
+          list.innerHTML = `<li>Failed to fetch live scores.</li>`;
+          console.error('Error fetching live scores:', error);
+      }
+  }
+
+  // Initial fetch and refresh every 60 seconds
+  fetchLiveScores();
+  setInterval(fetchLiveScores, 60000);
+  </script>
 
 
   <!-- Blog Section -->

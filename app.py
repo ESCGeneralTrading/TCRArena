@@ -34,7 +34,9 @@ except OSError:
 # db = SQLAlchemy(app)
 # migrate = Migrate(app, db)
 
-
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tcrarena_db_user:ZLwPUckLOzUHE8Y07wQOTM2oPF7ooOkd@dpg-d25gn52li9vc73f9m400-a.singapore-postgres.render.com/tcrarena_db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
 db.init_app(app)
 migrate = Migrate(app, db)
 
@@ -364,6 +366,45 @@ admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 
 
 # Routes
+
+@app.route('/live-scores')
+def live_scores():
+    api_key = 'c5ca24a68253418f9c95e742090894bf'
+
+    if not api_key:
+        return jsonify({"error": "API key not configured"}), 500
+
+    url = "https://api.football-data.org/v4/matches?status=LIVE"
+    headers = {
+        'X-Auth-Token': api_key
+    }
+
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        live_matches = []
+        matches = data.get('matches', [])
+
+        if not matches:
+            return jsonify([])  # No live matches now
+
+        for match in matches:
+            live_matches.append({
+                "competition": match['competition']['name'],
+                "home_team": match['homeTeam']['name'],
+                "away_team": match['awayTeam']['name'],
+                "score": f"{match['score']['fullTime']['home']} - {match['score']['fullTime']['away']}",
+                "status": match['status'],
+                "minute": match.get('minute', 'N/A')
+            })
+
+        return jsonify(live_matches)
+
+    except requests.RequestException as e:
+        return jsonify({"error": "Failed to fetch live scores", "details": str(e)}), 500
+
 @app.route('/')
 def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
@@ -394,19 +435,6 @@ def login():
 import requests
 from flask import jsonify
 
-@app.route('/api/live-scores')
-def live_scores():
-    url = "https://www.scorebat.com/video-api/v3/"
-    try:
-        response = requests.get(url)
-        if response.status_code == 200 and response.text.strip():
-            return jsonify(response.json())
-        else:
-            return jsonify({'error': 'Empty or invalid API response.'})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -416,10 +444,19 @@ def logout():
 
 
 # New route to show full news article
+# @app.route('/news/<int:news_id>')
+# def view_news(news_id):
+#     if not session.get('joined'):
+#         return redirect(url_for('join', next=request.path))
+
+#     news = News.query.get_or_404(news_id)
+#     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
+#     return render_template('news_detail.html', news=news, suggestions=suggestions)
 @app.route('/news/<int:news_id>')
 def view_news(news_id):
-    if not session.get('joined'):
-        return redirect(url_for('join', next=request.path))
+    # Remove this condition ↓↓↓
+    # if not session.get('joined'):
+    #     return redirect(url_for('join', next=request.path))
 
     news = News.query.get_or_404(news_id)
     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
@@ -581,7 +618,9 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1].lower() == "createadmin":
         create_admin()
     else:
-        app.run(debug=True)
+        # app.run(debug=True)
+        app.run(host='0.0.0.0', port=5002, debug=True, use_debugger=False, use_reloader=True)
+
 
 
 

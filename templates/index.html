@@ -50,7 +50,7 @@
     nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 5.5rem;
+      gap: 6.5rem;
       justify-content: center;
       flex-grow: 1;
     }
@@ -728,8 +728,9 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
-        <a href="#">Collectible Community</a>
+        <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
+        <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
+        <!-- <a href="#">Collectible Community</a> -->
         <a href="https://www.thecollectroom.com/">Shop</a>
         <a href="{{ url_for('all_videos') }}">TCR Videos</a>
       </nav>
@@ -811,7 +812,8 @@
 
   <!-- Memorabilia Section -->
   <section class="memorabilia-section">
-    <p style=" font-size: 1.0rem;">COLLECTIBLE STORIES</p>
+    <!-- <p style=" font-size: 1.0rem;">COLLECTIBLE STORIES</p> -->
+    <p style=" font-size: 1.0rem;">COLLECTORS COMMUNITY</p>
     <!-- <h2>COLLECTIBLE STORIES</h2> -->
     <div class="memorabilia-grid">
       {% for item in memorabilia_stories[:6] %}

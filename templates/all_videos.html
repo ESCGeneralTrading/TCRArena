@@ -16,12 +16,13 @@
     .logo-banner {
       background: #fff;
       text-align: center;
-      padding: 1.5rem 0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem 0; /* match memorabilia.html */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* match shadow size too */
     }
 
+
     .logo-banner img {
-      height: 140px;
+      height: 170px;
       width: auto;
     }
 
@@ -120,7 +121,8 @@
   <!-- Logo -->
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
-      <img src="{{ url_for('static', filename='TCR arena black.png') }}" alt="TCR Arena Logo" />
+      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
+
     </a>
   </div>
 

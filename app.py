@@ -15,6 +15,7 @@ from flask import session
 import re
 from extensions import db
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 
@@ -27,18 +28,28 @@ except OSError:
     pass
 
 
-# db_path = os.path.join(app.instance_path, 'news.db')
-# app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
-# db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tcrarena_db_user:ZLwPUckLOzUHE8Y07wQOTM2oPF7ooOkd@dpg-d25gn52li9vc73f9m400-a.singapore-postgres.render.com/tcrarena_db"
+ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
+ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'webm', 'ogg'}
+
+def allowed_file(filename, allowed_set):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_set
+
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static/uploads')
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Limit max upload size (e.g., 50MB)
+
+db_path = os.path.join(app.instance_path, 'news.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
-db.init_app(app)
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tcrarena_db_user:ZLwPUckLOzUHE8Y07wQOTM2oPF7ooOkd@dpg-d25gn52li9vc73f9m400-a.singapore-postgres.render.com/tcrarena_db"
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
+# db.init_app(app)
+# migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -112,14 +123,37 @@ class Subscriber(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
 
 
+# class MemorabiliaStory(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(255), nullable=False)
+#     subtitle = db.Column(db.String(300))
+#     image_url = db.Column(db.String(512)) 
+#     image_filename = db.Column(db.String(255))  # uploaded image filename
+#     image_credit = db.Column(db.String(100))
+#     date = db.Column(db.String(50))  # e.g., '2h', '5m'
+#     content = db.Column(db.Text)  
+
+#     def __repr__(self):
+#         return f"<MemorabiliaStory {self.title}>"
+
+#     @property
+#     def display_image(self):
+#         if self.image_filename:
+#             return f"/static/uploads/{self.image_filename}"
+#         elif self.image_url:
+#             return self.image_url
+#         else:
+#             return "/static/uploads/default-placeholder.png"
 class MemorabiliaStory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     subtitle = db.Column(db.String(300))
     image_url = db.Column(db.String(512)) 
     image_filename = db.Column(db.String(255))  # uploaded image filename
+    video_filename = db.Column(db.String(255))  # uploaded video filename
+    video_url = db.Column(db.String(512))       # external video URL (optional)
     image_credit = db.Column(db.String(100))
-    date = db.Column(db.String(50))  # e.g., '2h', '5m'
+    date = db.Column(db.String(50))
     content = db.Column(db.Text)  
 
     def __repr__(self):
@@ -134,6 +168,16 @@ class MemorabiliaStory(db.Model):
         else:
             return "/static/uploads/default-placeholder.png"
 
+    @property
+    def display_video(self):
+        if self.video_filename:
+            return f"/static/uploads/{self.video_filename}"
+        elif self.video_url:
+            return self.video_url
+        else:
+            return None
+
+
 class YouTubeVideo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -141,6 +185,34 @@ class YouTubeVideo(db.Model):
 
     def __repr__(self):
         return f"<YouTubeVideo {self.title}>"
+
+
+# --- Advertisement model ---
+class Advertisement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))                # optional title
+    details = db.Column(db.Text)                     # optional details/content
+    image_filename = db.Column(db.String(255))       # uploaded image filename
+    image_url = db.Column(db.String(512))            # external image URL (optional)
+    video_filename = db.Column(db.String(255))       # uploaded video filename
+    video_url = db.Column(db.String(512))            # external video URL (optional)
+    start_date = db.Column(db.String(50))            # optional scheduling (string for simplicity)
+    end_date = db.Column(db.String(50))              # optional scheduling (string for simplicity)
+    active = db.Column(db.Boolean, default=True)     # simple active toggle
+
+    def display_image(self):
+        if self.image_filename:
+            return f"/static/uploads/{self.image_filename}"
+        elif self.image_url:
+            return self.image_url
+        return None
+
+    def display_video(self):
+        if self.video_filename:
+            return f"/static/uploads/{self.video_filename}"
+        elif self.video_url:
+            return self.video_url
+        return None
 
 
 # Admin Views
@@ -267,6 +339,51 @@ admin = Admin(
 admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
 
+# class MemorabiliaAdmin(ModelView):
+#     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+#     form_extra_fields = {
+#         'image_filename': FileUploadField(
+#             'Upload Image',
+#             base_path=upload_path,
+#             allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
+#             namegen=lambda obj, file_data: secure_filename(file_data.filename)
+#         )
+#     }
+
+#     column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url')
+#     column_searchable_list = ['title', 'image_credit']
+#     column_filters = ['image_credit', 'date']
+#     form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'content']
+
+#     form_widget_args = {
+#     'content': {
+#         'rows': 6,
+#         'style': 'font-family: monospace; font-size: 0.9em;'
+#         }
+#     }
+
+
+#     def _list_thumbnail(self, context, model, name):
+#         if model.image_filename:
+#             return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:100px;">')
+#         elif model.image_url:
+#             return Markup(f'<img src="{model.image_url}" style="max-height:100px;">')
+#         return ''
+
+#     column_formatters = {
+#         'image_filename': _list_thumbnail,
+#         'image_url': _list_thumbnail
+#     }
+
+#     def is_accessible(self):
+#         return current_user.is_authenticated
+
+#     def inaccessible_callback(self, name, **kwargs):
+#         return redirect(url_for('login'))
+
+# admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
+
 class MemorabiliaAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
 
@@ -276,32 +393,102 @@ class MemorabiliaAdmin(ModelView):
             base_path=upload_path,
             allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
             namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        ),
+        'video_filename': FileUploadField(
+            'Upload Video',
+            base_path=upload_path,
+            allowed_extensions=['mp4', 'webm', 'ogg'],  # Allowed video formats
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
         )
     }
 
-    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url')
+    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'video_filename', 'video_url')
     column_searchable_list = ['title', 'image_credit']
     column_filters = ['image_credit', 'date']
-    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'content']
+    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'video_filename', 'video_url', 'content']
 
     form_widget_args = {
-    'content': {
-        'rows': 6,
-        'style': 'font-family: monospace; font-size: 0.9em;'
+        'content': {
+            'rows': 6,
+            'style': 'font-family: monospace; font-size: 0.9em;'
         }
     }
-
 
     def _list_thumbnail(self, context, model, name):
         if model.image_filename:
             return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:100px;">')
         elif model.image_url:
             return Markup(f'<img src="{model.image_url}" style="max-height:100px;">')
+        elif model.video_filename:
+            return Markup(f'''
+                <video width="150" controls>
+                    <source src="/static/uploads/{model.video_filename}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            ''')
+        elif model.video_url:
+            return Markup(f'<a href="{model.video_url}" target="_blank">Video Link</a>')
         return ''
 
     column_formatters = {
         'image_filename': _list_thumbnail,
-        'image_url': _list_thumbnail
+        'image_url': _list_thumbnail,
+        'video_filename': _list_thumbnail,
+        'video_url': _list_thumbnail,
+    }
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
+
+# --- Advertisement admin view ---
+class AdvertisementAdmin(ModelView):
+    upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+    form_extra_fields = {
+        'image_filename': FileUploadField(
+            'Upload Image',
+            base_path=upload_path,
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        ),
+        'video_filename': FileUploadField(
+            'Upload Video',
+            base_path=upload_path,
+            allowed_extensions=['mp4', 'webm', 'ogg'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        )
+    }
+
+    column_list = ('id', 'title', 'active', 'start_date', 'end_date', 'image_filename', 'image_url', 'video_filename', 'video_url')
+    form_columns = ['title', 'details', 'active', 'start_date', 'end_date', 'image_filename', 'image_url', 'video_filename', 'video_url']
+
+    form_widget_args = {
+        'title': {'style': 'width: 70%;'},
+        'details': {'rows': 4, 'style': 'width: 90%;'},
+        'image_url': {'placeholder': 'External image URL (optional)'},
+        'video_url': {'placeholder': 'External video URL (optional)'},
+    }
+
+    def _list_thumbnail(self, context, model, name):
+        if model.image_filename:
+            return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:120px;">')
+        elif model.image_url:
+            return Markup(f'<img src="{model.image_url}" style="max-height:120px;">')
+        elif model.video_filename:
+            return Markup(f'<video width="160" controls><source src="/static/uploads/{model.video_filename}" type="video/mp4">Your browser does not support video.</video>')
+        elif model.video_url:
+            return Markup(f'<a href="{model.video_url}" target="_blank">Video Link</a>')
+        return ''
+
+    column_formatters = {
+        'image_filename': _list_thumbnail,
+        'image_url': _list_thumbnail,
+        'video_filename': _list_thumbnail,
+        'video_url': _list_thumbnail,
     }
 
     def is_accessible(self):
@@ -310,8 +497,8 @@ class MemorabiliaAdmin(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 
-admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
-
+# register in admin:
+admin.add_view(AdvertisementAdmin(Advertisement, db.session))
 
 class ContactAdmin(ModelView):
     column_list = ('id', 'name', 'email', 'contact_number','message')
@@ -330,6 +517,8 @@ class ContactAdmin(ModelView):
         return redirect(url_for('login'))
 
 admin.add_view(ContactAdmin(Contact, db.session))
+
+
 
 from flask_admin.menu import MenuLink
 admin.add_link(MenuLink(name='Visit Site', category='', url='/'))
@@ -411,8 +600,9 @@ def home():
     products = Product.query.order_by(Product.id.desc()).limit(5).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
+    ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,welcome_text=welcome_text)
+    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,advertisement=ad,welcome_text=welcome_text)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -444,20 +634,8 @@ def logout():
 
 
 # New route to show full news article
-# @app.route('/news/<int:news_id>')
-# def view_news(news_id):
-#     if not session.get('joined'):
-#         return redirect(url_for('join', next=request.path))
-
-#     news = News.query.get_or_404(news_id)
-#     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
-#     return render_template('news_detail.html', news=news, suggestions=suggestions)
 @app.route('/news/<int:news_id>')
 def view_news(news_id):
-    # Remove this condition ↓↓↓
-    # if not session.get('joined'):
-    #     return redirect(url_for('join', next=request.path))
-
     news = News.query.get_or_404(news_id)
     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
     return render_template('news_detail.html', news=news, suggestions=suggestions)
@@ -543,6 +721,35 @@ def subscribe():
 
     return redirect(url_for('home'))
 
+# @app.route('/add-memorabilia', methods=['GET', 'POST'])
+# def add_memorabilia():
+#     if request.method == 'POST':
+#         title = request.form['title']
+#         subtitle = request.form.get('subtitle')
+#         image_credit = request.form.get('image_credit')
+#         date = request.form.get('date')
+#         image_url = request.form.get('image_url')
+#         image = request.files.get('image')
+
+#         filename = None
+#         if image and allowed_file(image.filename):
+#             filename = secure_filename(image.filename)
+#             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+#         story = MemorabiliaStory(
+#             title=title,
+#             subtitle=subtitle,
+#             image_credit=image_credit,
+#             date=date,
+#             image_url=image_url if not filename else None,
+#             image_filename=filename
+#         )
+#         db.session.add(story)
+#         db.session.commit()
+#         flash("Memorabilia story added!", "success")
+#         return redirect(url_for('home'))
+
+#     return render_template('add_memorabilia.html')
 @app.route('/add-memorabilia', methods=['GET', 'POST'])
 def add_memorabilia():
     if request.method == 'POST':
@@ -551,20 +758,32 @@ def add_memorabilia():
         image_credit = request.form.get('image_credit')
         date = request.form.get('date')
         image_url = request.form.get('image_url')
-        image = request.files.get('image')
+        video_url = request.form.get('video_url')
 
-        filename = None
-        if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        image = request.files.get('image')
+        video = request.files.get('video')
+
+        filename_img = None
+        filename_vid = None
+
+        if image and allowed_file(image.filename, ALLOWED_IMAGE_EXTENSIONS):
+            filename_img = secure_filename(image.filename)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_img))
+
+        if video and allowed_file(video.filename, ALLOWED_VIDEO_EXTENSIONS):
+            filename_vid = secure_filename(video.filename)
+            video.save(os.path.join(app.config['UPLOAD_FOLDER'], filename_vid))
 
         story = MemorabiliaStory(
             title=title,
             subtitle=subtitle,
             image_credit=image_credit,
             date=date,
-            image_url=image_url if not filename else None,
-            image_filename=filename
+            image_url=image_url if not filename_img else None,
+            video_url=video_url if not filename_vid else None,
+            image_filename=filename_img,
+            video_filename=filename_vid,
+            content=request.form.get('content')
         )
         db.session.add(story)
         db.session.commit()

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Collectible Stories - Memorabilia</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -25,7 +25,7 @@
       height: 170px;
       width: auto;
     }
-    
+
     .container {
       max-width: 1200px;
       margin: 2rem auto;
@@ -39,7 +39,6 @@
     .tabs a {
       margin: 0 0.6rem;
       text-decoration: none;
-      /* font-weight: bold; */
       color: #021638;
     }
 
@@ -52,7 +51,6 @@
       margin-bottom: 2.5rem;
       color: #021638;
       font-weight: normal;
-      /* font-size: 1.5rem; */
       letter-spacing: 1px;
       text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.03);
     }
@@ -71,6 +69,7 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
+      position: relative; /* needed for overlay buttons */
     }
 
     .blog-post:hover {
@@ -78,13 +77,15 @@
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
     }
 
-    .blog-post img {
-        width: 100%;
-        height: 350px;
-        object-fit: cover;
-        object-position: top; /* ✅ This makes the image crop from the top */
+    .blog-post img,
+    .blog-post video {
+      width: 100%;
+      height: 350px;
+      /* height:600px; */
+      object-fit: cover;
+      object-position: top;
+      border-radius: 0;
     }
-
 
     .blog-post-content {
       padding: 1rem 1.2rem 1.2rem;
@@ -169,13 +170,34 @@
       color: #ffd700;
       text-decoration: underline;
     }
+
+    /* Video control buttons overlay */
+    .video-control {
+      position: absolute;
+      top: 8px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+      border-radius: 3px;
+      user-select: none;
+      z-index: 10;
+    }
+    .video-control.pause-btn {
+      left: 8px;
+    }
+    .video-control.mute-btn {
+      left: 70px;
+    }
   </style>
 </head>
 <body>
 
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
-      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+      <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
     </a>
   </div>
 
@@ -183,17 +205,27 @@
     <!-- Tabs Navigation -->
     <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
-      <a href="{{ url_for('all_videos') }}">TCR Videos</a>
-      <a href="{{ url_for('memorabilia') }}">Collectible Stories</a>
+      <a href="{{ url_for('all_videos') }}">Arena Play</a>
+      <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
     </div>
 
-    <h1>Relive Greatness in the  ArenaCollectible Stories</h1>
-
+    <h1>Relive Greatness in the Arena Collectors Community</h1>
 
     <div class="grid">
       {% for item in memorabilia_stories %}
       <div class="blog-post">
-        <img src="{{ item.display_image }}" alt="{{ item.title }}">
+        {% if item.display_video %}
+          <video id="video-{{ loop.index }}" autoplay muted loop playsinline
+                 style="width:100%; height:600px; object-fit:cover; object-position: top; border-radius: 0;">
+            <source src="{{ item.display_video }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">Pause</button>
+          <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">Unmute</button>
+        {% else %}
+          <img src="{{ item.display_image }}" alt="{{ item.title }}" />
+        {% endif %}
+
         <div class="blog-post-content">
           <div>
             <h3>{{ item.title }}</h3>
@@ -201,7 +233,6 @@
             <p>{{ item.subtitle }}</p>
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
-
         </div>
       </div>
       {% endfor %}
@@ -229,11 +260,41 @@
   </div>
 
   <footer>
-    <p>&copy; 2025 TcR Arena. All rights reserved. |
+    <p>
+      &copy; 2025 TcR Arena. All rights reserved. |
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
       <a href="{{ url_for('join') }}">Contact</a>
     </p>
   </footer>
+
+  <script>
+    document.querySelectorAll('.video-control').forEach(button => {
+      button.addEventListener('click', e => {
+        e.preventDefault();
+        const videoId = button.getAttribute('data-video-id');
+        const video = document.getElementById(videoId);
+        if (!video) return;
+
+        if (button.classList.contains('pause-btn')) {
+          if (video.paused) {
+            video.play();
+            button.textContent = 'Pause';
+          } else {
+            video.pause();
+            button.textContent = 'Play';
+          }
+        } else if (button.classList.contains('mute-btn')) {
+          if (video.muted) {
+            video.muted = false;
+            button.textContent = 'Mute';
+          } else {
+            video.muted = true;
+            button.textContent = 'Unmute';
+          }
+        }
+      });
+    });
+  </script>
 
 </body>
 </html>

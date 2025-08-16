@@ -774,7 +774,12 @@ def team_details(league_id, team_name):
             break
 
     if not selected_team:
-        return f"Team '{team_name}' not found in league {league.get('@name', '')}", 404
+        return render_template(
+            'error.html',
+            error_code=404,
+            message=f"Team '{team_name}' not found in league {league.get('@name', '')}"
+        ), 404
+
 
     return render_template('team_details.html', league=league, team=selected_team)
 

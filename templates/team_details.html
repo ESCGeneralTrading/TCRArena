@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ team['@name'] }} - Team Details</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding-bottom: 80px;
+        color: #1f1f1f;
+    }
+
+    /* Logo Banner */
+    .logo-banner {
+        background: #fff;
+        text-align: center;
+        padding: 1.5rem 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    .logo-banner img {
+        max-height: 12vh;
+        width: auto;
+        transition: transform 0.3s;
+    }
+    .logo-banner img:hover { transform: scale(1.05); }
+
+    h1, h2 {
+        text-align: center;
+        margin: 15px 0;
+        color: #222;
+    }
+    h2 { color: #007bff; }
+
+    p {
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    /* Table */
+    table {
+        width: 95%;
+        max-width: 1200px;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+    }
+    th, td {
+        padding: 12px 15px;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+    th {
+        background: #343a40;
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    tr:nth-child(even) { background: #f6f6f6; }
+    tr:hover { background: #e9f2ff; }
+
+    /* Back Button */
+    .back-btn {
+        display: inline-block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 6px;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s, transform 0.2s;
+    }
+    .back-btn:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Footer */
+    footer {
+        background: #000;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+    footer a { color: #ffd700; text-decoration: underline; }
+
+    /* Responsive */
+    @media(max-width: 768px){
+        table { width: 100%; }
+        th, td { padding: 10px; font-size: 13px; }
+        h1, h2 { font-size: 1.2rem; }
+        .back-btn { width: 50%; font-size: 13px; padding: 10px; }
+    }
+    @media(max-width: 480px){
+        th, td { padding: 8px; font-size: 12px; }
+        .logo-banner img { max-height: 10vh; }
+        .back-btn { width: 70%; font-size: 12px; padding: 8px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="logo-banner">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+    </a>
+</div>
+
+<h1>{{ team['@name'] }}</h1>
+<h2>{{ league['@name'] }}</h2>
+<p><strong>Coach:</strong> {{ team['coach']['@name'] }} (ID: {{ team['coach']['@id'] }})</p>
+
+<table>
+    <tr>
+        <th>Player ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Position</th>
+        <th>Injured</th>
+    </tr>
+    {% for player in team['squad'] %}
+    <tr>
+        <td>{{ player['@id'] }}</td>
+        <td>{{ player['@name'] }}</td>
+        <td>{{ player['@age'] }}</td>
+        <td>{{ player['@position'] }}</td>
+        <td>{{ player['@injured'] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div style="text-align:center;">
+    <a href="javascript:history.back()" class="back-btn">Back</a>
+</div>
+
+<footer>
+    &copy; 2025 TcR Arena. All rights reserved. |
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+    <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
+</footer>
+
+</body>
+</html>

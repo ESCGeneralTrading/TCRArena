@@ -1,3 +1,4 @@
+import datetime  # instead of "from datetime import datetime, timedelta"
 import os
 import sys
 import getpass
@@ -16,6 +17,7 @@ import re
 from extensions import db
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+from flask_mail import Mail, Message
 
 load_dotenv()
 
@@ -27,10 +29,27 @@ try:
 except OSError:
     pass
 
+today = datetime.datetime.now().date()
+
+
+app.config['MAIL_SERVER'] = 'smtp.titan.email'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'digital@thecollectroom.com'
+app.config['MAIL_PASSWORD'] = 'ESC@2025'
+app.config['MAIL_DEFAULT_SENDER'] = ('TCR Collectors', 'digital@thecollectroom.com')
+
+mail = Mail(app)
 
 
 ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'webm', 'ogg'}
+API_KEY = "538e881e9f4c4cb1d74708ddd91c6aa4"
+
+LIVE_FEED_URL = f"http://www.goalserve.com/getfeed/{API_KEY}/soccernew/live?json=1"
+LEAGUES_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerfixtures/data/mapping?json=1"
+LEAGUE_TEAMS_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerleague/{{}}?json=1"  # leagueID
+PLAYER_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/player/{{}}?json=1"
 
 def allowed_file(filename, allowed_set):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_set
@@ -122,28 +141,6 @@ class Subscriber(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
-
-# class MemorabiliaStory(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(255), nullable=False)
-#     subtitle = db.Column(db.String(300))
-#     image_url = db.Column(db.String(512)) 
-#     image_filename = db.Column(db.String(255))  # uploaded image filename
-#     image_credit = db.Column(db.String(100))
-#     date = db.Column(db.String(50))  # e.g., '2h', '5m'
-#     content = db.Column(db.Text)  
-
-#     def __repr__(self):
-#         return f"<MemorabiliaStory {self.title}>"
-
-#     @property
-#     def display_image(self):
-#         if self.image_filename:
-#             return f"/static/uploads/{self.image_filename}"
-#         elif self.image_url:
-#             return self.image_url
-#         else:
-#             return "/static/uploads/default-placeholder.png"
 class MemorabiliaStory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -176,6 +173,11 @@ class MemorabiliaStory(db.Model):
             return self.video_url
         else:
             return None
+class CollectorJoinee(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=True)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    join_date = db.Column(db.DateTime, default=db.func.now())
 
 
 class YouTubeVideo(db.Model):
@@ -339,51 +341,6 @@ admin = Admin(
 admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
 
-# class MemorabiliaAdmin(ModelView):
-#     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
-
-#     form_extra_fields = {
-#         'image_filename': FileUploadField(
-#             'Upload Image',
-#             base_path=upload_path,
-#             allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
-#             namegen=lambda obj, file_data: secure_filename(file_data.filename)
-#         )
-#     }
-
-#     column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url')
-#     column_searchable_list = ['title', 'image_credit']
-#     column_filters = ['image_credit', 'date']
-#     form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'content']
-
-#     form_widget_args = {
-#     'content': {
-#         'rows': 6,
-#         'style': 'font-family: monospace; font-size: 0.9em;'
-#         }
-#     }
-
-
-#     def _list_thumbnail(self, context, model, name):
-#         if model.image_filename:
-#             return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:100px;">')
-#         elif model.image_url:
-#             return Markup(f'<img src="{model.image_url}" style="max-height:100px;">')
-#         return ''
-
-#     column_formatters = {
-#         'image_filename': _list_thumbnail,
-#         'image_url': _list_thumbnail
-#     }
-
-#     def is_accessible(self):
-#         return current_user.is_authenticated
-
-#     def inaccessible_callback(self, name, **kwargs):
-#         return redirect(url_for('login'))
-
-# admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
-
 class MemorabiliaAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
 
@@ -443,6 +400,20 @@ class MemorabiliaAdmin(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
+
+class CollectorJoineeAdmin(ModelView):
+    column_list = ('id', 'name', 'email', 'join_date')
+    column_searchable_list = ['name', 'email']
+    column_filters = ['join_date']
+    form_columns = ['name', 'email']
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(CollectorJoineeAdmin(CollectorJoinee, db.session))
 
 # --- Advertisement admin view ---
 class AdvertisementAdmin(ModelView):
@@ -553,47 +524,272 @@ class YouTubeVideoAdmin(ModelView):
 
 admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 
+# ====================
+# --- LIVE SCORES ---
+# ====================
+LIVE_FEED_URL = "http://www.goalserve.com/getfeed/538e881e9f4c4cb1d74708ddd91c6aa4/soccernew/live?json=1"
 
+def date_to_day_code(input_date_str):
+    try:
+        input_date = datetime.datetime.strptime(input_date_str, "%d/%m/%Y").date()
+    except ValueError:
+        return None
+    today = datetime.datetime.now().date()
+    delta = (input_date - today).days
+    return f"d{delta}"
+
+def get_dynamic_feed_url(day_code):
+    base_url = "http://www.goalserve.com/getfeed/538e881e9f4c4cb1d74708ddd91c6aa4/soccernew/"
+    if day_code == "d0":
+        return f"{base_url}home?json=1"  # use live feed for today
+    return f"{base_url}{day_code}?json=1"
+
+def sort_matches(matches):
+    def match_key(m):
+        if m['status'] in ['FT', 'Finished']:
+            return (0, datetime.datetime.min.time())
+        try:
+            t = datetime.datetime.strptime(m['time'], "%H:%M").time()
+        except:
+            t = datetime.datetime.max.time()
+        return (1, t)
+    return sorted(matches, key=match_key)
+
+def fetch_matches(url):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        return None, str(e)
+    matches_list = []
+    categories = data.get('scores', {}).get('category', [])
+    if isinstance(categories, dict):
+        categories = [categories]
+
+    for cat in categories:
+        league_name = cat.get('@name', 'Unknown League')
+        league_id = cat.get('@id', '')  # capture league ID
+        matches = cat.get('matches', {}).get('match', [])
+        if isinstance(matches, dict):
+            matches = [matches]
+        for match in matches:
+            raw_date = match.get('@date', '')
+            try:
+                date_obj = datetime.strptime(raw_date, "%b %d")
+                formatted_date = date_obj.strftime("%d/%m")
+            except:
+                formatted_date = raw_date
+            events_raw = match.get('events') or {}
+            events_data = events_raw.get('event', [])
+            if isinstance(events_data, dict):
+                events_data = [events_data]
+            events = []
+            for ev in events_data:
+                events.append({
+                    'minute': ev.get('@minute', ''),
+                    'extra_min': ev.get('@extra_min', ''),
+                    'type': ev.get('@type', ''),
+                    'team': ev.get('@team', ''),
+                    'player': ev.get('@player', ''),
+                    'assist': ev.get('@assist', ''),
+                    'result': ev.get('@result', '')
+                })
+            matches_list.append({
+                'league': league_name,
+                'league_id': league_id,  # store it
+                'venue': match.get('@venue', ''),
+                'local_team': match.get('localteam', {}).get('@name', ''),
+                'local_goals': match.get('localteam', {}).get('@goals', 0),
+                'visitor_team': match.get('visitorteam', {}).get('@name', ''),
+                'visitor_goals': match.get('visitorteam', {}).get('@goals', 0),
+                'status': match.get('@status', 'NS'),
+                'time': match.get('@time', ''),
+                'date': formatted_date,
+                'events': events,
+                'match_id': match.get('@id', '')
+            })
+    return matches_list, None
+# def fetch_matches(url):
+#     try:
+#         response = requests.get(url, timeout=10)
+#         response.raise_for_status()
+#         data = response.json()
+#     except requests.exceptions.RequestException as e:
+#         return None, str(e)
+
+#     matches_list = []
+#     categories = data.get('scores', {}).get('category', [])
+#     if isinstance(categories, dict):
+#         categories = [categories]
+
+#     for cat in categories:
+#         league_name = cat.get('@name', 'Unknown League')
+#         matches = cat.get('matches', {}).get('match', [])
+#         if isinstance(matches, dict):
+#             matches = [matches]
+
+#         for match in matches:
+#             raw_date = match.get('@date', '')
+#             try:
+#                 date_obj = datetime.datetime.strptime(raw_date, "%b %d")
+#                 formatted_date = date_obj.strftime("%d/%m")
+#             except:
+#                 formatted_date = raw_date
+
+#             events_raw = match.get('events') or {}
+#             events_data = events_raw.get('event', [])
+#             if isinstance(events_data, dict):
+#                 events_data = [events_data]
+
+#             events = []
+#             for ev in events_data:
+#                 events.append({
+#                     'minute': ev.get('@minute', ''),
+#                     'extra_min': ev.get('@extra_min', ''),
+#                     'type': ev.get('@type', ''),
+#                     'team': ev.get('@team', ''),
+#                     'player': ev.get('@player', ''),
+#                     'assist': ev.get('@assist', ''),
+#                     'result': ev.get('@result', '')
+#                 })
+
+#             matches_list.append({
+#                 'league': league_name,
+#                 'venue': match.get('@venue', ''),
+#                 'local_team': match.get('localteam', {}).get('@name', ''),
+#                 'local_goals': match.get('localteam', {}).get('@goals', 0),
+#                 'visitor_team': match.get('visitorteam', {}).get('@name', ''),
+#                 'visitor_goals': match.get('visitorteam', {}).get('@goals', 0),
+#                 'status': match.get('@status', 'NS'),
+#                 'time': match.get('@time', ''),
+#                 'date': formatted_date,
+#                 'events': events
+#             })
+#     return matches_list, None
+
+def fetch_json(url):
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        return resp.json(), None
+    except Exception as e:
+        return None, str(e)
 # Routes
 
 @app.route('/live-scores')
 def live_scores():
-    api_key = 'c5ca24a68253418f9c95e742090894bf'
+    matches, error = fetch_matches(LIVE_FEED_URL)
+    if matches:
+        matches = sort_matches(matches)
+    if error:
+        return jsonify({"error": error}), 500
+    return jsonify(matches)
 
-    if not api_key:
-        return jsonify({"error": "API key not configured"}), 500
+@app.route('/all-scores')
+def all_scores():
+    matches, error = fetch_matches(LIVE_FEED_URL)
+    if matches:
+        matches = sort_matches(matches)
+    return render_template('all_scores.html', live_matches=matches or [], live_error=error)
 
-    url = "https://api.football-data.org/v4/matches?status=LIVE"
-    headers = {
-        'X-Auth-Token': api_key
-    }
+@app.route('/search')
+def search_matches():
+    input_date = request.args.get('date', '').strip()  # format: dd/mm/yyyy
+    day_code = date_to_day_code(input_date)
+    if not day_code:
+        return jsonify({"error": "Invalid date format. Use dd/mm/yyyy"}), 400
 
     try:
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        data = response.json()
+        date_obj = datetime.datetime.strptime(input_date, "%d/%m/%Y").date()
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use dd/mm/yyyy"}), 400
 
-        live_matches = []
-        matches = data.get('matches', [])
+    today = datetime.datetime.now().date()
+    if not (today - datetime.timedelta(days=7) <= date_obj <= today + datetime.timedelta(days=7)):
+        return jsonify({"error": "Only dates within past 7 or next 7 days are allowed."}), 400
 
-        if not matches:
-            return jsonify([])  # No live matches now
+    url = get_dynamic_feed_url(day_code)
+    matches, error = fetch_matches(url)
+    if matches:
+        matches = sort_matches(matches)
 
-        for match in matches:
-            live_matches.append({
-                "competition": match['competition']['name'],
-                "home_team": match['homeTeam']['name'],
-                "away_team": match['awayTeam']['name'],
-                "score": f"{match['score']['fullTime']['home']} - {match['score']['fullTime']['away']}",
-                "status": match['status'],
-                "minute": match.get('minute', 'N/A')
-            })
+    if error:
+        return jsonify({"error": error}), 500
 
-        return jsonify(live_matches)
+    return jsonify({"matches": matches})
+@app.route('/leagues')
+def leagues():
+    data, error = fetch_json(LEAGUES_URL)
+    if error:
+        return f"Error fetching leagues: {error}", 500
+    leagues_list = data.get('fixtures', {}).get('mapping', [])
+    if isinstance(leagues_list, dict):
+        leagues_list = [leagues_list]
+    return render_template('leagues.html', leagues=leagues_list)
 
-    except requests.RequestException as e:
-        return jsonify({"error": "Failed to fetch live scores", "details": str(e)}), 500
+@app.route('/league/<league_id>')
+def league_details(league_id):
+    url = LEAGUE_TEAMS_URL.format(league_id)
+    data, error = fetch_json(url)
+    if error:
+        return f"Error fetching league details: {error}", 500
 
+    league = data.get('league', {})
+    teams = league.get('team', [])
+    if isinstance(teams, dict):
+        teams = [teams]
+
+    # Flatten player info per team
+    for team in teams:
+        squad = team.get('squad', {}).get('player', [])
+        if isinstance(squad, dict):
+            squad = [squad]
+        team['squad'] = squad
+        team['coach'] = team.get('coach', {"@name": "N/A", "@id": ""})
+
+    return render_template('league_teams.html', league=league, teams=teams)
+
+@app.route('/team/<league_id>/<team_name>')
+def team_details(league_id, team_name):
+    url = LEAGUE_TEAMS_URL.format(league_id)
+    data, error = fetch_json(url)
+    if error:
+        return f"Error fetching team details: {error}", 500
+
+    league = data.get('league', {}) 
+    teams = league.get('team', [])
+    if isinstance(teams, dict):
+        teams = [teams]
+
+    selected_team = None
+    for team in teams:
+        if team.get('@name', '').lower() == team_name.lower():
+            squad = team.get('squad', {}).get('player', [])
+            if isinstance(squad, dict):
+                squad = [squad]
+            team['squad'] = squad
+            team['coach'] = team.get('coach', {"@name": "N/A", "@id": ""})
+            selected_team = team
+            break
+
+    if not selected_team:
+        return f"Team '{team_name}' not found in league {league.get('@name', '')}", 404
+
+    return render_template('team_details.html', league=league, team=selected_team)
+
+
+# @app.route('/')
+# def home():
+#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
+#     products = Product.query.order_by(Product.id.desc()).limit(5).all()
+#     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
+#     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
+#     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
+#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
+#     return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,advertisement=ad,welcome_text=welcome_text)
+
+# --- TCR Home Page ---
 @app.route('/')
 def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
@@ -601,8 +797,21 @@ def home():
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
+    live_matches, live_error = fetch_matches(LIVE_FEED_URL)
+    if live_matches:
+        live_matches = sort_matches(live_matches)
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-    return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,advertisement=ad,welcome_text=welcome_text)
+    return render_template(
+        'index.html',
+        news_items=news_items,
+        products=products,
+        memorabilia_stories=memorabilia_stories,
+        youtube_videos=youtube_videos,
+        advertisement=ad,
+        welcome_text=welcome_text,
+        live_matches=live_matches or [],
+        live_error=live_error
+    )
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -721,35 +930,6 @@ def subscribe():
 
     return redirect(url_for('home'))
 
-# @app.route('/add-memorabilia', methods=['GET', 'POST'])
-# def add_memorabilia():
-#     if request.method == 'POST':
-#         title = request.form['title']
-#         subtitle = request.form.get('subtitle')
-#         image_credit = request.form.get('image_credit')
-#         date = request.form.get('date')
-#         image_url = request.form.get('image_url')
-#         image = request.files.get('image')
-
-#         filename = None
-#         if image and allowed_file(image.filename):
-#             filename = secure_filename(image.filename)
-#             image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-#         story = MemorabiliaStory(
-#             title=title,
-#             subtitle=subtitle,
-#             image_credit=image_credit,
-#             date=date,
-#             image_url=image_url if not filename else None,
-#             image_filename=filename
-#         )
-#         db.session.add(story)
-#         db.session.commit()
-#         flash("Memorabilia story added!", "success")
-#         return redirect(url_for('home'))
-
-#     return render_template('add_memorabilia.html')
 @app.route('/add-memorabilia', methods=['GET', 'POST'])
 def add_memorabilia():
     if request.method == 'POST':
@@ -790,13 +970,69 @@ def add_memorabilia():
         flash("Memorabilia story added!", "success")
         return redirect(url_for('home'))
 
-    return render_template('add_memorabilia.html')
+    return render_template('memorabilia.html')
     
 @app.route('/memorabilia/<int:item_id>')
 def view_memorabilia(item_id):
     item = MemorabiliaStory.query.get_or_404(item_id)
     suggestions = MemorabiliaStory.query.filter(MemorabiliaStory.id != item_id).order_by(MemorabiliaStory.id.desc()).limit(3).all()
     return render_template('memorabilia_detail.html', item=item, suggestions=suggestions)
+
+@app.route('/join-collectors', methods=['POST'])
+def join_collectors():
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email', '').strip()
+
+    if not email:
+        flash("Email is required!", "danger")
+        return redirect(request.referrer or url_for('home'))
+
+    existing = CollectorJoinee.query.filter_by(email=email).first()
+    if existing:
+        flash("You have already joined the TCR Collectors Community!", "info")
+        return redirect(request.referrer or url_for('home'))
+
+    # Add new collector joinee
+    new_joinee = CollectorJoinee(name=name if name else None, email=email)
+    db.session.add(new_joinee)
+    db.session.commit()
+
+    # Prepare email content
+    collector_name = name if name else "Collector"
+    msg = Message(
+        "Your Exclusive 20% Collector's Discount 🎉",
+        recipients=[email]
+    )
+    msg.body = (
+        f"Dear {collector_name},\n\n"
+        "Welcome to the TCR Collectors Community!\n"
+        "As a valued member, you now have access to exclusive stories, rare finds, "
+        "and special collector events.\n\n"
+        "Here’s your personal 20% discount code: TCRCOLLECTOR20\n"
+        "Use it at checkout on our website https://www.thecollectroom.com/ or our shop \"The Collect Room\" to expand your collection at a special rate.\n\n"
+        "We can’t wait to see what you collect next!\n\n"
+        "Happy collecting,\n"
+        "The TCR Team"
+    )
+
+
+    msg.html = f"""
+    <p>Dear {collector_name},</p>
+    <p>Welcome to the <strong>TCR Collectors Community</strong>!</p>
+    <p>As a valued member, you now have access to exclusive stories, rare finds, and special collector events.</p>
+    <p style="font-size:1.2rem; color:#021638;">
+        <strong>Your personal 20% discount code:</strong> <code>TCRCOLLECTOR20</code>
+    </p>
+    <p>
+        Use it at checkout on our website <a href="https://www.thecollectroom.com/" target="_blank">https://www.thecollectroom.com/</a> or our store "<em>The Collect Room,Dubai Hills Mall</em>" to expand your collection at a special rate.
+    </p>
+    <p>Happy collecting,<br><strong >The TCR Team</strong></p>
+    """
+
+    mail.send(msg)
+
+    flash("Thank you for joining! Your 20% discount email has been sent.", "success")
+    return redirect(request.referrer or url_for('home'))
 
 
 @app.route('/videos')

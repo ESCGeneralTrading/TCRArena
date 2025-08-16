@@ -81,7 +81,6 @@
     .blog-post video {
       width: 100%;
       height: 350px;
-      /* height:600px; */
       object-fit: cover;
       object-position: top;
       border-radius: 0;
@@ -131,6 +130,42 @@
       background: #054a9a;
     }
 
+
+    .featured-cta {
+      background-color: #ffcc66;
+      padding: 4rem 2rem;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      /* margin-top: 2rem; */
+    }
+    .featured-cta h2 {
+      margin: 0;
+      font-size: 3rem;
+      font-weight: normal;
+      color: #222;
+      line-height: 1.5;
+    }
+  
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .featured-cta {
+        padding: 3rem 1.5rem;
+      }
+      .featured-cta h2 {
+        font-size: 2.25rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .featured-cta {
+        padding: 2rem 1rem;
+      }
+      .featured-cta h2 {
+        font-size: 1.8rem;
+      }
+    }
+
     .pagination {
       text-align: center;
       margin-top: 3rem;
@@ -162,7 +197,7 @@
       color: #fff;
       text-align: center;
       padding: 2rem 1rem;
-      margin-top: 4rem;
+      /* margin-top: 4rem; */
       font-size: 0.9rem;
     }
 
@@ -171,7 +206,6 @@
       text-decoration: underline;
     }
 
-    /* Video control buttons overlay */
     .video-control {
       position: absolute;
       top: 8px;
@@ -193,8 +227,9 @@
     }
   </style>
 </head>
-<body>
 
+
+<body>
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
       <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
@@ -202,7 +237,6 @@
   </div>
 
   <div class="container">
-    <!-- Tabs Navigation -->
     <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
       <a href="{{ url_for('all_videos') }}">Arena Play</a>
@@ -211,20 +245,17 @@
 
     <h1>Relive Greatness in the Arena Collectors Community</h1>
 
+    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</h2>
     <div class="grid">
-      {% for item in memorabilia_stories %}
+      {% for item in memorabilia_stories if item.display_video %}
       <div class="blog-post">
-        {% if item.display_video %}
-          <video id="video-{{ loop.index }}" autoplay muted loop playsinline
-                 style="width:100%; height:600px; object-fit:cover; object-position: top; border-radius: 0;">
-            <source src="{{ item.display_video }}" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">Pause</button>
-          <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">Unmute</button>
-        {% else %}
-          <img src="{{ item.display_image }}" alt="{{ item.title }}" />
-        {% endif %}
+        <video id="video-{{ loop.index }}" autoplay muted loop playsinline
+              style="width:100%; height:600px; object-fit:cover; object-position: top; border-radius: 0;">
+          <source src="{{ item.display_video }}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">Pause</button>
+        <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">Unmute</button>
 
         <div class="blog-post-content">
           <div>
@@ -237,6 +268,28 @@
       </div>
       {% endfor %}
     </div>
+
+    <hr style="margin: 3rem 0; border: none; border-top: 2px solid #ccc;">
+
+    <!-- IMAGE SECTION -->
+    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</h2>
+    <div class="grid">
+      {% for item in memorabilia_stories if not item.display_video %}
+      <div class="blog-post">
+        <img src="{{ item.display_image }}" alt="{{ item.title }}" />
+
+        <div class="blog-post-content">
+          <div>
+            <h3>{{ item.title }}</h3>
+            <small>{{ item.date }} | {{ item.image_credit }}</small>
+            <p>{{ item.subtitle }}</p>
+          </div>
+          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
 
     {% if not memorabilia_stories %}
       <p style="text-align:center; color:#777; margin-top:2rem;">No memorabilia stories found.</p>
@@ -258,6 +311,20 @@
     </div>
     {% endif %}
   </div>
+
+  <!-- Join collectors communitity Section -->
+
+  <section class="featured-cta">
+    <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
+    <form action="{{ url_for('join_collectors') }}" method="POST" style="margin-top:2rem; margin-left:auto; margin-right:auto;">
+      <input type="email" name="email" placeholder="yourname@domain.com" required
+            style="width:40%; padding:35px; margin-bottom:1rem; border-radius:6px; border:1px solid #ccc;font-size: 2rem;"><br>
+      <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;font-size: 1rem;">
+          Join Now
+      </button>
+    </form>
+
+  </section>
 
   <footer>
     <p>

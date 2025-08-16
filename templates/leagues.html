@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Soccer Leagues - TCR Arena</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding-bottom: 70px;
+        color: #1f1f1f;
+    }
+
+    /* Logo Banner */
+    .logo-banner {
+      background: #fff;
+      text-align: center;
+      padding: 1.5rem 0; /* match memorabilia.html */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* match shadow size too */
+    }
+
+    .logo-banner img {
+      height: 170px;
+      width: auto;
+    }
+    .logo-banner img:hover { transform: scale(1.05); }
+
+    h1 {
+        text-align: center;
+        margin: 20px 0;
+        color: #222;
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        max-width: 1600px;
+        margin: 20px auto;
+        border-collapse: collapse;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+    }
+    th, td {
+        padding: 12px 15px;
+        font-size: 14px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+    th {
+        background: #343a40;
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    tr:nth-child(even) { background: #f6f6f6; }
+    tr:hover { background: #e9f2ff; }
+
+    /* Footer */
+    footer {
+        background: #000;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+    footer a { color: #ffd700; text-decoration: underline; }
+
+    /* Responsive */
+    @media(max-width: 1024px){
+        th, td { padding: 10px; font-size: 13px; }
+    }
+    @media(max-width: 768px){
+        table { width: 100%; }
+        th, td { padding: 8px; font-size: 12px; }
+        h1 { font-size: 1.5rem; }
+    }
+    @media(max-width: 480px){
+        th, td { padding: 6px; font-size: 11px; }
+        .logo-banner img { max-height: 10vh; }
+    }
+</style>
+</head>
+<body>
+
+<div class="logo-banner">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+    </a>
+</div>
+
+<h1>Soccer Leagues</h1>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Country</th>
+        <th>Name</th>
+        <th>Season</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Is Cup</th>
+        <th>Live Lineups</th>
+        <th>Live Stats</th>
+        <th>Live PBP</th>
+        <th>Path</th>
+        <th>Is Women</th>
+    </tr>
+    {% for league in leagues %}
+    <tr>
+        <td>{{ league['@id'] }}</td>
+        <td>{{ league['@country'] }}</td>
+        <td>{{ league['@name'] }}</td>
+        <td>{{ league['@season'] }}</td>
+        <td>{{ league['@date_start'] }}</td>
+        <td>{{ league['@date_end'] }}</td>
+        <td>{{ league['@iscup'] }}</td>
+        <td>{{ league['@live_lineups'] }}</td>
+        <td>{{ league['@live_stats'] }}</td>
+        <td>{{ league['@live_pbp'] }}</td>
+        <td>{{ league['@path'] }}</td>
+        <td>{{ league['@is_women'] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<footer>
+    &copy; 2025 TcR Arena. All rights reserved. |
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+    <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
+</footer>
+
+</body>
+</html>

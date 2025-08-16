@@ -463,6 +463,127 @@
       }
     }
 
+    /* Ensure .horizontal-card uses flexbox */
+    .horizontal-card {
+      display: flex;
+      flex-direction: row;
+      height: 180px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #333;
+    }
+
+  /* Video or image fills 40% width on desktop */
+  .horizontal-card video,
+  .horizontal-card img {
+    width: 60%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px 0 0 12px;
+    display: block;
+  }
+
+  /* News content fills remaining space */
+  .horizontal-card .news-content {
+    padding: 1rem;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  /* Video controls positioning relative to video */
+  .video-control {
+    position: absolute;
+    top: 8px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    transition: background 0.3s ease;
+    }
+
+    .video-control:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .pause-btn {
+      left: 8px;
+    }
+
+    .mute-btn {
+      left: 70px;
+    }
+
+    /* Responsive changes for smaller screens */
+    @media (max-width: 1024px) {
+      /* Stack horizontal card vertically */
+      .horizontal-card {
+        flex-direction: column;
+        height: auto;
+      }
+
+      /* Video/image full width and height auto */
+      .horizontal-card video,
+      .horizontal-card img {
+        width: 100%;
+        height: 350px;
+        border-radius: 12px 12px 0 0;
+      }
+
+      /* Adjust padding */
+      .horizontal-card .news-content {
+        padding: 0.75rem 1rem;
+      }
+
+      /* Smaller font size for controls */
+      .video-control {
+        font-size: 10px;
+        padding: 3px 6px;
+      }
+
+      .pause-btn {
+        left: 6px;
+        top: 6px;
+      }
+
+      .mute-btn {
+        left: 50px;
+        top: 6px;
+      }
+    }
+
+    /* Mobile further tweaks */
+    @media (max-width: 600px) {
+      .horizontal-card video,
+      .horizontal-card img {
+        height: 250px;
+      }
+
+      .video-control {
+        font-size: 9px;
+        padding: 2px 5px;
+      }
+
+      .pause-btn {
+        left: 5px;
+        top: 5px;
+      }
+
+      .mute-btn {
+        left: 40px;
+        top: 5px;
+      }
+    }
+
 
     .shop-cards {
       display: flex;
@@ -892,7 +1013,7 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="#">Live Scores</a>
+        <a href="{{ url_for('all_scores') }}">Live Scores</a>
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
@@ -911,51 +1032,84 @@
       </nav>
     </div>
   </header>
+
   
   <!-- LIVE SCORES SECTION -->
-  <div id="live-scores-container" style="background:#222; color:#eee; padding: 10px; text-align:center;">
-    <h5>Live Soccer Scores</h5>
-    <ul id="live-scores-list" style="list-style:none; padding-left:0;">
-        <li>Loading live scores...</li>
-      </ul>
+  <div id="live-scores-container" style="background:#222; color:#eee; padding:15px; text-align:center;">
+    <!-- <h1 style="margin-bottom:25px; color:#fff;">Live Soccer Scores</h1> -->
+
+    {% if live_error %}
+        <p class="error" style="color:#ff4c4c; text-align:center;">Error loading live feed: {{ live_error }}</p>
+    {% elif live_matches %}
+        <table style="width:100%; border-collapse:collapse; margin-bottom:30px; box-shadow:0 2px 6px rgba(0,0,0,0.3); background:#333; border-radius:8px; overflow:hidden; font-size:14px;">
+            <tr>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:left;"></th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Date</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">League</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Home Team</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Score</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Away Team</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Status</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Time</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Venue</th>
+            </tr>
+            {% for match in live_matches %}
+            <tr onclick="window.location.href='/all-scores#match-{{ loop.index }}'" style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" onmouseover="this.style.background='#555'" onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
+                <td style="padding:4px 6px;">
+                    <button class="expand-btn" style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
+                </td>
+                <td style="padding:4px 6px;">{{ match.date or '' }}</td>
+                <td style="padding:4px 6px;">{{ match.league }}</td>
+                <td style="padding:4px 6px;">{{ match.local_team }}</td>
+                <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
+                <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
+                <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
+                    {{ match.status }}
+                </td>
+                <td style="padding:4px 6px;">{{ match.time }}</td>
+                <td style="padding:4px 6px;">{{ match.venue }}</td>
+            </tr>
+            <tr id="events-{{ loop.index }}" style="display:none;">
+                <td colspan="9" style="padding:4px 6px;">
+                    {% if match.events %}
+                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px;">
+                        <tr>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Minute</th>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Type</th>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Team</th>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Player</th>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Assist</th>
+                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Score</th>
+                        </tr>
+                        {% for ev in match.events %}
+                        <tr style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %};">
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.type }}</td>
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.team }}</td>
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.player }}</td>
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.assist }}</td>
+                            <td style="font-size:12px; padding:4px 6px;">{{ ev.result }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <i>No events</i>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p style="text-align:center;">No live matches right now.</p>
+    {% endif %}
   </div>
- 
+
   <script>
-  async function fetchLiveScores() {
-      try {
-          const response = await fetch('/live-scores');
-          const scores = await response.json();
-
-          const list = document.getElementById('live-scores-list');
-          list.innerHTML = '';
-
-          if (scores.error) {
-              list.innerHTML = `<li>Error loading live scores: ${scores.error}</li>`;
-              return;
-          }
-
-          if (scores.length === 0) {
-              list.innerHTML = '<li>No live matches at the moment.</li>';
-              return;
-          }
-
-          scores.forEach(score => {
-              const li = document.createElement('li');
-              li.textContent = `[${score.country} - ${score.league}] ${score.teams} — ${score.score} (${score.status})`;
-              list.appendChild(li);
-          });
-      } catch (error) {
-          const list = document.getElementById('live-scores-list');
-          list.innerHTML = `<li>Failed to fetch live scores.</li>`;
-          console.error('Error fetching live scores:', error);
-      }
+  function toggleEvents(id) {
+      const el = document.getElementById(id);
+      el.style.display = (el.style.display === "none") ? "table-row" : "none";
   }
-
-  // Initial fetch and refresh every 60 seconds
-  fetchLiveScores();
-  setInterval(fetchLiveScores, 60000);
   </script>
-
 
   <!-- Blog Section -->
   <section class="blog">
@@ -1010,7 +1164,7 @@
 
               {% if i == 1 %}
                 {% if video_items|length >= 1 %}
-                  <video id="video1" autoplay muted loop playsinline style="width:75%; height:100%; object-fit:cover; border-radius:0px 0px 0 0;">
+                  <video id="video1" autoplay muted loop playsinline style=" object-fit:cover; border-radius:0px 0px 0 0;">
                     <source src="{{ video_items[0].display_video }}" type="video/mp4">
                     Your browser does not support the video tag.
                   </video>
@@ -1032,7 +1186,7 @@
                 {% endif %}
               {% elif i == 6 %}
                 {% if video_items|length >= 2 %}
-                  <video id="video6" autoplay muted loop playsinline style="width:75%; height:100%; object-fit:cover;">
+                  <video id="video6" autoplay muted loop playsinline style="object-fit:cover;">
                     <source src="{{ video_items[1].display_video }}" type="video/mp4">
                     Your browser does not support the video tag.
                   </video>

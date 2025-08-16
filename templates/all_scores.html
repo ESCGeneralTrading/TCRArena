@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Live Soccer Scores - TCR Arena</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding-bottom: 70px;
+        color: #1f1f1f;
+    }
+
+    /* Logo Banner */
+    .logo-banner {
+      background: #fff;
+      text-align: center;
+      padding: 1.5rem 0; /* match memorabilia.html */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* match shadow size too */
+    }
+
+
+    .logo-banner img {
+      height: 170px;
+      width: auto;
+    }
+    .logo-banner img:hover { transform: scale(1.05); }
+
+    h1, h2 {
+        text-align: center;
+        margin: 15px 0;
+        color: #222;
+    }
+
+    /* Match Cards (Live & Search) */
+    .match-card, .search-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1400px;
+        width: 95%;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+    .match-card:hover, .search-card:hover { 
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    }
+    .match-card { border-left: 5px solid #ff7f50; }
+    .search-card { border-left: 5px solid #007bff; }
+
+    .match-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .teams {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+    }
+    .teams > div:first-child { flex: 1; text-align: right; }
+    .teams > div:last-child { flex: 1; text-align: left; }
+    .score {
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: #ff4500;
+        width: 70px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .status-live { color: #d9534f; font-weight: 700; }
+    .status-finished { color: #28a745; font-weight: 700; }
+    .status-upcoming { color: #ffc107; font-weight: 700; }
+
+    .expand-btn {
+        cursor: pointer;
+        background: #ff7f50;
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.2s;
+        margin-top: 5px;
+    }
+    .expand-btn:hover { 
+        background: #e67343;
+        transform: scale(1.05);
+    }
+
+    .events-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+    }
+    .events-table th {
+        background: #333;
+        color: #fff;
+        font-weight: 500;
+        font-size: 13px;
+        padding: 8px;
+        border-radius: 4px;
+    }
+    .events-table td {
+        font-size: 13px;
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+    }
+
+    /* Search Section */
+    #search-section {
+        max-width: 1600px;
+        margin: 40px auto 60px auto;
+        text-align: center;
+    }
+    #search-section input, #search-section button {
+        padding: 12px 18px;
+        font-size: 15px;
+        margin: 8px 6px 15px 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: all 0.2s;
+    }
+    #search-section input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 6px rgba(0,123,255,0.2);
+    }
+    #search-section button {
+        background: #ff7f50;
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    #search-section button:hover { background: #e67343; }
+
+    #filter-league-venue {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        width: 250px;
+        transition: all 0.2s;
+    }
+    #filter-league-venue:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 6px rgba(0,123,255,0.2);
+    }
+
+    .error { color: red; font-weight: 500; }
+
+    /* Footer */
+    footer {
+        background: #000;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+    footer a { color: #ffd700; text-decoration: underline; }
+
+    /* Responsive */
+    @media(max-width: 1024px){
+        .logo-banner img { max-height: 10vh; }
+        .teams { font-size: 16px; }
+        .score { font-size: 1.1rem; width: 60px; }
+    }
+    @media(max-width: 768px){
+        .match-header { flex-direction: column; align-items: flex-start; }
+        .teams { flex-direction: column; align-items: flex-start; line-height: 1.5rem; }
+        .score { margin: 5px 0; }
+        #filter-league-venue { width: 100%; margin-bottom: 10px; }
+    }
+    @media(max-width: 480px){
+        .logo-banner img { max-height: 8vh; }
+        .teams { font-size: 14px; }
+        .score { font-size: 1rem; width: 50px; }
+        #search-section input, #search-section button { font-size: 13px; padding: 10px 14px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="logo-banner">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo">
+    </a>
+</div>
+
+{% if live_error %}
+<p class="error">Error loading live feed: {{ live_error }}</p>
+{% elif live_matches %}
+    {% for match in live_matches %}
+    <div class="match-card">
+        <div class="match-header">
+            <div class="match-info">{{ match.date }} | {{ match.league }} | {{ match.venue }}</div>
+            <div class="match-info status-{% if match.status == 'LIVE' %}live{% elif match.status == 'FT' %}finished{% else %}upcoming{% endif %}">{{ match.status }} | {{ match.time }}</div>
+        </div>
+        <div class="teams">
+            <div>{% if match.league_id %}
+                    <a href="/team/{{ match.league_id }}/{{ match.local_team }}">{{ match.local_team }}</a>
+                {% else %}
+                    {{ match.local_team }}
+                {% endif %}
+            </div>
+            <div class="score">{{ match.local_goals }} - {{ match.visitor_goals }}</div>
+            <div>{% if match.league_id %}
+                    <a href="/team/{{ match.league_id }}/{{ match.visitor_team }}">{{ match.visitor_team }}</a>
+                {% else %}
+                    {{ match.visitor_team }}
+                {% endif %}
+            </div>
+        </div>
+        <button class="expand-btn" onclick="toggleEvents('events-{{ loop.index }}')">View Events</button>
+        <div id="events-{{ loop.index }}" style="display:none; margin-top:10px;">
+            {% if match.events %}
+            <table class="events-table">
+                <tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>
+                {% for ev in match.events %}
+                <tr>
+                    <td>{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                    <td>{{ ev.type }}</td>
+                    <td>{{ ev.team }}</td>
+                    <td>{{ ev.player }}</td>
+                    <td>{{ ev.assist }}</td>
+                    <td>{{ ev.result }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <i>No events</i>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<p style="text-align:center;">No live matches right now.</p>
+{% endif %}
+
+<div id="search-section">
+    <h2>Search Past/Upcoming Matches</h2>
+    <input type="date" id="search-date">
+    <button onclick="searchMatches()">Search</button>
+
+    <div style="text-align:right; margin-bottom:10px;">
+        <input type="text" id="filter-league-venue" placeholder="Filter by League | Venue" onkeyup="filterSearchResults()">
+    </div>
+
+    <div id="search-results"></div>
+</div>
+
+<footer>
+    &copy; 2025 TcR Arena. All rights reserved. |
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+    <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
+</footer>
+
+<script>
+function toggleEvents(id){
+    const el=document.getElementById(id);
+    el.style.display = (el.style.display==="none")?"block":"none";
+}
+
+function formatDateToDDMMYYYY(dateStr){
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2,'0');
+    const month = String(d.getMonth()+1).padStart(2,'0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+}
+
+(function setDatePickerLimits(){
+    const today = new Date();
+    const past7 = new Date(); past7.setDate(today.getDate()-7);
+    const next7 = new Date(); next7.setDate(today.getDate()+7);
+    function formatForInput(d){
+        const yyyy=d.getFullYear(), mm=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+        return `${yyyy}-${mm}-${dd}`;
+    }
+    const dateInput=document.getElementById('search-date');
+    dateInput.min=formatForInput(past7);
+    dateInput.max=formatForInput(next7);
+})();
+
+function searchMatches(){
+    const dateInput=document.getElementById('search-date').value;
+    if(!dateInput) return alert('Please select a date');
+    const formattedDate=formatDateToDDMMYYYY(dateInput);
+    fetch(`/search?date=${formattedDate}`)
+        .then(res=>res.json())
+        .then(data=>{
+            const container=document.getElementById('search-results');
+            if(data.error){ container.innerHTML=`<p style="color:red;">${data.error}</p>`; return;}
+            if(data.matches.length===0){ container.innerHTML="<p>No matches found.</p>"; return;}
+            let html='';
+            data.matches.forEach((m,i)=>{
+                html+=`<div class="search-card">
+                    <div class="match-header">
+                        <div class="match-info">${m.date} | ${m.league} | ${m.venue}</div>
+                        <div class="match-info">${m.status} | ${m.time}</div>
+                    </div>
+                    <div class="teams">
+                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.local_team)}">${m.local_team}</a>` : m.local_team}</div>
+                        <div class="score">${m.local_goals} - ${m.visitor_goals}</div>
+                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.visitor_team)}">${m.visitor_team}</a>` : m.visitor_team}</div>
+                    </div>
+                    <button class="expand-btn" onclick="toggleEvents('search-events-${i}')">View Events</button>
+                    <div id="search-events-${i}" style="display:none; margin-top:10px;">`;
+                if(m.events.length){
+                    html+=`<table class="events-table"><tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>`;
+                    m.events.forEach(ev=>{
+                        html+=`<tr>
+                            <td>${ev.minute}${ev.extra_min? '+'+ev.extra_min:''}</td>
+                            <td>${ev.type}</td><td>${ev.team}</td><td>${ev.player}</td><td>${ev.assist}</td><td>${ev.result}</td>
+                        </tr>`;
+                    });
+                    html+='</table>';
+                } else { html+='<i>No events</i>'; }
+                html+='</div></div>';
+            });
+            container.innerHTML=html;
+        })
+        .catch(err=>document.getElementById('search-results').innerHTML=`<p style="color:red;">Error: ${err}</p>`);
+}
+
+function filterSearchResults() {
+    const filterText = document.getElementById('filter-league-venue').value.toLowerCase();
+    const cards = document.querySelectorAll('#search-results .search-card');
+    cards.forEach(card => {
+        const matchInfo = card.querySelector('.match-header .match-info:first-child').innerText.toLowerCase();
+        card.style.display = matchInfo.includes(filterText) ? '' : 'none';
+    });
+}
+</script>
+
+</body>
+</html>

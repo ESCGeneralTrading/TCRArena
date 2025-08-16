@@ -8,6 +8,7 @@
 ## 🚀 Features
 
 - 📰 News & Blogs with category filtering and full-page views
+- Live soccer scores
 - 📺 Dynamic YouTube Video integration (@TheCollectRoom)
 - 🛍️ Memorabilia Product Showcase
 - 📜 Memorabilia history 

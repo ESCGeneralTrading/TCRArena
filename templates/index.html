@@ -1037,8 +1037,52 @@
   <!-- LIVE SCORES SECTION -->
   <div id="live-scores-container" style="background:#222; color:#eee; padding:15px; text-align:center;">
     <!-- <h1 style="margin-bottom:25px; color:#fff;">Live Soccer Scores</h1> -->
+    {% if live_matches %}
+        {% set premier_match = live_matches | selectattr("league", "equalto", "England: Premier League") | list %}
+        {% set other_matches = live_matches | rejectattr("league", "equalto", "England: Premier League") | list %}
 
-    {% if live_error %}
+        {% if premier_match %}
+            {% set matches_to_display = premier_match + other_matches %}
+        {% else %}
+            {% set matches_to_display = live_matches %}
+        {% endif %}
+
+        {% set matches_to_display = matches_to_display[:7] %}
+        
+        <table style="width:100%; border-collapse:collapse; margin-bottom:30px; box-shadow:0 2px 6px rgba(0,0,0,0.3); background:#333; border-radius:8px; overflow:hidden; font-size:14px;">
+            <tr>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px;"></th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Date</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">League</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Home Team</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Score</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Away Team</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Status</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Time</th>
+                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Venue</th>
+            </tr>
+
+            {% for match in matches_to_display %}
+            <tr onclick="window.location.href='/all-scores'" style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" onmouseover="this.style.background='#555'" onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
+                <td style="padding:4px 6px;">
+                    <button class="expand-btn" style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
+                </td>
+                <td style="padding:4px 6px;">{{ match.date or '' }}</td>
+                <td style="padding:4px 6px;">{{ match.league }}</td>
+                <td style="padding:4px 6px;">{{ match.local_team }}</td>
+                <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
+                <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
+                <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
+                    {{ match.status }}
+                </td>
+                <td style="padding:4px 6px;">{{ match.time }}</td>
+                <td style="padding:4px 6px;">{{ match.venue }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    <!-- {% if live_error %}
         <p class="error" style="color:#ff4c4c; text-align:center;">Error loading live feed: {{ live_error }}</p>
     {% elif live_matches %}
         <table style="width:100%; border-collapse:collapse; margin-bottom:30px; box-shadow:0 2px 6px rgba(0,0,0,0.3); background:#333; border-radius:8px; overflow:hidden; font-size:14px;">
@@ -1098,7 +1142,7 @@
                 </td>
             </tr>
             {% endfor %}
-        </table>
+        </table> -->
     {% else %}
         <p style="text-align:center;">No live matches right now.</p>
     {% endif %}

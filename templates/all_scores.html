@@ -99,12 +99,16 @@
         border-radius: 6px;
         font-weight: 600;
         transition: all 0.2s;
-        margin-top: 5px;
+        margin: 20px auto 0; /* top 10px, centered horizontally, no bottom margin */
+        display: block; /* makes it take full width horizontally for centering */
+        width: fit-content; /* keeps the button width based on content */
     }
+
     .expand-btn:hover { 
         background: #e67343;
         transform: scale(1.05);
     }
+
 
     .events-table {
         width: 100%;
@@ -123,6 +127,7 @@
         font-size: 13px;
         padding: 8px;
         border-bottom: 1px solid #eee;
+        text-align: center;
     }
 
     /* Search Section */

@@ -1063,23 +1063,58 @@
             </tr>
 
             {% for match in matches_to_display %}
-            <tr onclick="window.location.href='/all-scores'" style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" onmouseover="this.style.background='#555'" onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
-                <td style="padding:4px 6px;">
-                    <button class="expand-btn" style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
-                </td>
-                <td style="padding:4px 6px;">{{ match.date or '' }}</td>
-                <td style="padding:4px 6px;">{{ match.league }}</td>
-                <td style="padding:4px 6px;">{{ match.local_team }}</td>
-                <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
-                <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
-                <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
-                    {{ match.status }}
-                </td>
-                <td style="padding:4px 6px;">{{ match.time }}</td>
-                <td style="padding:4px 6px;">{{ match.venue }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+              <tr onclick="window.location.href='/all-scores'" 
+                  style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" 
+                  onmouseover="this.style.background='#555'" 
+                  onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
+                  <td style="padding:4px 6px;">
+                      <button class="expand-btn" 
+                              style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" 
+                              onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
+                  </td>
+                  <td style="padding:4px 6px;">{{ match.date or '' }}</td>
+                  <td style="padding:4px 6px;">{{ match.league }}</td>
+                  <td style="padding:4px 6px;">{{ match.local_team }}</td>
+                  <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
+                  <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
+                  <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
+                      {{ match.status }}
+                  </td>
+                  <td style="padding:4px 6px;">{{ match.time }}</td>
+                  <td style="padding:4px 6px;">{{ match.venue }}</td>
+              </tr>
+
+              <tr id="events-{{ loop.index }}" style="display:none;">
+                  <td colspan="9" style="padding:4px 6px;">
+                      {% if match.events %}
+                      <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px;">
+                          <tr>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Minute</th>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Type</th>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Team</th>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Player</th>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Assist</th>
+                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Score</th>
+                          </tr>
+                          {% for ev in match.events %}
+                          <tr style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %};">
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.type }}</td>
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.team }}</td>
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.player }}</td>
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.assist }}</td>
+                              <td style="font-size:12px; padding:4px 6px;">{{ ev.result }}</td>
+                          </tr>
+                          {% endfor %}
+                      </table>
+                      {% else %}
+                      <i>No events</i>
+                      {% endif %}
+                  </td>
+              </tr>
+              {% endfor %}
+
+            </table>
     {% endif %}
 
     <!-- {% if live_error %}

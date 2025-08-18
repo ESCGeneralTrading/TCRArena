@@ -20,69 +20,48 @@
       padding: 1.5rem 0;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
+    .logo-banner img { height: 170px; width: auto; }
 
-    .logo-banner img {
-      height: 170px;
-      width: auto;
-    }
+    .container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
 
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1rem;
-    }
-    .tabs {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+    .tabs { text-align: center; margin-bottom: 2rem; }
+    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: 600; }
+    .tabs a:hover { text-decoration: underline; }
 
-    .tabs a {
-      margin: 0 0.6rem;
-      text-decoration: none;
-      color: #021638;
-    }
+    h1 { text-align: center; margin-bottom: 2.5rem; color: #021638; font-weight: normal; letter-spacing: 1px; text-shadow: 1px 1px 1px rgba(0,0,0,0.03); }
 
-    .tabs a:hover {
-      text-decoration: underline;
-    }
-    
-    h1 {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      color: #021638;
-      font-weight: normal;
-      letter-spacing: 1px;
-      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.03);
-    }
-
-    .grid {
+    .videos-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.8rem;
+      margin: 0 1rem;
+    }
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+      margin: 0 1rem;
     }
 
     .blog-post {
       background: #ffffff;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
-      position: relative; /* needed for overlay buttons */
+      position: relative;
+      width: 100%;
+      min-height: auto;
     }
-
-    .blog-post:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    }
+    .blog-post:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
 
     .blog-post img,
     .blog-post video {
       width: 100%;
-      height: 350px;
+      height: auto;
       object-fit: cover;
-      object-position: top;
       border-radius: 0;
     }
 
@@ -91,46 +70,193 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      height: 100%;
     }
-
-    .blog-post-content h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1.1rem;
-      font-weight: normal;
-      color: #333;
-    }
-
-    .blog-post-content small {
-      color: #888;
-      font-size: 0.85rem;
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    .blog-post-content p {
-      color: #555;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      margin: 0 0 1rem;
-    }
-
+    .blog-post-content h3 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: normal; color: #333; }
+    .blog-post-content small { color: #888; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
+    .blog-post-content p { color: #555; font-size: 0.95rem; line-height: 1.4; margin: 0 0 1rem; }
     .blog-post-content a {
-      background: #021638;
+      background: #021638; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none;
+      font-size: 0.95rem; align-self: flex-start; transition: background 0.3s ease;
+    }
+    .blog-post-content a:hover { background: #054a9a; }
+
+    .pagination { text-align: center; margin-top: 3rem; }
+    .pagination a { display: inline-block; margin: 0 0.3rem; padding: 0.5rem 0.9rem; background: #021638; color: #fff; border-radius: 6px; text-decoration: none; font-size: 0.95rem; transition: background 0.3s ease; }
+    .pagination a.active { background: #054a9a; font-weight: normal; }
+    .pagination a:hover { background: #003366; }
+
+    footer { background: #000; color: #fff; text-align: center; padding: 2rem 1rem; font-size: 0.9rem; }
+    footer a { color: #ffd700; text-decoration: underline; }
+
+    /* Video control buttons overlay */
+    .video-control {
+      position: absolute;
+      background: rgba(0,0,0,0.4);
       color: #fff;
-      padding: 0.5rem 1rem;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 50%;
+      user-select: none;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    .video-control:hover { background: rgba(0,0,0,0.7); }
+
+    .pause-btn { left: 8px; top: 12px; }
+    .mute-btn { left: 60px; top: 12px; }
+
+    .pause-btn1 { bottom: 10px; left: 10px; }
+    .mute-btn1 { bottom: 10px; right: 10px; }
+    .fullscreen-btn { top: 10px; right: 10px; }
+
+    /* Video slider */
+    .video-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #ddd;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      margin-top: 5px;
+      position: relative;
+    }
+    .video-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: #888;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.3);
+      position: relative;
+      top: -4px;
+      transition: background 0.2s;
+    }
+    .video-slider::-webkit-slider-thumb:hover { background: #666; }
+    .video-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      background: #888;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 0 2px rgba(0,0,0,0.3);
+      transition: background 0.2s;
+    }
+
+    @media (max-width: 1024px) {
+      .images-grid { grid-template-columns: repeat(2, 1fr); }
+      .videos-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .images-grid, .videos-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Carousel */
+    .video-carousel-wrapper {
+      position: relative;
+      margin: 2rem auto;
+      max-width: 1535px;
+    }
+    .video-carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 1rem 0;
+    }
+    .video-carousel::-webkit-scrollbar { display: none; }
+
+    .video-carousel .carousel-item {
+      flex: 0 0 35%;
+      max-width: 280px;
+      aspect-ratio: 9 / 16;
+      scroll-snap-align: center;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      position: relative;
+      margin: 0 0.5rem;
+    }
+
+    .video-carousel .carousel-item video { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Carousel navigation arrows */
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(2,22,56,0.7);
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      padding: 0.5rem 0.8rem;
+      cursor: pointer;
+      border-radius: 50%;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+    .carousel-nav:hover {
+      background: rgba(2,22,56,1);
+      transform: translateY(-50%) scale(1.15);
+      font-size: 1.5rem;
+      padding: 0.4rem 0.6rem;
+    }
+    .carousel-nav.prev { left: -1.5rem; }
+    .carousel-nav.next { right: -1.5rem; }
+
+    @media (max-width: 768px) {
+      .carousel-nav.prev { left: 0.3rem; }
+      .carousel-nav.next { right: 0.3rem; }
+    }
+    @media (max-width: 480px) {
+      .video-overlay video {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+      }
+    }
+
+    /* Fullscreen overlay */
+    .video-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .video-overlay video {
+      width: auto;
+      height: 90%;
+      max-width: 500px;
+      aspect-ratio: 9 / 16;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .video-overlay .close-overlay {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      font-size: 2rem;
+      padding: 5px 10px;
+      cursor: pointer;
       border-radius: 6px;
-      text-decoration: none;
-      font-size: 0.95rem;
-      align-self: flex-start;
-      transition: background 0.3s ease;
+      z-index: 1010;
     }
-
-    .blog-post-content a:hover {
-      background: #054a9a;
-    }
-
-
     .featured-cta {
       background-color: #ffcc66;
       padding: 4rem 2rem;
@@ -166,32 +292,6 @@
       }
     }
 
-    .pagination {
-      text-align: center;
-      margin-top: 3rem;
-    }
-
-    .pagination a {
-      display: inline-block;
-      margin: 0 0.3rem;
-      padding: 0.5rem 0.9rem;
-      background: #021638;
-      color: #fff;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: background 0.3s ease;
-    }
-
-    .pagination a.active {
-      background: #054a9a;
-      font-weight: normal;
-    }
-
-    .pagination a:hover {
-      background: #003366;
-    }
-
     footer {
       background: #000;
       color: #fff;
@@ -205,30 +305,8 @@
       color: #ffd700;
       text-decoration: underline;
     }
-
-    .video-control {
-      position: absolute;
-      top: 8px;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-size: 12px;
-      border-radius: 3px;
-      user-select: none;
-      z-index: 10;
-    }
-    .video-control.pause-btn {
-      left: 8px;
-    }
-    .video-control.mute-btn {
-      left: 70px;
-    }
   </style>
 </head>
-
-
 <body>
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
@@ -244,18 +322,24 @@
     </div>
 
     <h1>Relive Greatness in the Arena Collectors Community</h1>
+    
+    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
 
-    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</h2>
-    <div class="grid">
-      {% for item in memorabilia_stories if item.display_video %}
+    {% set videos = (memorabilia_stories|selectattr('display_video')|list)[:4] %}
+    {% set images = (memorabilia_stories|rejectattr('display_video')|list)[:6] %}
+
+    <div class="videos-grid">
+      {% for item in videos %}
       <div class="blog-post">
-        <video id="video-{{ loop.index }}" autoplay muted loop playsinline
-              style="width:100%; height:600px; object-fit:cover; object-position: top; border-radius: 0;">
+        <video id="video-{{ loop.index }}" autoplay muted loop playsinline>
           <source src="{{ item.display_video }}" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+
         <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">Pause</button>
         <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">Unmute</button>
+
+        <input type="range" class="video-slider" data-video-id="video-{{ loop.index }}" min="0" max="100" value="0">
 
         <div class="blog-post-content">
           <div>
@@ -271,13 +355,11 @@
 
     <hr style="margin: 3rem 0; border: none; border-top: 2px solid #ccc;">
 
-    <!-- IMAGE SECTION -->
-    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</h2>
-    <div class="grid">
-      {% for item in memorabilia_stories if not item.display_video %}
+    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</p>
+    <div class="images-grid">
+      {% for item in images %}
       <div class="blog-post">
         <img src="{{ item.display_image }}" alt="{{ item.title }}" />
-
         <div class="blog-post-content">
           <div>
             <h3>{{ item.title }}</h3>
@@ -289,11 +371,6 @@
       </div>
       {% endfor %}
     </div>
-
-
-    {% if not memorabilia_stories %}
-      <p style="text-align:center; color:#777; margin-top:2rem;">No memorabilia stories found.</p>
-    {% endif %}
 
     {% if pagination %}
     <div class="pagination">
@@ -310,6 +387,40 @@
       {% endif %}
     </div>
     {% endif %}
+  </div>
+
+  <!-- Collector Videos section -->
+  <!-- <p style="text-align:left; color:#021638; margin:2rem; font-size: 1.3rem;">Collector Videos</p> -->
+
+  <div class="video-carousel-wrapper">
+    <button class="carousel-nav prev">‹</button>
+    <div class="video-carousel">
+      {% for video in collector_videos %}
+      <div class="carousel-item">
+        <video id="collector-video-{{ loop.index }}" autoplay muted loop playsinline>
+          <source src="{{ video.display_video }}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        <button class="video-control pause-btn1" data-video-id="collector-video-{{ loop.index }}">❚❚</button>
+        <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
+        <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
+
+        <div class="blog-post-content">
+          <h3>{{ video.title }}</h3>
+          <small>{{ video.date }}</small>
+          <p>{{ video.subtitle }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button class="carousel-nav next">›</button>
+  </div>
+
+  <!-- Fullscreen overlay -->
+  <div class="video-overlay" id="video-overlay">
+    <button class="close-overlay" id="close-overlay">✕</button>
+    <video id="overlay-video" controls autoplay></video>
   </div>
 
   <!-- Join collectors communitity Section -->
@@ -335,33 +446,91 @@
   </footer>
 
   <script>
-    document.querySelectorAll('.video-control').forEach(button => {
-      button.addEventListener('click', e => {
-        e.preventDefault();
-        const videoId = button.getAttribute('data-video-id');
-        const video = document.getElementById(videoId);
-        if (!video) return;
+    // --- Pause/Play buttons ---
+    document.querySelectorAll('.video-control.pause-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        if (vid.paused) { vid.play(); btn.textContent = 'Pause'; }
+        else { vid.pause(); btn.textContent = 'Play'; }
+      });
+    });
 
-        if (button.classList.contains('pause-btn')) {
-          if (video.paused) {
-            video.play();
-            button.textContent = 'Pause';
-          } else {
-            video.pause();
-            button.textContent = 'Play';
-          }
-        } else if (button.classList.contains('mute-btn')) {
-          if (video.muted) {
-            video.muted = false;
-            button.textContent = 'Mute';
-          } else {
-            video.muted = true;
-            button.textContent = 'Unmute';
-          }
-        }
+    document.querySelectorAll('.video-control.mute-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        vid.muted = !vid.muted;
+        btn.textContent = vid.muted ? 'Unmute' : 'Mute';
+      });
+    });
+
+    document.querySelectorAll('.video-slider').forEach(slider => {
+      const video = document.getElementById(slider.dataset.videoId);
+      video.addEventListener('timeupdate', () => {
+        if (!slider.dragging) slider.value = (video.currentTime / video.duration) * 100 || 0;
+      });
+      slider.addEventListener('mousedown', () => slider.dragging = true);
+      slider.addEventListener('mouseup', () => { slider.dragging = false; video.currentTime = (slider.value / 100) * video.duration; });
+      slider.addEventListener('input', () => { if (slider.dragging) video.currentTime = (slider.value / 100) * video.duration; });
+    });
+
+    document.querySelectorAll('.videos-grid video, .carousel-item video').forEach(video => {
+      video.addEventListener('click', () => { video.paused ? video.play() : video.pause(); });
+      video.style.cursor = 'pointer';
+    });
+
+    // --- Carousel controls ---
+    document.querySelectorAll('.video-carousel-wrapper').forEach(wrapper => {
+      const carousel = wrapper.querySelector('.video-carousel');
+      const prevBtn = wrapper.querySelector('.carousel-nav.prev');
+      const nextBtn = wrapper.querySelector('.carousel-nav.next');
+      prevBtn.addEventListener('click', () => { carousel.scrollBy({ left: -carousel.clientWidth * 0.6, behavior: 'smooth' }); });
+      nextBtn.addEventListener('click', () => { carousel.scrollBy({ left: carousel.clientWidth * 0.6, behavior: 'smooth' }); });
+    });
+
+    // --- Fullscreen overlay ---
+    const overlay = document.getElementById('video-overlay');
+    const overlayVideo = document.getElementById('overlay-video');
+    const closeOverlay = document.getElementById('close-overlay');
+
+    document.querySelectorAll('.fullscreen-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const video = document.getElementById(btn.dataset.videoId);
+        overlayVideo.src = video.currentSrc;
+        overlayVideo.currentTime = video.currentTime;
+        overlayVideo.play();
+        overlay.style.display = 'flex';
+      });
+    });
+
+    closeOverlay.addEventListener('click', () => {
+      overlayVideo.pause();
+      overlay.style.display = 'none';
+      overlayVideo.src = '';
+    });
+
+    overlay.addEventListener('click', e => {
+      if(e.target === overlay){
+        overlayVideo.pause();
+        overlay.style.display = 'none';
+        overlayVideo.src = '';
+      }
+    });
+
+    // Pause/Play buttons for collector videos
+    document.querySelectorAll('.pause-btn1').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        if (vid.paused) { vid.play(); btn.textContent = '❚❚'; }
+        else { vid.pause(); btn.textContent = '▶'; }
+      });
+    });
+    document.querySelectorAll('.mute-btn1').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        vid.muted = !vid.muted;
+        btn.textContent = vid.muted ? '🔊' : '🔇';
       });
     });
   </script>
-
 </body>
 </html>

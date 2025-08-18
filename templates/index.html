@@ -1218,88 +1218,50 @@
     </div>
   </section>
 
+  
   <!-- Memorabilia Section -->
-  <section class="memorabilia-section">
-    <!-- <p style=" font-size: 1.0rem;">COLLECTIBLE STORIES</p> -->
-    <p style=" font-size: 1.0rem;">COLLECTORS COMMUNITY</p>
+  <!-- <section class="memorabilia-section">
+    <p style="font-size: 1.0rem;">COLLECTORS COMMUNITY</p>
+
     {% set video_items = memorabilia_stories | selectattr('display_video') | list %}
     {% set image_items = memorabilia_stories | rejectattr('display_video') | list %}
 
     <div class="memorabilia-grid">
+      {% for item in video_items + image_items %}
+        <div class="memorabilia-item">
+          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" style="text-decoration:none; color:inherit;">
+            <div class="news-card" style="position:relative;">
 
-      {% for i in range(1,7) %}
-        <div class="memorabilia-item item{{ i }}">
-          <a href="{% if (i == 1 and video_items|length >= 1) %}
-                      {{ url_for('view_memorabilia', item_id=video_items[0].id) }}
-                    {% elif (i == 6 and video_items|length >= 2) %}
-                      {{ url_for('view_memorabilia', item_id=video_items[1].id) }}
-                    {% else %}
-                      {% set idx = i - 2 if i > 1 else 0 %}
-                      {{ url_for('view_memorabilia', item_id=image_items[idx].id) }}
-                    {% endif %}"
-              style="text-decoration: none; color: inherit;">
+              {% if item.display_video %}
+                <video id="video-{{ idx }}" autoplay muted loop playsinline
+                      style="width:100%; height:350px; object-fit:cover; border-radius:0;">
+                  <source src="{{ item.display_video }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video> -->
 
-            <div class="news-card {% if i == 1 or i == 6 %}horizontal-card{% endif %}" style="position:relative;">
+                <!-- Controls -->
+                <!-- <button class="video-control pause-btn" data-video-id="video-{{ idx }}" 
+                        style="position:absolute; top:8px; left:8px; z-index:10;">
+                  Pause
+                </button>
+                <button class="video-control mute-btn" data-video-id="video-{{ idx }}" 
+                        style="position:absolute; top:8px; left:70px; z-index:10;">
+                  Unmute
+                </button>
 
-              {% if i == 1 %}
-                {% if video_items|length >= 1 %}
-                  <video id="video1" autoplay muted loop playsinline style=" object-fit:cover; border-radius:0px 0px 0 0;">
-                    <source src="{{ video_items[0].display_video }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>
-
-                  <!-- Controls -->
-                  <button class="video-control pause-btn" data-video-id="video1" 
-                          style="position:absolute; top:8px; left:8px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
-                    Pause
-                  </button>
-                  <button class="video-control mute-btn" data-video-id="video1" 
-                          style="position:absolute; top:8px; left:70px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
-                    Unmute
-                  </button>
-
-                  {% set current_item = video_items[0] %}
-                {% else %}
-                  <img src="{{ image_items[0].display_image }}" alt="{{ image_items[0].title }}">
-                  {% set current_item = image_items[0] %}
-                {% endif %}
-              {% elif i == 6 %}
-                {% if video_items|length >= 2 %}
-                  <video id="video6" autoplay muted loop playsinline style="object-fit:cover;">
-                    <source src="{{ video_items[1].display_video }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>
-
-                  <!-- Controls -->
-                  <button class="video-control pause-btn" data-video-id="video6" 
-                          style="position:absolute; top:8px; left:8px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
-                    Pause
-                  </button>
-                  <button class="video-control mute-btn" data-video-id="video6" 
-                          style="position:absolute; top:8px; left:70px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
-                    Unmute
-                  </button>
-
-                  {% set current_item = video_items[1] %}
-                {% else %}
-                  {% set idx = 4 if video_items|length < 2 else 3 %}
-                  <img src="{{ image_items[idx].display_image }}" alt="{{ image_items[idx].title }}">
-                  {% set current_item = image_items[idx] %}
-                {% endif %}
               {% else %}
-                {% set idx = i - 2 if i > 1 else 0 %}
-                <img src="{{ image_items[idx].display_image }}" alt="{{ image_items[idx].title }}">
-                {% set current_item = image_items[idx] %}
+                <img src="{{ item.display_image }}" alt="{{ item.title }}" style="width:100%; height:350px; object-fit:cover;">
               {% endif %}
 
               <div class="news-content">
-                <span class="image-credit">Photo Credits: {{ current_item.image_credit }}</span>
-                <h3>{{ current_item.title }}</h3>
-                <p>{{ current_item.subtitle }}</p>
+                <span class="image-credit">Photo Credits: {{ item.image_credit }}</span>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.subtitle }}</p>
                 <div class="news-meta">
-                  <span>{{ current_item.date }}</span>
+                  <span>{{ item.date }}</span>
                 </div>
               </div>
+
             </div>
           </a>
         </div>
@@ -1312,6 +1274,8 @@
           e.preventDefault();
           const videoId = button.getAttribute('data-video-id');
           const video = document.getElementById(videoId);
+
+          if (!video) return;
 
           if(button.classList.contains('pause-btn')) {
             if(video.paused) {
@@ -1334,16 +1298,104 @@
       });
     </script>
 
+    <div style="text-align:center; margin-top:2rem;">
+      <a href="{{ url_for('memorabilia') }}">
+        <button>VIEW MORE</button>
+      </a>
+    </div>
+  </section> -->
+  <!-- Memorabilia Section -->
+  <section class="memorabilia-section">
+    <p style="font-size: 1.0rem;">COLLECTORS COMMUNITY</p>
 
-    <!-- View More Button -->
-    <div style="text-align: center; margin-top: 2rem;">
+    {% set video_items = memorabilia_stories | selectattr('display_video') | list %}
+    {% set image_items = memorabilia_stories | rejectattr('display_video') | list %}
+
+    <div class="memorabilia-grid">
+      {% for i in range(1,7) %}
+        {# Determine if this slot should display a video #}
+        {% set is_video_slot = (i == 1 and video_items|length >= 1) or (i == 6 and video_items|length >= 2) %}
+
+        {# Choose current_item safely #}
+        {% if is_video_slot %}
+          {% set current_item = video_items[0] if i == 1 else video_items[1] %}
+        {% else %}
+          {% set idx = i - 2 if i > 1 else 0 %}
+          {% set idx = idx if idx < image_items|length else (image_items|length - 1 if image_items|length > 0 else 0) %}
+          {% set current_item = image_items[idx] %}
+        {% endif %}
+
+        <div class="memorabilia-item item{{ i }}">
+          <a href="{{ url_for('view_memorabilia', item_id=current_item.id) }}" 
+            style="text-decoration:none; color:inherit;">
+            <div class="news-card {% if is_video_slot %}horizontal-card{% endif %}" style="position:relative;">
+
+              {% if is_video_slot and current_item.display_video %}
+                <video id="video{{ i }}" autoplay muted loop playsinline 
+                      style="object-fit:cover; width:70%; height:100%; border-radius:0;">
+                  <source src="{{ current_item.display_video }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+
+                <!-- Controls -->
+                <button class="video-control pause-btn" data-video-id="video{{ i }}" 
+                        style="position:absolute; top:8px; left:8px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
+                  Pause
+                </button>
+                <button class="video-control mute-btn" data-video-id="video{{ i }}" 
+                        style="position:absolute; top:8px; left:70px; z-index:10; background:#0008; color:#fff; border:none; padding:4px 8px; cursor:pointer; font-size:12px; border-radius:3px;">
+                  Unmute
+                </button>
+              {% else %}
+                {% if current_item.display_image %}
+                  <img src="{{ current_item.display_image }}" alt="{{ current_item.title }}" style="width:100%; height:350px; object-fit:cover;">
+                {% else %}
+                  <div style="width:100%; height:350px; background:#ccc; display:flex; align-items:center; justify-content:center;">
+                    <span>No Image Available</span>
+                  </div>
+                {% endif %}
+              {% endif %}
+
+              <div class="news-content">
+                <span class="image-credit">Photo Credits: {{ current_item.image_credit or 'N/A' }}</span>
+                <h3>{{ current_item.title or 'Untitled' }}</h3>
+                <p>{{ current_item.subtitle or '' }}</p>
+                <div class="news-meta">
+                  <span>{{ current_item.date or '' }}</span>
+                </div>
+              </div>
+
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      document.querySelectorAll('.video-control').forEach(button => {
+        button.addEventListener('click', e => {
+          e.preventDefault();
+          const videoId = button.getAttribute('data-video-id');
+          const video = document.getElementById(videoId);
+          if (!video) return;
+
+          if(button.classList.contains('pause-btn')) {
+            if(video.paused) { video.play(); button.textContent = 'Pause'; }
+            else { video.pause(); button.textContent = 'Play'; }
+          } else if(button.classList.contains('mute-btn')) {
+            video.muted = !video.muted;
+            button.textContent = video.muted ? 'Unmute' : 'Mute';
+          }
+        });
+      });
+    </script>
+
+    <div style="text-align:center; margin-top:2rem;">
       <a href="{{ url_for('memorabilia') }}">
         <button>VIEW MORE</button>
       </a>
     </div>
   </section>
-
-  
 
   <!-- Shop Section -->
   <section class="shop">

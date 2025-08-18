@@ -173,12 +173,32 @@ class MemorabiliaStory(db.Model):
             return self.video_url
         else:
             return None
+        
 class CollectorJoinee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=True)
     email = db.Column(db.String(150), unique=True, nullable=False)
     join_date = db.Column(db.DateTime, default=db.func.now())
 
+class CollectorVideo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    subtitle = db.Column(db.String(300))
+    video_filename = db.Column(db.String(255))  # uploaded video
+    video_url = db.Column(db.String(512))       # optional external video URL
+    date = db.Column(db.String(50))
+    content = db.Column(db.Text)
+
+    def __repr__(self):
+        return f"<CollectorVideo {self.title}>"
+
+    @property
+    def display_video(self):
+        if self.video_filename:
+            return f"/static/uploads/{self.video_filename}"
+        elif self.video_url:
+            return self.video_url
+        return None
 
 class YouTubeVideo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -354,7 +374,7 @@ class MemorabiliaAdmin(ModelView):
         'video_filename': FileUploadField(
             'Upload Video',
             base_path=upload_path,
-            allowed_extensions=['mp4', 'webm', 'ogg'],  # Allowed video formats
+            allowed_extensions=['mp4','mp3', 'webm', 'ogg'],  # Allowed video formats
             namegen=lambda obj, file_data: secure_filename(file_data.filename)
         )
     }
@@ -401,6 +421,29 @@ class MemorabiliaAdmin(ModelView):
         return redirect(url_for('login'))
 admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
 
+class CollectorVideoAdmin(ModelView):
+    upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+    form_extra_fields = {
+        'video_filename': FileUploadField(
+            'Upload Video',
+            base_path=upload_path,
+            allowed_extensions=['mp4','webm','ogg'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        )
+    }
+
+    column_list = ('id', 'title', 'subtitle', 'date', 'video_filename', 'video_url')
+    form_columns = ['title', 'subtitle', 'date', 'video_filename', 'video_url', 'content']
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(CollectorVideoAdmin(CollectorVideo, db.session))
+
 class CollectorJoineeAdmin(ModelView):
     column_list = ('id', 'name', 'email', 'join_date')
     column_searchable_list = ['name', 'email']
@@ -429,7 +472,7 @@ class AdvertisementAdmin(ModelView):
         'video_filename': FileUploadField(
             'Upload Video',
             base_path=upload_path,
-            allowed_extensions=['mp4', 'webm', 'ogg'],
+            allowed_extensions=['mp4','mp3' 'webm', 'ogg'],
             namegen=lambda obj, file_data: secure_filename(file_data.filename)
         )
     }
@@ -880,14 +923,25 @@ def validate_email(email):
 def validate_phone(phone):
     return re.match(r"^\+?\d{7,15}$", phone)
 
+# @app.route('/memorabilia')
+# def memorabilia():
+#     page = request.args.get('page', 1, type=int)
+#     pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=10)
+#     return render_template(
+#         'memorabilia.html',
+#         memorabilia_stories=pagination.items,
+#         pagination=pagination
+#     )
 @app.route('/memorabilia')
 def memorabilia():
     page = request.args.get('page', 1, type=int)
-    pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=9)
+    pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=10)
+    collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
     return render_template(
         'memorabilia.html',
         memorabilia_stories=pagination.items,
-        pagination=pagination
+        pagination=pagination,
+        collector_videos=collector_videos
     )
 
 @app.route('/join', methods=['GET', 'POST'])

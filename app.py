@@ -200,14 +200,22 @@ class CollectorVideo(db.Model):
             return self.video_url
         return None
 
+# class YouTubeVideo(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(255), nullable=False)
+#     video_id = db.Column(db.String(50), nullable=False)  # YouTube video ID only (not full URL)
+
+#     def __repr__(self):
+#         return f"<YouTubeVideo {self.title}>"
+
 class YouTubeVideo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    video_id = db.Column(db.String(50), nullable=False)  # YouTube video ID only (not full URL)
+    video_id = db.Column(db.String(50), nullable=False)  # YouTube ID only
+    is_short = db.Column(db.Boolean, default=True)       # True = Shorts, False = Full-length
 
     def __repr__(self):
         return f"<YouTubeVideo {self.title}>"
-
 
 # --- Advertisement model ---
 class Advertisement(db.Model):
@@ -553,9 +561,22 @@ class SubscriberAdmin(ModelView):
 
 admin.add_view(SubscriberAdmin(Subscriber, db.session))
 
+# class YouTubeVideoAdmin(ModelView):
+#     column_list = ('id', 'title', 'video_id')
+#     form_columns = ['title', 'video_id']
+#     column_searchable_list = ['title']
+#     page_size = 20
+
+#     def is_accessible(self):
+#         return current_user.is_authenticated
+
+#     def inaccessible_callback(self, name, **kwargs):
+#         return redirect(url_for('login'))
+
+# admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 class YouTubeVideoAdmin(ModelView):
-    column_list = ('id', 'title', 'video_id')
-    form_columns = ['title', 'video_id']
+    column_list = ('id', 'title', 'video_id', 'is_short')  # <-- added is_short
+    form_columns = ['title', 'video_id', 'is_short']      # <-- added is_short
     column_searchable_list = ['title']
     page_size = 20
 
@@ -566,7 +587,6 @@ class YouTubeVideoAdmin(ModelView):
         return redirect(url_for('login'))
 
 admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
-
 # ====================
 # --- LIVE SCORES ---
 # ====================
@@ -838,12 +858,34 @@ def team_details(league_id, team_name):
 #     return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,advertisement=ad,welcome_text=welcome_text)
 
 # --- TCR Home Page ---
+# @app.route('/')
+# def home():
+#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
+#     products = Product.query.order_by(Product.id.desc()).limit(5).all()
+#     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
+#     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
+#     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
+#     live_matches, live_error = fetch_matches(LIVE_FEED_URL)
+#     if live_matches:
+#         live_matches = sort_matches(live_matches)
+#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
+#     return render_template(
+#         'index.html',
+#         news_items=news_items,
+#         products=products,
+#         memorabilia_stories=memorabilia_stories,
+#         youtube_videos=youtube_videos,
+#         advertisement=ad,
+#         welcome_text=welcome_text,
+#         live_matches=live_matches or [],
+#         live_error=live_error
+#     )
 @app.route('/')
 def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
     products = Product.query.order_by(Product.id.desc()).limit(5).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
-    youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
+    youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
     live_matches, live_error = fetch_matches(LIVE_FEED_URL)
     if live_matches:
@@ -854,7 +896,7 @@ def home():
         news_items=news_items,
         products=products,
         memorabilia_stories=memorabilia_stories,
-        youtube_videos=youtube_videos,
+        youtube_videos=youtube_shorts,
         advertisement=ad,
         welcome_text=welcome_text,
         live_matches=live_matches or [],
@@ -1094,10 +1136,15 @@ def join_collectors():
     return redirect(request.referrer or url_for('home'))
 
 
+# @app.route('/videos')
+# def all_videos():
+#     videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).all()
+#     return render_template('all_videos.html', videos=videos)
 @app.route('/videos')
 def all_videos():
-    videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).all()
-    return render_template('all_videos.html', videos=videos)
+    shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).all()
+    full_videos = YouTubeVideo.query.filter_by(is_short=False).order_by(YouTubeVideo.id.desc()).all()
+    return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
 
 @app.route("/privacy")
 def privacy():

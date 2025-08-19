@@ -25,9 +25,24 @@
     .container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
 
     .tabs { text-align: center; margin-bottom: 2rem; }
-    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: 600; }
+    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: bold; }
     .tabs a:hover { text-decoration: underline; }
 
+    /* Mobile view adjustments */
+    @media (max-width: 768px) {
+      .tabs a {
+        font-size: 12px; /* reduce font size on mobile */
+        padding: 4px 8px; 
+        gap: 1px;
+      }
+
+      .tabs {
+        flex-direction: column; /* stack tabs vertically */
+        align-items: center;
+        
+      }
+    }
+    
     h1 { text-align: center; margin-bottom: 2.5rem; color: #021638; font-weight: normal; letter-spacing: 1px; text-shadow: 1px 1px 1px rgba(0,0,0,0.03); }
 
     .videos-grid {
@@ -57,11 +72,18 @@
     }
     .blog-post:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
 
-    .blog-post img,
+    /* .blog-post img,
     .blog-post video {
       width: 100%;
       height: auto;
       object-fit: cover;
+      border-radius: 0;
+    } */
+    .blog-post img,
+    .blog-post video {
+      width: 100%;
+      height: 500px;      /* 🔥 set a consistent height */
+      object-fit: cover;  /* crop instead of distort */
       border-radius: 0;
     }
 
@@ -71,6 +93,19 @@
       flex-direction: column;
       justify-content: space-between;
     }
+     .blog-post-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* pushes content up, button down */
+      flex-grow: 1; /* makes sure content stretches */
+      height: 100%;
+    }
+
+    .blog-post-content a {
+      margin-top: auto;   /* forces button to the bottom */
+      align-self: flex-end; /* aligns to the right side (optional, remove if left is preferred) */
+    }
+
     .blog-post-content h3 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: normal; color: #333; }
     .blog-post-content small { color: #888; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
     .blog-post-content p { color: #555; font-size: 0.95rem; line-height: 1.4; margin: 0 0 1rem; }
@@ -134,7 +169,7 @@
       cursor: pointer;
       box-shadow: 0 0 2px rgba(0,0,0,0.3);
       position: relative;
-      top: -4px;
+      top: -0.5px;
       transition: background 0.2s;
     }
     .video-slider::-webkit-slider-thumb:hover { background: #666; }
@@ -185,6 +220,17 @@
       position: relative;
       margin: 0 0.5rem;
     }
+    .video-control {
+      font-size: 18px;        /* consistent size */
+      line-height: 1;         /* keep tight */
+      width: 36px;            /* fixed circle size */
+      height: 36px;
+      display: flex;          /* center the icon */
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
 
     .video-carousel .carousel-item video { width: 100%; height: 100%; object-fit: cover; }
 
@@ -292,6 +338,70 @@
       }
     }
 
+    .like-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 0.9rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .like-overlay.liked {
+      color: #ff4d4d;
+      transform: scale(1.2);
+      transition: transform 0.2s ease;
+    }
+
+    .heart-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .heart-btn {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .heart-btn.liked {
+      color: red;
+      transform: scale(1.3);
+    }
+
+     /* Nice popup notification */
+    .like-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #021638;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 9999;
+      font-size: 1rem;
+    }
+    .like-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
     footer {
       background: #000;
       color: #fff;
@@ -336,8 +446,9 @@
           Your browser does not support the video tag.
         </video>
 
-        <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">Pause</button>
-        <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">Unmute</button>
+        <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">❚❚</button>
+        <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">🔇</button>
+
 
         <input type="range" class="video-slider" data-video-id="video-{{ loop.index }}" min="0" max="100" value="0">
 
@@ -348,6 +459,10 @@
             <p>{{ item.subtitle }}</p>
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
+          <div class="heart-container" data-item-id="{{ item.id }}">
+            <button class="heart-btn">❤️</button>
+            <span class="heart-count">200</span>
+          </div>
         </div>
       </div>
       {% endfor %}
@@ -367,6 +482,10 @@
             <p>{{ item.subtitle }}</p>
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
+          <div class="heart-container" data-item-id="{{ item.id }}">
+            <button class="heart-btn">❤️</button>
+            <span class="heart-count">200</span>
+          </div>
         </div>
       </div>
       {% endfor %}
@@ -389,6 +508,9 @@
     {% endif %}
   </div>
 
+  <!-- Notification popup -->
+  <div id="like-notification" class="like-notification">You already liked this!</div>
+
   <!-- Collector Videos section -->
   <!-- <p style="text-align:left; color:#021638; margin:2rem; font-size: 1.3rem;">Collector Videos</p> -->
 
@@ -406,6 +528,11 @@
         <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
         <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
 
+        <!-- 🔥 Like Button Overlay -->
+        <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
+          ❤️ <span class="like-count">300</span>
+        </div>
+        
         <div class="blog-post-content">
           <h3>{{ video.title }}</h3>
           <small>{{ video.date }}</small>
@@ -450,18 +577,25 @@
     document.querySelectorAll('.video-control.pause-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const vid = document.getElementById(btn.dataset.videoId);
-        if (vid.paused) { vid.play(); btn.textContent = 'Pause'; }
-        else { vid.pause(); btn.textContent = 'Play'; }
+        if (vid.paused) { 
+          vid.play(); 
+          btn.textContent = '❚❚'; // pause icon
+        } else { 
+          vid.pause(); 
+          btn.textContent = '▶'; // play icon
+        }
       });
     });
 
+    // Mute/Unmute buttons
     document.querySelectorAll('.video-control.mute-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const vid = document.getElementById(btn.dataset.videoId);
         vid.muted = !vid.muted;
-        btn.textContent = vid.muted ? 'Unmute' : 'Mute';
+        btn.textContent = vid.muted ? '🔇' : '🔊';
       });
     });
+
 
     document.querySelectorAll('.video-slider').forEach(slider => {
       const video = document.getElementById(slider.dataset.videoId);
@@ -528,9 +662,70 @@
       btn.addEventListener('click', () => {
         const vid = document.getElementById(btn.dataset.videoId);
         vid.muted = !vid.muted;
-        btn.textContent = vid.muted ? '🔊' : '🔇';
+        btn.textContent = vid.muted ? '🔇':'🔊' ;
+      });
+    });
+
+    // --- Collector videos like logic ---
+    document.querySelectorAll('.like-overlay').forEach(container => {
+      const countEl = container.querySelector('.like-count');
+      const itemId = container.dataset.itemId;
+
+      let baseCount = 300;
+
+      // Load from localStorage
+      if(localStorage.getItem('liked_' + itemId)) {
+        container.classList.add('liked');
+        countEl.textContent = baseCount + 1;
+      } else {
+        countEl.textContent = baseCount;
+      }
+
+      container.addEventListener('click', () => {
+        if (!localStorage.getItem('liked_' + itemId)) {
+          countEl.textContent = parseInt(countEl.textContent) + 1;
+          container.classList.add('liked');
+          localStorage.setItem('liked_' + itemId, 'true');
+        } else {
+          showNotification("You already liked this!");
+        }
+      });
+    });
+
+  </script>
+
+   <script>
+    // --- Heart like logic with nice popup ---
+    function showNotification(msg) {
+      const notif = document.getElementById('like-notification');
+      notif.textContent = msg;
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 2000);
+    }
+
+    document.querySelectorAll('.heart-container').forEach(container => {
+      const btn = container.querySelector('.heart-btn');
+      const countEl = container.querySelector('.heart-count');
+      const itemId = container.dataset.itemId;
+
+      let initialCount = parseInt(countEl.textContent);
+
+      if(localStorage.getItem('liked_' + itemId)) {
+        btn.classList.add('liked');
+        countEl.textContent = initialCount + 1;
+      }
+
+      btn.addEventListener('click', () => {
+        if (!localStorage.getItem('liked_' + itemId)) {
+          countEl.textContent = parseInt(countEl.textContent) + 1;
+          btn.classList.add('liked');
+          localStorage.setItem('liked_' + itemId, 'true');
+        } else {
+          showNotification("You already liked this!");
+        }
       });
     });
   </script>
 </body>
 </html>
+

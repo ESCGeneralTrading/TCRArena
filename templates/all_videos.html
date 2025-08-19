@@ -53,6 +53,22 @@
     .tabs a:hover {
       text-decoration: underline;
     }
+      
+    /* Mobile view adjustments */
+    @media (max-width: 768px) {
+      .tabs a {
+          font-size: 12px; /* reduce font size on mobile */
+          padding: 4px 8px; 
+          gap: 1px;
+      }
+
+      .tabs {
+          flex-direction: column; /* stack tabs vertically */
+          align-items: center;
+          
+      }
+    }
+    
 
     .youtube-grid {
       display: grid;

@@ -146,13 +146,15 @@ class MemorabiliaStory(db.Model):
     title = db.Column(db.String(255), nullable=False)
     subtitle = db.Column(db.String(300))
     image_url = db.Column(db.String(512)) 
-    image_filename = db.Column(db.String(255))  # uploaded image filename
-    video_filename = db.Column(db.String(255))  # uploaded video filename
-    video_url = db.Column(db.String(512))       # external video URL (optional)
+    image_filename = db.Column(db.String(255))
+    video_filename = db.Column(db.String(255))
+    video_url = db.Column(db.String(512))
     image_credit = db.Column(db.String(100))
     date = db.Column(db.String(50))
-    content = db.Column(db.Text)  
-
+    content = db.Column(db.Text)
+    
+    likes = db.Column(db.Integer, default=200) 
+    
     def __repr__(self):
         return f"<MemorabiliaStory {self.title}>"
 
@@ -188,7 +190,8 @@ class CollectorVideo(db.Model):
     video_url = db.Column(db.String(512))       # optional external video URL
     date = db.Column(db.String(50))
     content = db.Column(db.Text)
-
+    likes = db.Column(db.Integer, default=300)
+   
     def __repr__(self):
         return f"<CollectorVideo {self.title}>"
 
@@ -199,14 +202,6 @@ class CollectorVideo(db.Model):
         elif self.video_url:
             return self.video_url
         return None
-
-# class YouTubeVideo(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String(255), nullable=False)
-#     video_id = db.Column(db.String(50), nullable=False)  # YouTube video ID only (not full URL)
-
-#     def __repr__(self):
-#         return f"<YouTubeVideo {self.title}>"
 
 class YouTubeVideo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -387,10 +382,11 @@ class MemorabiliaAdmin(ModelView):
         )
     }
 
-    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'video_filename', 'video_url')
+
+    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'likes', 'image_filename', 'image_url', 'video_filename', 'video_url')
     column_searchable_list = ['title', 'image_credit']
     column_filters = ['image_credit', 'date']
-    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'image_filename', 'image_url', 'video_filename', 'video_url', 'content']
+    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'likes', 'image_filename', 'image_url', 'video_filename', 'video_url', 'content']
 
     form_widget_args = {
         'content': {
@@ -441,8 +437,8 @@ class CollectorVideoAdmin(ModelView):
         )
     }
 
-    column_list = ('id', 'title', 'subtitle', 'date', 'video_filename', 'video_url')
-    form_columns = ['title', 'subtitle', 'date', 'video_filename', 'video_url', 'content']
+    column_list = ('id', 'title', 'subtitle', 'date', 'likes', 'video_filename', 'video_url')
+    form_columns = ['title', 'subtitle', 'date', 'likes', 'video_filename', 'video_url', 'content']
 
     def is_accessible(self):
         return current_user.is_authenticated
@@ -974,6 +970,7 @@ def validate_phone(phone):
 #         memorabilia_stories=pagination.items,
 #         pagination=pagination
 #     )
+
 @app.route('/memorabilia')
 def memorabilia():
     page = request.args.get('page', 1, type=int)
@@ -985,6 +982,72 @@ def memorabilia():
         pagination=pagination,
         collector_videos=collector_videos
     )
+
+from flask import session
+
+# --- Format Likes Helper ---
+def format_likes(num):
+    if num is None:
+        return "0"
+    if num < 1000:
+        return str(num)
+    elif num < 1_000_000:
+        return f"{num/1000:.1f}k".rstrip("0").rstrip(".")
+    else:
+        return f"{num/1_000_000:.1f}M".rstrip("0").rstrip(".")
+
+# Register as Jinja filter
+app.jinja_env.filters['format_likes'] = format_likes
+
+
+@app.route('/like/memorabilia/<int:item_id>', methods=['POST'])
+def like_memorabilia(item_id):
+    item = MemorabiliaStory.query.get(item_id)
+    if not item:
+        return {"error": "Item not found"}, 404
+
+    # Track liked items in session
+    liked_items = session.get('liked_memorabilia', [])
+
+    if item_id in liked_items:
+        return {"error": "Already liked"}, 400
+
+    if item.likes is None:
+        item.likes = 0
+
+    item.likes += 1
+    db.session.commit()
+
+    # Mark this item as liked in session
+    liked_items.append(item_id)
+    session['liked_memorabilia'] = liked_items
+
+    return {"likes": item.likes}
+
+
+@app.route("/like/collector/<int:video_id>", methods=["POST"])
+def like_collector(video_id):
+    video = CollectorVideo.query.get(video_id)
+    if video is None:
+        return jsonify({"error": "Video not found"}), 404
+
+    liked_videos = session.get('liked_collector', [])
+
+    if video_id in liked_videos:
+        return jsonify({"error": "Already liked"}), 400
+
+    if video.likes is None:
+        video.likes = 0
+
+    video.likes += 1
+    db.session.commit()
+
+    liked_videos.append(video_id)
+    session['liked_collector'] = liked_videos
+
+    return jsonify({"likes": video.likes})
+
+
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():

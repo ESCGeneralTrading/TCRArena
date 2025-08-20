@@ -72,13 +72,6 @@
     }
     .blog-post:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
 
-    /* .blog-post img,
-    .blog-post video {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      border-radius: 0;
-    } */
     .blog-post img,
     .blog-post video {
       width: 100%;
@@ -460,8 +453,10 @@
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
           <div class="heart-container" data-item-id="{{ item.id }}">
-            <button class="heart-btn">❤️</button>
-            <span class="heart-count">200</span>
+              <button class="heart-btn">❤️</button>
+              <!-- <span class="heart-count">{{ item.likes or 0 }}</span> -->
+              <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
+
           </div>
         </div>
       </div>
@@ -483,9 +478,12 @@
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
           <div class="heart-container" data-item-id="{{ item.id }}">
-            <button class="heart-btn">❤️</button>
-            <span class="heart-count">200</span>
+              <button class="heart-btn">❤️</button>
+              <!-- <span class="heart-count">{{ item.likes or 0 }}</span> -->
+              <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
+
           </div>
+
         </div>
       </div>
       {% endfor %}
@@ -530,7 +528,9 @@
 
         <!-- 🔥 Like Button Overlay -->
         <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
-          ❤️ <span class="like-count">300</span>
+          <!-- ❤️ <span class="like-count">{{ video.likes or 0 }}</span> -->
+          <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
+
         </div>
         
         <div class="blog-post-content">
@@ -666,36 +666,9 @@
       });
     });
 
-    // --- Collector videos like logic ---
-    document.querySelectorAll('.like-overlay').forEach(container => {
-      const countEl = container.querySelector('.like-count');
-      const itemId = container.dataset.itemId;
-
-      let baseCount = 300;
-
-      // Load from localStorage
-      if(localStorage.getItem('liked_' + itemId)) {
-        container.classList.add('liked');
-        countEl.textContent = baseCount + 1;
-      } else {
-        countEl.textContent = baseCount;
-      }
-
-      container.addEventListener('click', () => {
-        if (!localStorage.getItem('liked_' + itemId)) {
-          countEl.textContent = parseInt(countEl.textContent) + 1;
-          container.classList.add('liked');
-          localStorage.setItem('liked_' + itemId, 'true');
-        } else {
-          showNotification("You already liked this!");
-        }
-      });
-    });
-
   </script>
-
-   <script>
-    // --- Heart like logic with nice popup ---
+  <script>
+    // --- Unified Like Logic for Memorabilia & Collector Videos ---
     function showNotification(msg) {
       const notif = document.getElementById('like-notification');
       notif.textContent = msg;
@@ -703,29 +676,66 @@
       setTimeout(() => notif.classList.remove('show'), 2000);
     }
 
+    function formatLikes(num) {
+      if (num < 1000) return num.toString();
+      if (num < 1_000_000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
+      return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + "M";
+    }
+
+
+    // Handle memorabilia likes
     document.querySelectorAll('.heart-container').forEach(container => {
       const btn = container.querySelector('.heart-btn');
       const countEl = container.querySelector('.heart-count');
       const itemId = container.dataset.itemId;
 
-      let initialCount = parseInt(countEl.textContent);
-
-      if(localStorage.getItem('liked_' + itemId)) {
-        btn.classList.add('liked');
-        countEl.textContent = initialCount + 1;
-      }
-
       btn.addEventListener('click', () => {
-        if (!localStorage.getItem('liked_' + itemId)) {
-          countEl.textContent = parseInt(countEl.textContent) + 1;
-          btn.classList.add('liked');
-          localStorage.setItem('liked_' + itemId, 'true');
-        } else {
-          showNotification("You already liked this!");
-        }
+        fetch(`/like/memorabilia/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              // countEl.textContent = res.data.likes;
+              countEl.textContent = formatLikes(res.data.likes);
+              btn.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this item!");
+          });
       });
     });
+
+    // Handle collector video likes
+    document.querySelectorAll('.like-overlay').forEach(container => {
+      const countEl = container.querySelector('.like-count');
+      const itemId = container.dataset.itemId.replace('collector-', '');
+      
+      container.addEventListener('click', () => {
+        fetch(`/like/collector/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              // countEl.textContent = res.data.likes;
+              countEl.textContent = formatLikes(res.data.likes);
+              container.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this video!");
+          });
+      });
+    });
+    
+
   </script>
+
+
 </body>
 </html>
 

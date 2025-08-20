@@ -162,7 +162,7 @@
       cursor: pointer;
       box-shadow: 0 0 2px rgba(0,0,0,0.3);
       position: relative;
-      top: -0.5px;
+      top: -0.7px;
       transition: background 0.2s;
     }
     .video-slider::-webkit-slider-thumb:hover { background: #666; }
@@ -556,7 +556,7 @@
         <!-- 🔥 Like Button Overlay -->
         <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
           <!-- ❤️ <span class="like-count">{{ video.likes or 0 }}</span> -->
-          <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
+          ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
 
         </div>
         

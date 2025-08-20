@@ -296,6 +296,33 @@
       border-radius: 6px;
       z-index: 1010;
     }
+
+    .email-input {
+      width: 100%;
+      max-width: 850px;   /* keeps it from getting too wide on desktops */
+      padding: 3rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      box-sizing: border-box; /* ensures padding doesn’t break width */
+    }
+
+    /* Make it more comfortable on bigger screens */
+    @media (min-width: 768px) {
+      .email-input {
+        font-size: 1.25rem;
+        padding: 1.2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .email-input {
+        font-size: 1.5rem;
+        padding: 1.5rem;
+      }
+    }
+    
     .featured-cta {
       background-color: #ffcc66;
       padding: 4rem 2rem;
@@ -426,7 +453,7 @@
 
     <h1>Relive Greatness in the Arena Collectors Community</h1>
     
-    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
+    <p class="video-hpara"  style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
 
     {% set videos = (memorabilia_stories|selectattr('display_video')|list)[:4] %}
     {% set images = (memorabilia_stories|rejectattr('display_video')|list)[:6] %}
@@ -555,8 +582,9 @@
   <section class="featured-cta">
     <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
     <form action="{{ url_for('join_collectors') }}" method="POST" style="margin-top:2rem; margin-left:auto; margin-right:auto;">
-      <input type="email" name="email" placeholder="yourname@domain.com" required
-            style="width:40%; padding:35px; margin-bottom:1rem; border-radius:6px; border:1px solid #ccc;font-size: 2rem;"><br>
+      <!-- <input type="email" name="email" placeholder="yourname@domain.com" required
+            style="width:40%; padding:35px; margin-bottom:1rem; border-radius:6px; border:1px solid #ccc;font-size: 2rem;"><br> -->
+      <input type="email" name="email" placeholder="yourname@domain.com" required class="email-input"><br>
       <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;font-size: 1rem;">
           Join Now
       </button>

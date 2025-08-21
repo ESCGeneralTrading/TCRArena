@@ -971,17 +971,146 @@ def validate_phone(phone):
 #         pagination=pagination
 #     )
 
+# @app.route('/memorabilia')
+# def memorabilia():
+#     page = request.args.get('page', 1, type=int)
+#     pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=11)
+#     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
+#     return render_template(
+#         'memorabilia.html',
+#         memorabilia_stories=pagination.items,
+#         pagination=pagination,
+#         collector_videos=collector_videos
+#     )
 @app.route('/memorabilia')
 def memorabilia():
     page = request.args.get('page', 1, type=int)
-    pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=10)
+    videos_per_page = 4
+    images_per_page = 6
+
+    # Fetch all items ordered by date
+    all_items = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).all()
+    all_videos = [item for item in all_items if item.display_video]
+    all_images = [item for item in all_items if not item.display_video]
+
+    # Sort images by id
+    all_images.sort(key=lambda x: x.id, reverse=True)
+
+
+    # Paginate videos and images separately
+    video_start = (page - 1) * videos_per_page
+    video_end = video_start + videos_per_page
+    image_start = (page - 1) * images_per_page
+    image_end = image_start + images_per_page
+
+    videos = all_videos[video_start:video_end]
+    images = all_images[image_start:image_end]
+
+    # Calculate total pages based on the list that requires more pages
+    total_video_pages = (len(all_videos) + videos_per_page - 1) // videos_per_page
+    total_image_pages = (len(all_images) + images_per_page - 1) // images_per_page
+    total_pages = max(total_video_pages, total_image_pages)
+
+    # Pagination object
+    class Pagination:
+        def __init__(self, page, total_pages):
+            self.page = page
+            self.pages = total_pages
+
+        @property
+        def has_prev(self):
+            return self.page > 1
+
+        @property
+        def has_next(self):
+            return self.page < self.pages
+
+        @property
+        def prev_num(self):
+            return self.page - 1
+
+        @property
+        def next_num(self):
+            return self.page + 1
+
+        def iter_pages(self):
+            return range(1, self.pages + 1)
+
+    pagination = Pagination(page=page, total_pages=total_pages)
     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
+
     return render_template(
         'memorabilia.html',
-        memorabilia_stories=pagination.items,
+        videos=videos,
+        images=images,
         pagination=pagination,
+        memorabilia_stories=videos + images,
         collector_videos=collector_videos
     )
+
+# @app.route('/memorabilia')
+# def memorabilia():
+#     page = request.args.get('page', 1, type=int)
+#     videos_per_page = 4
+#     images_per_page = 6
+
+#     # Fetch all items ordered by date
+#     all_items = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).all()
+#     all_videos = [item for item in all_items if item.display_video]
+#     all_images = [item for item in all_items if not item.display_video]
+
+#     # Paginate videos and images separately
+#     video_start = (page - 1) * videos_per_page
+#     video_end = video_start + videos_per_page
+#     image_start = (page - 1) * images_per_page
+#     image_end = image_start + images_per_page
+
+#     videos = all_videos[video_start:video_end]
+#     images = all_images[image_start:image_end]
+
+#     # Calculate total pages based on the list that requires more pages
+#     total_video_pages = (len(all_videos) + videos_per_page - 1) // videos_per_page
+#     total_image_pages = (len(all_images) + images_per_page - 1) // images_per_page
+#     total_pages = max(total_video_pages, total_image_pages)
+
+#     # Pagination object
+#     class Pagination:
+#         def __init__(self, page, total_pages):
+#             self.page = page
+#             self.pages = total_pages
+
+#         @property
+#         def has_prev(self):
+#             return self.page > 1
+
+#         @property
+#         def has_next(self):
+#             return self.page < self.pages
+
+#         @property
+#         def prev_num(self):
+#             return self.page - 1
+
+#         @property
+#         def next_num(self):
+#             return self.page + 1
+
+#         def iter_pages(self):
+#             return range(1, self.pages + 1)
+
+#     pagination = Pagination(page=page, total_pages=total_pages)
+#     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
+
+#     return render_template(
+#         'memorabilia.html',
+#         videos=videos,
+#         images=images,
+#         pagination=pagination,
+#         memorabilia_stories=videos + images,
+#         collector_videos=collector_videos
+#     )
+
+
 
 from flask import session
 

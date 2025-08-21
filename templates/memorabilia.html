@@ -82,8 +82,7 @@
     }
     .blog-post:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
 
-    .blog-post img,
-    .blog-post video {
+    .blog-post img {
       width: 100%;
       height: 500px;      /* 🔥 set a consistent height */
       object-fit: cover;  /* crop instead of distort */
@@ -109,7 +108,7 @@
       align-self: flex-end; /* aligns to the right side (optional, remove if left is preferred) */
     }
 
-    .blog-post-content h3 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: normal; color: #333; }
+    .blog-post-content h3 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: bold; color: #333; }
     .blog-post-content small { color: #888; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; }
     .blog-post-content p { color: #555; font-size: 0.95rem; line-height: 1.4; margin: 0 0 1rem; }
     .blog-post-content a {
@@ -123,6 +122,57 @@
     .pagination a.active { background: #054a9a; font-weight: normal; }
     .pagination a:hover { background: #003366; }
 
+
+    /* --- Video Post Content --- */
+    .video-post-content {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 0.7rem;
+    }
+    .blog-post video {
+      width: 100%;
+      height: 500px;      /* 🔥 set a consistent height */
+      object-fit: cover;  /* crop instead of distort */
+      border-radius: 0;
+    }
+    /* Read More button */
+    .video-read-more {
+      background: #021638;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.3s ease;
+      align-self: flex-start;
+    }
+
+    .video-read-more:hover {
+      background: #054a9a;
+    }
+
+    /* Video heart styling */
+    .video-heart-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 0.3rem; /* same style as image section */
+    }
+
+    .video-heart-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .video-heart-btn.liked {
+      color: red;
+      transform: scale(1.2);
+    }
+    
     footer { background: #000; color: #fff; text-align: center; padding: 2rem 1rem; font-size: 0.9rem; }
     footer a { color: #ffd700; text-decoration: underline; }
 
@@ -462,11 +512,13 @@
     </div>
 
     <h1>Relive Greatness in the Arena Collectors Community</h1>
-    
+    <!-- video section -->
     <p class="video-hpara"  style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
 
-    {% set videos = (memorabilia_stories|selectattr('display_video')|list)[:4] %}
-    {% set images = (memorabilia_stories|rejectattr('display_video')|list)[:6] %}
+    <!-- {% set videos = (memorabilia_stories|selectattr('display_video')|list)[:4] %}
+    {% set images = (memorabilia_stories|rejectattr('display_video')|list)[:6] %} -->
+    {% set videos = videos %}
+    {% set images = images %}
 
     <div class="videos-grid">
       {% for item in videos %}
@@ -482,18 +534,20 @@
 
         <input type="range" class="video-slider" data-video-id="video-{{ loop.index }}" min="0" max="100" value="0">
 
-        <div class="blog-post-content">
-          <div>
+        <div class="video-post-content">
+          <div class="video-style-content">
             <h3>{{ item.title }}</h3>
             <small>{{ item.date }} | {{ item.image_credit }}</small>
             <p>{{ item.subtitle }}</p>
           </div>
-          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
-          <div class="heart-container" data-item-id="{{ item.id }}">
-              <button class="heart-btn">❤️</button>
-              <!-- <span class="heart-count">{{ item.likes or 0 }}</span> -->
-              <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
 
+          <!-- Button block -->
+          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" class="video-read-more">Read More</a>
+
+          <!-- Heart block -->
+          <div class="video-heart-container" data-item-id="{{ item.id }}">
+              <button class="video-heart-btn">❤️</button>
+              <span class="video-heart-count">{{ (item.likes or 0) | format_likes }}</span>
           </div>
         </div>
       </div>
@@ -501,7 +555,7 @@
     </div>
 
     <hr style="margin: 3rem 0; border: none; border-top: 2px solid #ccc;">
-
+    <!-- image section -->
     <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</p>
     <div class="images-grid">
       {% for item in images %}
@@ -769,11 +823,36 @@
           });
       });
     });
-    
+    // Handle main videos grid likes
+    document.querySelectorAll('.video-heart-container').forEach(container => {
+      const btn = container.querySelector('.video-heart-btn');
+      const countEl = container.querySelector('.video-heart-count');
+      const itemId = container.dataset.itemId;
+
+      btn.addEventListener('click', () => {
+        fetch(`/like/memorabilia/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              countEl.textContent = formatLikes(res.data.likes);
+              btn.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this video!");
+          });
+      });
+
+      // Optional: mark already liked buttons on page load
+      if (container.dataset.liked === "true") {
+        btn.classList.add('liked');
+      }
+    });
 
   </script>
-
-
 </body>
 </html>
 

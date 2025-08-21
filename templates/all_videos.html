@@ -41,30 +41,27 @@
       margin-bottom: 1rem;
       color: #021638;
       font-size: 1.5rem;
-      font-weight: 600;
+      font-weight: bold;
     }
 
-    .tabs {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
+    .tabs { text-align: center; margin-bottom: 2rem; }
+    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: bold; }
+    .tabs a:hover { text-decoration: underline; }
 
-    .tabs a {
-      margin: 0 0.7rem;
-      text-decoration: none;
-      font-weight: 600;
-      color: #021638;
-      padding: 6px 12px;
-      border-radius: 3px;
-      transition: 0.3s;
-    }
+    /* Mobile view adjustments */
+    @media (max-width: 768px) {
+      .tabs a {
+        font-size: 12px; /* reduce font size on mobile */
+        padding: 4px 8px; 
+        gap: 1px;
+      }
 
-    .tabs a:hover {
-      text-decoration: none;
-      background: #021638;
-      color: #fff;
+      .tabs {
+        flex-direction: column; /* stack tabs vertically */
+        align-items: center;
+        
+      }
     }
-
     .youtube-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);

@@ -106,6 +106,25 @@ class News(db.Model):
         else:
             return "/static/uploads/default-placeholder.png"
 
+class TopPlayer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sport = db.Column(db.String(50), nullable=False)   # e.g., Football, Basketball, F1 Driver, Cricket
+    rank = db.Column(db.Integer, nullable=False)
+    player_name = db.Column(db.String(150), nullable=False)
+    club = db.Column(db.String(150))  # e.g., 2025 club/team
+    nationality = db.Column(db.String(100))
+    sources = db.Column(db.String(255))  # comma-separated
+    credits = db.Column(db.String(255))  # image/video credit
+
+class TopFighter(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sport = db.Column(db.String(50), nullable=False)   # e.g., Football, Basketball, F1 Driver, Cricket
+    rank = db.Column(db.Integer, nullable=False)
+    player_name = db.Column(db.String(150), nullable=False)
+    club = db.Column(db.String(150))  # e.g., 2025 club/team
+    nationality = db.Column(db.String(100))
+    sources = db.Column(db.String(255))  # comma-separated
+    credits = db.Column(db.String(255))  # image/video credit
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -363,6 +382,30 @@ admin = Admin(
 
 admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
+
+class TopPlayerAdmin(ModelView):
+    column_list = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
+    form_columns = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
+    column_sortable_list = ('rank', 'sport', 'player_name')
+    column_searchable_list = ('player_name', 'club', 'nationality')
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(TopPlayerAdmin(TopPlayer, db.session))
+
+class TopFighterAdmin(ModelView):
+    column_list = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
+    form_columns = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
+    column_sortable_list = ('rank', 'sport', 'player_name')
+    column_searchable_list = ('player_name', 'club', 'nationality')
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(TopFighterAdmin(TopFighter, db.session))
 
 class MemorabiliaAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -669,63 +712,6 @@ def fetch_matches(url):
                 'match_id': match.get('@id', '')
             })
     return matches_list, None
-# def fetch_matches(url):
-#     try:
-#         response = requests.get(url, timeout=10)
-#         response.raise_for_status()
-#         data = response.json()
-#     except requests.exceptions.RequestException as e:
-#         return None, str(e)
-
-#     matches_list = []
-#     categories = data.get('scores', {}).get('category', [])
-#     if isinstance(categories, dict):
-#         categories = [categories]
-
-#     for cat in categories:
-#         league_name = cat.get('@name', 'Unknown League')
-#         matches = cat.get('matches', {}).get('match', [])
-#         if isinstance(matches, dict):
-#             matches = [matches]
-
-#         for match in matches:
-#             raw_date = match.get('@date', '')
-#             try:
-#                 date_obj = datetime.datetime.strptime(raw_date, "%b %d")
-#                 formatted_date = date_obj.strftime("%d/%m")
-#             except:
-#                 formatted_date = raw_date
-
-#             events_raw = match.get('events') or {}
-#             events_data = events_raw.get('event', [])
-#             if isinstance(events_data, dict):
-#                 events_data = [events_data]
-
-#             events = []
-#             for ev in events_data:
-#                 events.append({
-#                     'minute': ev.get('@minute', ''),
-#                     'extra_min': ev.get('@extra_min', ''),
-#                     'type': ev.get('@type', ''),
-#                     'team': ev.get('@team', ''),
-#                     'player': ev.get('@player', ''),
-#                     'assist': ev.get('@assist', ''),
-#                     'result': ev.get('@result', '')
-#                 })
-
-#             matches_list.append({
-#                 'league': league_name,
-#                 'venue': match.get('@venue', ''),
-#                 'local_team': match.get('localteam', {}).get('@name', ''),
-#                 'local_goals': match.get('localteam', {}).get('@goals', 0),
-#                 'visitor_team': match.get('visitorteam', {}).get('@name', ''),
-#                 'visitor_goals': match.get('visitorteam', {}).get('@goals', 0),
-#                 'status': match.get('@status', 'NS'),
-#                 'time': match.get('@time', ''),
-#                 'date': formatted_date,
-#                 'events': events
-#             })
-#     return matches_list, None
 
 def fetch_json(url):
     try:
@@ -751,6 +737,42 @@ def all_scores():
     if matches:
         matches = sort_matches(matches)
     return render_template('all_scores.html', live_matches=matches or [], live_error=error)
+
+@app.route('/top-players-json')
+def top_players_json():
+    sport = request.args.get('sport', '').strip()
+    if not sport:
+        return jsonify({"players": []})
+
+    players = TopPlayer.query.filter_by(sport=sport).order_by(TopPlayer.rank).all()
+    players_list = [{
+        "rank": p.rank,
+        "player_name": p.player_name,
+        "club": p.club,
+        "nationality": p.nationality,
+        "sources": p.sources,
+        "credits": p.credits
+    } for p in players]
+
+    return jsonify({"players": players_list})
+
+@app.route('/top-fighters-json')
+def top_fighters_json():
+    sport = request.args.get('sport', '').strip()
+    if not sport:
+        return jsonify({"players": []})
+
+    players = TopFighter.query.filter_by(sport=sport).order_by(TopFighter.rank).all()
+    fighters_list = [{
+        "rank": p.rank,
+        "player_name": p.player_name,
+        "club": p.club,
+        "nationality": p.nationality,
+        "sources": p.sources,
+        "credits": p.credits
+    } for p in players]
+
+    return jsonify({"players": fighters_list})
 
 @app.route('/search')
 def search_matches():
@@ -982,6 +1004,7 @@ def validate_phone(phone):
 #         pagination=pagination,
 #         collector_videos=collector_videos
 #     )
+
 @app.route('/memorabilia')
 def memorabilia():
     page = request.args.get('page', 1, type=int)
@@ -995,7 +1018,7 @@ def memorabilia():
 
     # Sort images by id
     all_images.sort(key=lambda x: x.id, reverse=True)
-
+    all_videos.sort(key=lambda x: x.id, reverse=True)
 
     # Paginate videos and images separately
     video_start = (page - 1) * videos_per_page
@@ -1047,68 +1070,6 @@ def memorabilia():
         memorabilia_stories=videos + images,
         collector_videos=collector_videos
     )
-
-# @app.route('/memorabilia')
-# def memorabilia():
-#     page = request.args.get('page', 1, type=int)
-#     videos_per_page = 4
-#     images_per_page = 6
-
-#     # Fetch all items ordered by date
-#     all_items = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).all()
-#     all_videos = [item for item in all_items if item.display_video]
-#     all_images = [item for item in all_items if not item.display_video]
-
-#     # Paginate videos and images separately
-#     video_start = (page - 1) * videos_per_page
-#     video_end = video_start + videos_per_page
-#     image_start = (page - 1) * images_per_page
-#     image_end = image_start + images_per_page
-
-#     videos = all_videos[video_start:video_end]
-#     images = all_images[image_start:image_end]
-
-#     # Calculate total pages based on the list that requires more pages
-#     total_video_pages = (len(all_videos) + videos_per_page - 1) // videos_per_page
-#     total_image_pages = (len(all_images) + images_per_page - 1) // images_per_page
-#     total_pages = max(total_video_pages, total_image_pages)
-
-#     # Pagination object
-#     class Pagination:
-#         def __init__(self, page, total_pages):
-#             self.page = page
-#             self.pages = total_pages
-
-#         @property
-#         def has_prev(self):
-#             return self.page > 1
-
-#         @property
-#         def has_next(self):
-#             return self.page < self.pages
-
-#         @property
-#         def prev_num(self):
-#             return self.page - 1
-
-#         @property
-#         def next_num(self):
-#             return self.page + 1
-
-#         def iter_pages(self):
-#             return range(1, self.pages + 1)
-
-#     pagination = Pagination(page=page, total_pages=total_pages)
-#     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
-
-#     return render_template(
-#         'memorabilia.html',
-#         videos=videos,
-#         images=images,
-#         pagination=pagination,
-#         memorabilia_stories=videos + images,
-#         collector_videos=collector_videos
-#     )
 
 
 

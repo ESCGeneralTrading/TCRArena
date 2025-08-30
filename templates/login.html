@@ -5,6 +5,102 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login - TCR Arena Admin</title>
   <style>
+
+    .top-black-bar {
+      background-color: #000;
+      color: #fff;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      font-weight: normal;
+      font-size: 0.9rem;
+      position: sticky;
+      top: 0;
+      z-index: 1100;
+      overflow: hidden;
+    }
+
+    .top-black-bar marquee {
+      width: 100%;
+    }
+
+    header {
+      background: #000;
+      color: #fff;
+      padding: 1rem 0;
+      position: sticky;
+      top: 30px;
+      z-index: 1000;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4rem;
+      justify-content: center;
+      flex-grow: 1;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 25px;
+      height: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle span {
+      display: block;
+      height: 3px;
+      background: #fff;
+      border-radius: 2px;
+    }
+
+    /* Tablet + Mobile Nav */
+    @media (max-width: 1024px) {
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #000;
+        margin-top: 0.5rem;
+        padding: 1rem;
+        border-radius: 4px;
+        gap: 1.5rem;
+      }
+      nav.active {
+        display: flex;
+      }
+      .nav-toggle {
+        display: flex;
+        align-self: flex-end;
+        margin-bottom: 0.5rem;
+      }
+    }
+    
     body {
       font-family: 'Montserrat', sans-serif;
       background: #f4f4f4;
@@ -60,6 +156,44 @@
   </style>
 </head>
 <body>
+    <!-- Black top band with marquee -->
+  <div class="top-black-bar">
+    <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop();" onmouseout="this.start();">
+      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Exclusive offers, rare collectibles, limited editions &amp; more!&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Sign up today and never miss a deal!
+    </marquee>
+  </div>
+
+<!-- Header / Nav -->
+  <header>
+    <div class="header-container">
+      <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav id="navMenu">
+        <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
+        <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
+        <a href="{{ url_for('all_scores') }}">Live Scores</a>
+        <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
+        <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
+        <a href="#">Partner's Tickets</a>
+        <a href="https://www.thecollectroom.com/">Shop</a>
+        <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
+        <a href="{{ url_for('all_videos') }}">
+          Ar <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24"
+            fill="white" 
+            style="vertical-align: middle; border: 1px solid white; padding: 1.5px; box-sizing: content-box; border-radius: 5px;">
+            <polygon points="6,4 20,12 6,20" />
+          </svg> na Play
+        </a>
+      </nav>
+    </div>
+  </header>
+
   <div class="login-container">
     <h2>TCR Arena Admin Login</h2>
     {% with messages = get_flashed_messages(with_categories=true) %}

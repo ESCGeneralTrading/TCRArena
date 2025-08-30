@@ -984,6 +984,88 @@
       color: #ffd700;
       text-decoration: underline;
     }
+    /* Table Styles */
+    .live-scores-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+        background: #333;
+        border-radius: 8px;
+        overflow: hidden;
+        font-size: 14px;
+        min-width: 800px; /* Ensure scroll on small screens */
+    }
+
+    .live-scores-table th, 
+    .live-scores-table td {
+        padding: 6px 8px;
+        text-align: center;
+        color: #eee;
+    }
+
+    .live-scores-table th {
+        background: #444;
+        font-weight: 500;
+    }
+
+    .match-row:nth-child(even) {
+        background: #2a2a2a;
+    }
+
+    .match-row:nth-child(odd) {
+        background: #333;
+    }
+
+    .match-row:hover {
+        background: #555;
+        cursor: pointer;
+    }
+
+    .status.live { color: #ff4c4c; font-weight:bold; }
+    .status.finished { color: #4caf50; font-weight:bold; }
+    .status.other { color: #ffc107; font-weight:bold; }
+
+    .events-row { display: none; }
+    .events-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+        font-size: 13px;
+    }
+
+    .events-table th, .events-table td {
+        padding: 4px 6px;
+        background: #555;
+        font-size: 12px;
+        color: #fff;
+    }
+
+    .events-table tr:nth-child(even) td { background: #2a2a2a; }
+    .events-table tr:nth-child(odd) td { background: #333; }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .live-scores-table {
+            font-size: 12px;
+        }
+        .live-scores-table th, .live-scores-table td {
+            padding: 4px 6px;
+        }
+        .events-table {
+            font-size: 11px;
+        }
+    }
+    @media (max-width: 480px) {
+        .live-scores-table {
+            font-size: 10px;
+        }
+        .live-scores-table th, .live-scores-table td {
+            padding: 2px 4px;
+        }
+        .events-table {
+            font-size: 9px;
+        }
+    }
   </style>
 </head>
 <body>
@@ -1032,163 +1114,154 @@
       </nav>
     </div>
   </header>
-
   
-  <!-- LIVE SCORES SECTION -->
-  <div id="live-scores-container" style="background:#222; color:#eee; padding:15px; text-align:center;">
-    <!-- <h1 style="margin-bottom:25px; color:#fff;">Live Soccer Scores</h1> -->
+  <!-- Live Score -->
+  <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
+
+    {% set highlight_leagues = [
+        "England: Premier League",
+        "Spain: La Liga",
+        "Italy: Serie A",
+        "Germany: Bundesliga",
+        "France: Ligue 1",
+        "Portugal: Primeira Liga",
+        "Netherlands: Eredivisie",
+        "Brazil: Campeonato Brasileiro Série A",
+        "USA: Major League Soccer",
+        "Saudi Arabia: Saudi Pro League",
+        "FIFA World Cup",
+        "UEFA Champions League",
+        "Copa Libertadores",
+        "UEFA European Championship",
+        "Copa America",
+        "FA Cup",
+        "DFB-Pokal",
+        "Coppa Italia",
+        "Copa del Rey",
+        "CONCACAF Champions League",
+    ] %}
+
     {% if live_matches %}
-        {% set premier_match = live_matches | selectattr("league", "equalto", "England: Premier League") | list %}
-        {% set other_matches = live_matches | rejectattr("league", "equalto", "England: Premier League") | list %}
+        {% set highlighted_matches = live_matches | selectattr("league", "in", highlight_leagues) | list %}
+        {% set other_matches = live_matches | rejectattr("league", "in", highlight_leagues) | list %}
+        {% set matches_to_display = highlighted_matches + other_matches %}
+        {% set matches_to_display = matches_to_display[:5] %}
 
-        {% if premier_match %}
-            {% set matches_to_display = premier_match + other_matches %}
-        {% else %}
-            {% set matches_to_display = live_matches %}
-        {% endif %}
+        <div class="scores-wrapper" 
+        style="max-width:1500px; margin:auto; padding:20px 15px; display:flex; gap:16px; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;">
 
-        {% set matches_to_display = matches_to_display[:7] %}
-        
-        <table style="width:100%; border-collapse:collapse; margin-bottom:30px; box-shadow:0 2px 6px rgba(0,0,0,0.3); background:#333; border-radius:8px; overflow:hidden; font-size:14px;">
-            <tr>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px;"></th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Date</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">League</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Home Team</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Score</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Away Team</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Status</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Time</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Venue</th>
-            </tr>
+        {% for match in matches_to_display %}
+        <div class="match-card-wrapper" style="flex:0 0 auto; width:280px; display:flex; flex-direction:column;">
 
-            {% for match in matches_to_display %}
-              <tr onclick="window.location.href='/all-scores'" 
-                  style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" 
-                  onmouseover="this.style.background='#555'" 
-                  onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
-                  <td style="padding:4px 6px;">
-                      <button class="expand-btn" 
-                              style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" 
-                              onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
-                  </td>
-                  <td style="padding:4px 6px;">{{ match.date or '' }}</td>
-                  <td style="padding:4px 6px;">{{ match.league }}</td>
-                  <td style="padding:4px 6px;">{{ match.local_team }}</td>
-                  <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
-                  <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
-                  <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
-                      {{ match.status }}
-                  </td>
-                  <td style="padding:4px 6px;">{{ match.time }}</td>
-                  <td style="padding:4px 6px;">{{ match.venue }}</td>
-              </tr>
+          <div class="match-card" 
+              onclick="window.location.href='/all-scores'" 
+              style="background:{% if match.league in highlight_leagues %}#1e1e2f{% else %}#1c1c1c{% endif %}; 
+                      border-radius:10px; padding:16px; cursor:pointer; 
+                      box-shadow:0 4px 8px rgba(0,0,0,0.4); transition: transform 0.2s ease;
+                      display:flex; flex-direction:column; justify-content:space-between; height:100%;">
 
-              <tr id="events-{{ loop.index }}" style="display:none;">
-                  <td colspan="9" style="padding:4px 6px;">
-                      {% if match.events %}
-                      <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px;">
-                          <tr>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Minute</th>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Type</th>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Team</th>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Player</th>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Assist</th>
-                              <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Score</th>
-                          </tr>
-                          {% for ev in match.events %}
-                          <tr style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %};">
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.type }}</td>
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.team }}</td>
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.player }}</td>
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.assist }}</td>
-                              <td style="font-size:12px; padding:4px 6px;">{{ ev.result }}</td>
-                          </tr>
-                          {% endfor %}
-                      </table>
-                      {% else %}
-                      <i>No events</i>
-                      {% endif %}
-                  </td>
-              </tr>
-              {% endfor %}
+            <style>
+              .match-card:hover { transform: translateY(-3px); }
+              @media (min-width: 992px) {
+                .scores-wrapper { overflow-x: visible; }
+                .match-card-wrapper { width: calc((100% - 4*16px)/5); }
+              }
+            </style>
 
+            <!-- Top content -->
+            <div>
+              <!-- League & Date -->
+              <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                {{ match.date or '' }} • {{ match.league }}
+              </div>
+
+              <!-- Teams & Score -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div style="display:flex; flex-direction:column; gap:2px;">
+                  <span style="font-weight:700; font-size:16px;">{{ match.local_team }}</span>
+                  <span style="font-weight:700; font-size:16px;">{{ match.visitor_team }}</span>
+                </div>
+                <div style="font-size:20px; font-weight:bold; background:#000; border-radius:6px; padding:6px 12px; min-width:60px; text-align:center;">
+                  {{ match.local_goals }} - {{ match.visitor_goals }}
+                </div>
+              </div>
+
+              <!-- Status -->
+              <div style="margin-bottom:6px; font-size:14px; font-weight:600; color:
+                  {% if match.status == 'LIVE' %}#ff3b3b
+                  {% elif match.status == 'FT' %}#4caf50
+                  {% else %}#ffc107{% endif %};">
+                {{ match.status }}{% if match.time %} • {{ match.time }}{% endif %}
+              </div>
+
+              <!-- Venue spacer -->
+              <div style="font-size:12px; color:#888; margin-bottom:6px; min-height:18px;">
+                {% if match.venue %}Venue: {{ match.venue }}{% else %}&nbsp;{% endif %}
+              </div>
+            </div>
+
+            <!-- Match Events button -->
+            <!-- <button onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')" 
+                    style="margin-top:8px; background:none; border:1px solid #444; color:#fff; font-size:12px; padding:6px 10px; border-radius:5px; cursor:pointer; width:100%;">
+              Match Events ▼
+            </button> -->
+
+          </div>
+
+          <!-- Hidden Events -->
+          <!-- <div id="events-{{ loop.index }}" 
+              style="display:none; background:#1e1e2f; padding:10px; border-radius:0 0 10px 10px; margin-top:-4px; max-height:300px; overflow-y:auto; transition: max-height 0.3s ease;">
+            {% if match.events %}
+            <table style="width:100%; border-collapse:collapse; font-size:12px; color:#ddd;">
+              <thead>
+                <tr style="background:#333;">
+                  <th style="padding:6px;">Min</th>
+                  <th style="padding:6px;">Type</th>
+                  <th style="padding:6px;">Team</th>
+                  <th style="padding:6px;">Player</th>
+                  <th style="padding:6px;">Assist</th>
+                  <th style="padding:6px;">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ev in match.events %}
+                <tr style="background:{% if loop.index0 % 2 == 0 %}#2a2a2a{% else %}#1a1a1a{% endif %};">
+                  <td style="padding:5px; text-align:center;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                  <td style="padding:5px; text-align:center;">{{ ev.type }}</td>
+                  <td style="padding:5px; text-align:center;">{{ ev.team }}</td>
+                  <td style="padding:5px;">{{ ev.player }}</td>
+                  <td style="padding:5px;">{{ ev.assist }}</td>
+                  <td style="padding:5px; text-align:center;">{{ ev.result }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
-    {% endif %}
+            {% else %}
+            <i style="color:#aaa;">No events</i>
+            {% endif %}
+          </div> -->
+    </div>
+    {% endfor %}
+  </div>
 
-    <!-- {% if live_error %}
-        <p class="error" style="color:#ff4c4c; text-align:center;">Error loading live feed: {{ live_error }}</p>
-    {% elif live_matches %}
-        <table style="width:100%; border-collapse:collapse; margin-bottom:30px; box-shadow:0 2px 6px rgba(0,0,0,0.3); background:#333; border-radius:8px; overflow:hidden; font-size:14px;">
-            <tr>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:left;"></th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Date</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">League</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Home Team</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Score</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Away Team</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Status</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Time</th>
-                <th style="background:#444; color:#fff; font-weight:500; padding:6px 8px; text-align:center;">Venue</th>
-            </tr>
-            {% for match in live_matches %}
-            <tr onclick="window.location.href='/all-scores#match-{{ loop.index }}'" style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}; cursor:pointer; font-size:14px;" onmouseover="this.style.background='#555'" onmouseout="this.style.background='{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %}'">
-                <td style="padding:4px 6px;">
-                    <button class="expand-btn" style="cursor:pointer; background:none; border:none; color:#fff; font-weight:bold; font-size:14px;" onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')">▶</button>
-                </td>
-                <td style="padding:4px 6px;">{{ match.date or '' }}</td>
-                <td style="padding:4px 6px;">{{ match.league }}</td>
-                <td style="padding:4px 6px;">{{ match.local_team }}</td>
-                <td style="padding:4px 6px;">{{ match.local_goals }} - {{ match.visitor_goals }}</td>
-                <td style="padding:4px 6px;">{{ match.visitor_team }}</td>
-                <td style="padding:4px 6px; font-weight:bold; color:{% if match.status == 'LIVE' %}#ff4c4c{% elif match.status == 'FT' %}#4caf50{% else %}#ffc107{% endif %};">
-                    {{ match.status }}
-                </td>
-                <td style="padding:4px 6px;">{{ match.time }}</td>
-                <td style="padding:4px 6px;">{{ match.venue }}</td>
-            </tr>
-            <tr id="events-{{ loop.index }}" style="display:none;">
-                <td colspan="9" style="padding:4px 6px;">
-                    {% if match.events %}
-                    <table style="width:100%; border-collapse:collapse; margin-top:5px; font-size:13px;">
-                        <tr>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Minute</th>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Type</th>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Team</th>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Player</th>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Assist</th>
-                            <th style="background:#555; color:#fff; font-weight:500; font-size:12px; padding:4px 6px;">Score</th>
-                        </tr>
-                        {% for ev in match.events %}
-                        <tr style="background:{% if loop.index0 % 2 == 0 %}#333{% else %}#2a2a2a{% endif %};">
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.type }}</td>
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.team }}</td>
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.player }}</td>
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.assist }}</td>
-                            <td style="font-size:12px; padding:4px 6px;">{{ ev.result }}</td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% else %}
-                    <i>No events</i>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table> -->
+
     {% else %}
-        <p style="text-align:center;">No live matches right now.</p>
+        <p style="text-align:center; font-size:14px; color:#bbb;">No live matches right now.</p>
     {% endif %}
   </div>
 
   <script>
   function toggleEvents(id) {
-      const el = document.getElementById(id);
-      el.style.display = (el.style.display === "none") ? "table-row" : "none";
+    const el = document.getElementById(id);
+    if (el.style.display === "none" || el.style.display === "") {
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
   }
   </script>
+
+
 
   <!-- Blog Section -->
   <section class="blog">

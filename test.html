@@ -1,0 +1,89 @@
+<div class="match-card1-wrapper" style="flex:0 0 auto; width:260px; display:flex; flex-direction:column;">
+  <div class="match-card1" 
+       onclick="window.location.href='/all-scores'" 
+       style="background:{% if match.league in highlight_leagues %}#1e1e2f{% else %}#1c1c1c{% endif %}; 
+              border-radius:10px; padding:16px; cursor:pointer; 
+              box-shadow:0 4px 8px rgba(0,0,0,0.4); transition: transform 0.2s ease;
+              display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+
+.match-card1:hover { transform: translateY(-3px); }
+                        @media (min-width: 992px) {
+                            .scores-wrapper { overflow-x: visible; }
+                            .match-card1-wrapper { width: calc((100% - 4*16px)/5); }
+                        }
+                        </style>
+
+                        <!-- Top content -->
+                        <div>
+                        <!-- League & Date -->
+                        <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                            {{ match.date or '' }} • {{ match.league }}
+                        </div>
+
+                        <!-- Teams & Score -->
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span style="font-weight:700; font-size:16px;">{{ match.local_team }}</span>
+                            <span style="font-weight:700; font-size:16px;">{{ match.visitor_team }}</span>
+                            </div>
+                            <div style="font-size:20px; font-weight:bold; background:#000; border-radius:6px; padding:6px 12px; min-width:60px; text-align:center;">
+                            {{ match.local_goals }} - {{ match.visitor_goals }}
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div style="margin-bottom:6px; font-size:14px; font-weight:600; color:
+                            {% if match.status == 'LIVE' %}#ff3b3b
+                            {% elif match.status == 'FT' %}#4caf50
+                            {% else %}#ffc107{% endif %};">
+                            {{ match.status }}{% if match.time %} • {{ match.time }}{% endif %}
+                        </div>
+
+                        <!-- Venue spacer -->
+                        <div style="font-size:12px; color:#888; margin-bottom:6px; min-height:18px;">
+                            {% if match.venue %}Venue: {{ match.venue }}{% else %}&nbsp;{% endif %}
+                        </div>
+                        </div>
+
+      <!-- Match Events button -->
+      <button onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')" 
+              style="margin-top:8px; background:none; border:1px solid #444; color:#fff; font-size:12px; 
+                     padding:6px 10px; border-radius:5px; cursor:pointer; width:100%;">
+        Match Events ▼
+      </button>
+
+      <!-- Hidden Events (now inside card) -->
+      <div id="events-{{ loop.index }}" 
+          style="display:none; background:#1e1e2f; padding:10px; border-radius:0 0 10px 10px; 
+                 margin-top:8px; max-height:300px; overflow-y:auto; transition:max-height 0.3s ease;">
+          {% if match.events %}
+          <table style="width:100%; border-collapse:collapse; font-size:12px; color:#ddd;">
+            <thead>
+              <tr style="background:#333;">
+                <th style="padding:6px;">Min</th>
+                <th style="padding:6px;">Type</th>
+                <th style="padding:6px;">Team</th>
+                <th style="padding:6px;">Player</th>
+                <th style="padding:6px;">Assist</th>
+                <th style="padding:6px;">Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ev in match.events %}
+              <tr style="background:{% if loop.index0 % 2 == 0 %}#2a2a2a{% else %}#1a1a1a{% endif %};">
+                <td style="padding:5px; text-align:center;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                <td style="padding:5px; text-align:center;">{{ ev.type }}</td>
+                <td style="padding:5px; text-align:center;">{{ ev.team }}</td>
+                <td style="padding:5px;">{{ ev.player }}</td>
+                <td style="padding:5px;">{{ ev.assist }}</td>
+                <td style="padding:5px; text-align:center;">{{ ev.result }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <i style="color:#aaa;">No events</i>
+          {% endif %}
+      </div>
+  </div>
+</div>

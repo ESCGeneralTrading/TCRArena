@@ -6,37 +6,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background: #f9fafb;
+    html, body {
+        height: 100%;
         margin: 0;
-        padding-bottom: 70px;
-        color: #1f1f1f;
     }
 
-    /* Logo Banner */
+    body {
+        font-family:  'Montserrat', sans-serif;
+        background: #f9fafb;
+        color: #1f1f1f;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh; /* ensures footer sticks to bottom */
+    }
+
+    main {
+        flex: 1; /* main content takes all available space */
+    }
+
+    .top-black-bar {
+        background-color: #000;
+        color: #fff;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        padding: 0 1rem;
+        font-weight: normal;
+        font-size: 0.9rem;
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+        /* overflow: hidden; */
+        overflow: visible;
+    }
+
+    .top-black-bar marquee { width: 100%; }
+
     .logo-banner {
       background: #fff;
       text-align: center;
-      padding: 1.5rem 0; /* match memorabilia.html */
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* match shadow size too */
+      padding: 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-
 
     .logo-banner img {
       height: 170px;
       width: auto;
     }
-    
-    .logo-banner img:hover { transform: scale(1.05); }
 
-    h1, h2 {
-        text-align: center;
-        margin: 15px 0;
-        color: #222;
+    header {
+      background: #000;
+      color: #fff;
+      padding: 1rem 0;
+      position: sticky;
+      top: 30px;
+      z-index: 1000;
     }
 
-    /* Match Cards (Live & Search) */
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4rem;
+      justify-content: center;
+      flex-grow: 1;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 25px;
+      height: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .nav-toggle span {
+      display: block;
+      height: 3px;
+      background: #fff;
+      border-radius: 2px;
+    }
+    
+    /* Tablet + Mobile Nav */
+    @media (max-width: 1024px) {
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #000;
+        margin-top: 0.5rem;
+        padding: 1rem;
+        border-radius: 4px;
+        gap: 1.5rem;
+      }
+      nav.active {
+        display: flex;
+      }
+      .nav-toggle {
+        display: flex;
+        align-self: flex-end;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    h1,h2 { text-align: center; margin: 15px 0; color: #222; }
+
+    
     .match-card, .search-card {
         background: #fff;
         border-radius: 12px;
@@ -48,165 +144,157 @@
         transition: transform 0.3s, box-shadow 0.3s;
         position: relative;
     }
-    .match-card:hover, .search-card:hover { 
-        transform: translateY(-3px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-    }
+    .match-card:hover, .search-card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0,0,0,0.12); }
     .match-card { border-left: 5px solid #ff7f50; }
     .search-card { border-left: 5px solid #007bff; }
 
-    .match-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-    .teams {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-        font-size: 18px;
-        font-weight: 500;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-    }
-    .teams > div:first-child { flex: 1; text-align: right; }
-    .teams > div:last-child { flex: 1; text-align: left; }
-    .score {
-        font-weight: 700;
-        font-size: 1.3rem;
-        color: #ff4500;
-        width: 70px;
-        text-align: center;
-        flex-shrink: 0;
-    }
+    .match-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 14px; color: #555; margin-bottom: 10px; }
+    .teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; font-size: 18px; font-weight: 500; margin-bottom: 10px; text-align: center; }
+    .teams > div:first-child { text-align: right; }
+    .teams > div:last-child { text-align: left; }
+    .score { font-weight: 700; font-size: 1.3rem; color: #ff4500; min-width: 70px; text-align: center; }
 
     .status-live { color: #d9534f; font-weight: 700; }
     .status-finished { color: #28a745; font-weight: 700; }
     .status-upcoming { color: #ffc107; font-weight: 700; }
 
-    .expand-btn {
-        cursor: pointer;
-        background: #ff7f50;
-        color: #fff;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 6px;
-        font-weight: 600;
-        transition: all 0.2s;
-        margin: 20px auto 0; /* top 10px, centered horizontally, no bottom margin */
-        display: block; /* makes it take full width horizontally for centering */
-        width: fit-content; /* keeps the button width based on content */
-    }
+    .expand-btn { cursor: pointer; background: #ff7f50; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; transition: all 0.2s; margin: 20px auto 0; display: block; width: fit-content; }
+    .expand-btn:hover { background: #e67343; transform: scale(1.05); }
 
-    .expand-btn:hover { 
-        background: #e67343;
-        transform: scale(1.05);
-    }
+    .events-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .events-table th { background: #333; color: #fff; font-weight: 500; font-size: 13px; padding: 8px; border-radius: 4px; }
+    .events-table td { font-size: 13px; padding: 8px; border-bottom: 1px solid #eee; text-align: center; }
 
-
-    .events-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 12px;
-    }
-    .events-table th {
-        background: #333;
-        color: #fff;
-        font-weight: 500;
-        font-size: 13px;
-        padding: 8px;
-        border-radius: 4px;
-    }
-    .events-table td {
-        font-size: 13px;
-        padding: 8px;
-        border-bottom: 1px solid #eee;
-        text-align: center;
-    }
-
-    /* Search Section */
-    #search-section {
-        max-width: 1600px;
-        margin: 40px auto 60px auto;
-        text-align: center;
-    }
-    #search-section input, #search-section button {
-        padding: 12px 18px;
-        font-size: 15px;
-        margin: 8px 6px 15px 6px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        outline: none;
-        transition: all 0.2s;
-    }
-    #search-section input:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 6px rgba(0,123,255,0.2);
-    }
-    #search-section button {
-        background: #ff7f50;
-        color: #fff;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-    }
+    #search-section { max-width: 1600px; margin: 40px auto 60px auto; text-align: center; }
+    #search-section input, #search-section button { padding: 12px 18px; font-size: 15px; margin: 8px 6px 15px 6px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: all 0.2s; }
+    #search-section input:focus { border-color: #007bff; box-shadow: 0 0 6px rgba(0,123,255,0.2); }
+    #search-section button { background: #ff7f50; color: #fff; border: none; font-weight: 600; cursor: pointer; }
     #search-section button:hover { background: #e67343; }
+    #filter-league-venue { padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; width: 250px; transition: all 0.2s; }
+    #filter-league-venue:focus { border-color: #007bff; box-shadow: 0 0 6px rgba(0,123,255,0.2); }
 
-    #filter-league-venue {
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        width: 250px;
-        transition: all 0.2s;
+    /* Center headers for top players and fighters */
+    #players-header,
+    #fighters-header {
+        text-align: center;          /* Center the text */
+        font-size: 1.5rem;           /* Base font size */
+        font-weight: 600;            /* Bold header */
+        margin: 20px 0;              /* Spacing above and below */
+        color: #222;                 /* Dark color for readability */
+        word-wrap: break-word;       /* Wrap long text on smaller screens */
+        padding: 0 10px;             /* Small padding for mobile */
     }
-    #filter-league-venue:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 6px rgba(0,123,255,0.2);
+
+    /* Make text responsive */
+    @media (max-width: 768px) {
+        #players-header,
+        #fighters-header {
+            font-size: 1.1rem;       /* Slightly smaller on tablets */
+        }
+    }
+
+    @media (max-width: 480px) {
+        #players-header,
+        #fighters-header {
+            font-size: 1rem;       /* Smaller on mobile */
+        }
     }
 
     .error { color: red; font-weight: 500; }
 
-    /* Footer */
     footer {
         background: #000;
         color: #fff;
         text-align: center;
-        padding: 1rem;
+        padding: 2rem 1rem;
         font-size: 0.9rem;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
     }
-    footer a { color: #ffd700; text-decoration: underline; }
+    footer a {
+        color: #ffd700;
+        text-decoration: underline;
+    }
 
-    /* Responsive */
-    @media(max-width: 1024px){
-        .logo-banner img { max-height: 10vh; }
-        .teams { font-size: 16px; }
-        .score { font-size: 1.1rem; width: 60px; }
+    /* Collapsible / Tabs / Responsive Styles */
+    .collapsible-wrapper { position: relative; display: inline-block; }
+    .players-list { display: none; position: absolute; top: 100%; left: 0; background: #fff; list-style: none; margin: 0; padding: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 999; min-width: 160px; }
+    .players-list li { padding: 10px 16px; cursor: pointer; font-weight: 500; color: #021638; }
+    .players-list li:hover { background: #f2f2f2; }
+
+    .tabs-container { display: flex; justify-content: center; margin: 30px 0; flex-wrap: wrap; gap: 9px; font-family: 'Montserrat', sans-serif; }
+    .tab-button { background-color: transparent; border: none; padding: 12px 24px; cursor: pointer; color: #021638; font-weight: bold; font-size: 1rem; text-decoration: none; transition: all 0.2s; }
+    .tab-button:hover { text-decoration: underline; }
+    .tab-button.active { text-decoration: underline; }
+
+    .tab-content { display: none; max-width: 1490px; margin: 0 auto 40px auto; }
+    /* Make tabs inline and scrollable on small screens */
+    @media (max-width: 480px) {
+    .tabs-container {
+        flex-wrap: nowrap;      
+        justify-content: space-between; 
+        padding: 0 5px;
+        position: relative; /* ensure dropdowns are positioned relative to container */
     }
-    @media(max-width: 768px){
-        .match-header { flex-direction: column; align-items: flex-start; }
-        .teams { flex-direction: column; align-items: flex-start; line-height: 1.5rem; }
-        .score { margin: 5px 0; }
-        #filter-league-venue { width: 100%; margin-bottom: 10px; }
+
+    .tabs-container .tab-button,
+    .collapsible-wrapper > .tab-button {
+        flex: 1 1 0;            
+        font-size: 0.75rem;     
+        padding: 6px 4px;
+        text-align: center;
+        white-space: nowrap;
+        min-width: 0;           
     }
-    @media(max-width: 480px){
-        .logo-banner img { max-height: 8vh; }
-        .teams { font-size: 14px; }
-        .score { font-size: 1rem; width: 50px; }
-        #search-section input, #search-section button { font-size: 13px; padding: 10px 14px; }
+
+    /* Dropdown lists open absolutely below button */
+    .collapsible-wrapper {
+        position: relative; /* parent wrapper is relative */
     }
+
+    .players-list, .fighters-list {
+        display: none;
+        position: absolute; /* float over content, no push */
+        top: 100%;          /* directly below button */
+        left: 0;
+        right: 0;           /* full width of button */
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        z-index: 999;
+        margin-top: 4px;
+    }
+
+    .players-list li, .fighters-list li {
+        padding: 10px 16px;
+        cursor: pointer;
+        font-weight: 500;
+        color: #021638;
+    }
+
+    .players-list li:hover, .fighters-list li:hover {
+        background: #f2f2f2;
+    }
+}
+    
+
+    /* @media(max-width: 1024px){ .logo-banner img { max-height: 10vh; } .teams { font-size: 16px; } .score { font-size: 1.1rem; width: 60px; } } */
+    @media(max-width: 768px){ .match-header { flex-direction: column; align-items: flex-start; } .teams { flex-direction: column; align-items: flex-start; line-height: 1.5rem; } .score { margin: 5px 0; } #filter-league-venue { width: 100%; margin-bottom: 10px; } }
+    /* @media(max-width: 480px){ .logo-banner img { max-height: 8vh; } .teams { font-size: 14px; } .score { font-size: 1rem; width: 50px; } #search-section input, #search-section button { font-size: 13px; padding: 10px 14px; } } */
+
+    .live-dot { display: inline-block; width: 13px; height: 13px; margin-left: 4px; margin-top: -2px; border-radius: 30%; background-color: #d9534f; position: relative; vertical-align: middle; animation: pulse 1.2s infinite; }
+    .live-dot::after { content: ''; position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; background: #fff; border-radius: 50%; }
+    @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
+
 </style>
 </head>
 <body>
+
+<!-- Black top band with marquee -->
+  <div class="top-black-bar">
+    <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop();" onmouseout="this.start();">
+      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Exclusive offers, rare collectibles, limited editions &amp; more!&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Sign up today and never miss a deal!
+    </marquee>
+  </div>
 
 <div class="logo-banner">
     <a href="{{ url_for('home') }}">
@@ -214,151 +302,568 @@
     </a>
 </div>
 
-{% if live_error %}
-<p class="error">Error loading live feed: {{ live_error }}</p>
-{% elif live_matches %}
-    {% for match in live_matches %}
-    <div class="match-card">
-        <div class="match-header">
-            <div class="match-info">{{ match.date }} | {{ match.league }} | {{ match.venue }}</div>
-            <div class="match-info status-{% if match.status == 'LIVE' %}live{% elif match.status == 'FT' %}finished{% else %}upcoming{% endif %}">{{ match.status }} | {{ match.time }}</div>
-        </div>
-        <div class="teams">
-            <div>{% if match.league_id %}
-                    <a href="/team/{{ match.league_id }}/{{ match.local_team }}">{{ match.local_team }}</a>
-                {% else %}
-                    {{ match.local_team }}
-                {% endif %}
+<!-- Header / Nav -->
+  <header>
+    <div class="header-container">
+      <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation" role="button" tabindex="0">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <nav id="navMenu">
+        <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
+        <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
+        <a href="{{ url_for('all_scores') }}">Live Scores</a>
+        <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
+        <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
+        <a href="#">Partner's Tickets</a>
+        <a href="https://www.thecollectroom.com/">Shop</a>
+        <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
+        <a href="{{ url_for('all_videos') }}">
+          Ar <svg 
+            width="20" 
+            height="20" 
+            viewBox="0 0 24 24"
+            fill="white" 
+            style="vertical-align: middle; border: 1px solid white; padding: 1.5px; box-sizing: content-box; border-radius: 5px;">
+            <polygon points="6,4 20,12 6,20" />
+          </svg> na Play
+        </a>
+      </nav>
+    </div>
+  </header>
+    <main>
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="openTab(event, 'live')">
+                LIVE MATCH <span class="live-dot"></span>
+            </button>
+            <button class="tab-button" onclick="openTab(event, 'table')">TABLE</button>
+
+            <div class="collapsible-wrapper">
+                <button class="tab-button" onclick="togglePlayersList()">TOP PLAYERS ▼</button>
+                <ul id="players-list" class="players-list">
+                    <li onclick="showSport('Football')">Football</li>
+                    <li onclick="showSport('Basketball')">Basketball</li>
+                    <li onclick="showSport('F1 Driver')">F1 Driver</li>
+                    <li onclick="showSport('Cricket')">Cricket</li>
+                </ul>
             </div>
-            <div class="score">{{ match.local_goals }} - {{ match.visitor_goals }}</div>
-            <div>{% if match.league_id %}
-                    <a href="/team/{{ match.league_id }}/{{ match.visitor_team }}">{{ match.visitor_team }}</a>
-                {% else %}
-                    {{ match.visitor_team }}
-                {% endif %}
+
+            <div class="collapsible-wrapper">
+                <button class="tab-button" onclick="toggleFightersList()">TOP FIGHTERS ▼</button>
+                <ul id="fighters-list" class="players-list">
+                    <li onclick="showFighters('MMA')">MMA</li>
+                    <li onclick="showFighters('Boxing')">Boxing</li>
+                </ul>
             </div>
         </div>
-        <button class="expand-btn" onclick="toggleEvents('events-{{ loop.index }}')">View Events</button>
-        <div id="events-{{ loop.index }}" style="display:none; margin-top:10px;">
-            {% if match.events %}
-            <table class="events-table">
-                <tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>
-                {% for ev in match.events %}
-                <tr>
-                    <td>{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
-                    <td>{{ ev.type }}</td>
-                    <td>{{ ev.team }}</td>
-                    <td>{{ ev.player }}</td>
-                    <td>{{ ev.assist }}</td>
-                    <td>{{ ev.result }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-            {% else %}
-            <i>No events</i>
+
+        <!-- Tab Contents -->
+        <div id="live" class="tab-content" style="display:block;">
+            {% if live_error %}
+                <p class="error">Error loading live feed: {{ live_error }}</p>
+            {% elif live_matches %}
+                <div id="live-scores-container" style="color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
+
+                    {% set highlight_leagues = [
+                        "England: Premier League",
+                        "Spain: La Liga",
+                        "Italy: Serie A",
+                        "Germany: Bundesliga",
+                        "France: Ligue 1",
+                        "Portugal: Primeira Liga",
+                        "Netherlands: Eredivisie",
+                        "Brazil: Campeonato Brasileiro Série A",
+                        "USA: Major League Soccer",
+                        "Saudi Arabia: Saudi Pro League",
+                        "FIFA World Cup",
+                        "UEFA Champions League",
+                        "Copa Libertadores",
+                        "UEFA European Championship",
+                        "Copa America",
+                        "FA Cup",
+                        "DFB-Pokal",
+                        "Coppa Italia",
+                        "Copa del Rey",
+                        "CONCACAF Champions League"
+                    ] %}
+
+                    {% if live_matches %}
+                        {% set highlighted_matches = live_matches | selectattr("league", "in", highlight_leagues) | list %}
+                        {% set other_matches = live_matches | rejectattr("league", "in", highlight_leagues) | list %}
+                        {% set matches_to_display = highlighted_matches + other_matches %}
+                        {% set matches_to_display = matches_to_display[:5] %}
+
+                        <div class="scores-wrapper" 
+                            style="max-width:2000px; margin:auto; padding:20px 15px; display:flex; gap:15px; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch; gap: 30px;">
+
+                            {% for match in matches_to_display %}
+                            <div class="match-card1-wrapper" style="flex:0 0 auto; width:265px; display:flex; flex-direction:column;">
+
+                                <div class="match-card1" 
+                                    onclick="window.location.href='/all-scores'" 
+                                    style="background:{% if match.league in highlight_leagues %}#1e1e2f{% else %}#1c1c1c{% endif %}; 
+                                        border-radius:10px; padding:16px; cursor:pointer; 
+                                        box-shadow:0 4px 8px rgba(0,0,0,0.4); transition: transform 0.2s ease;
+                                        display:flex; flex-direction:column; justify-content:space-between;">
+
+                                    <style>
+                                    .match-card1:hover { transform: translateY(-3px); }
+                                    @media (min-width: 992px) {
+                                        .scores-wrapper { overflow-x: visible; }
+                                        .match-card1-wrapper { width: calc((100% - 4*16px)/5); }
+                                    }
+                                    </style>
+
+                                    <!-- Top content -->
+                                    <div>
+                                        <!-- League & Date -->
+                                        <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                                            {{ match.date or '' }} • {{ match.league }}
+                                        </div>
+
+                                        <!-- Teams & Score -->
+                                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                                <span style="font-weight:700; font-size:16px;">{{ match.local_team }}</span>
+                                                <span style="font-weight:700; font-size:16px;">{{ match.visitor_team }}</span>
+                                            </div>
+                                            <div style="font-size:20px; font-weight:bold; background:#000; border-radius:6px; padding:6px 12px; min-width:60px; text-align:center;">
+                                                {{ match.local_goals }} - {{ match.visitor_goals }}
+                                            </div>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div style="margin-bottom:6px; font-size:14px; font-weight:600; color:
+                                            {% if match.status == 'LIVE' %}#ff3b3b
+                                            {% elif match.status == 'FT' %}#4caf50
+                                            {% else %}#ffc107{% endif %};">
+                                            {{ match.status }}{% if match.time %} • {{ match.time }}{% endif %}
+                                        </div>
+
+                                        <!-- Venue spacer -->
+                                        <div style="font-size:12px; color:#888; margin-bottom:2px; min-height:5px;">
+                                            {% if match.venue %}Venue: {{ match.venue }}{% else %}&nbsp;{% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Match Events button -->
+                                    <button onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')" 
+                                            style="margin-top:1px; background:none; border:1px solid #444; color:#fff; font-size:12px; padding:6px 10px; border-radius:5px; cursor:pointer; width:100%;">
+                                        Match Events ▼
+                                    </button>
+
+                                </div>
+
+                                <!-- Hidden Events -->
+                                <div id="events-{{ loop.index }}" 
+                                    style="display:none; background:#1e1e2f; padding:10px; border-radius:0 0 10px 10px; 
+                                            margin-top:8px; max-height:200px; overflow-y:auto;">
+                                    {% if match.events %}
+                                        <table style="width:100%; border-collapse:collapse; font-size:12px; color:#ddd;">
+                                            <thead>
+                                                <tr style="background:#333;">
+                                                    <th style="padding:6px;">Min</th>
+                                                    <th style="padding:6px;">Type</th>
+                                                    <th style="padding:6px;">Team</th>
+                                                    <th style="padding:6px;">Player</th>
+                                                    <th style="padding:6px;">Assist</th>
+                                                    <th style="padding:6px;">Score</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for ev in match.events %}
+                                                <tr style="background:{% if loop.index0 % 2 == 0 %}#2a2a2a{% else %}#1a1a1a{% endif %};">
+                                                    <td style="padding:5px; text-align:center;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
+                                                    <td style="padding:5px; text-align:center;">{{ ev.type }}</td>
+                                                    <td style="padding:5px; text-align:center;">{{ ev.team }}</td>
+                                                    <td style="padding:5px;">{{ ev.player }}</td>
+                                                    <td style="padding:5px;">{{ ev.assist }}</td>
+                                                    <td style="padding:5px; text-align:center;">{{ ev.result }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <i style="color:#aaa;">No events</i>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <script>
+                        function equalizeCardHeights() {
+                            const cards = document.querySelectorAll('.match-card1');
+                            let maxHeight = 0;
+
+                            // Reset heights first
+                            cards.forEach(card => card.style.height = 'auto');
+
+                            // Find max height
+                            cards.forEach(card => {
+                                if (card.offsetHeight > maxHeight) {
+                                    maxHeight = card.offsetHeight;
+                                }
+                            });
+
+                            // Apply max height
+                            cards.forEach(card => card.style.height = maxHeight + 'px');
+                        }
+
+                        function toggleEvents(id) {
+                            const el = document.getElementById(id);
+                            if (el.style.display === "none" || el.style.display === "") {
+                                el.style.display = "block";
+                            } else {
+                                el.style.display = "none";
+                            }
+                            // Equalize heights after toggle
+                            equalizeCardHeights();
+                        }
+
+                        window.addEventListener('load', equalizeCardHeights);
+                        window.addEventListener('resize', equalizeCardHeights);
+                        </script>
+
+                    {% else %}
+                        <p style="text-align:center; font-size:14px; color:#bbb;">No live matches right now.</p>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
-    </div>
-    {% endfor %}
-{% else %}
-<p style="text-align:center;">No live matches right now.</p>
-{% endif %}
 
-<div id="search-section">
-    <h2>Search Past/Upcoming Matches</h2>
-    <input type="date" id="search-date">
-    <button onclick="searchMatches()">Search</button>
 
-    <div style="text-align:right; margin-bottom:10px;">
-        <input type="text" id="filter-league-venue" placeholder="Filter by League | Venue" onkeyup="filterSearchResults()">
-    </div>
+        <div id="search-section">
+            <h2>Search Past/Upcoming Matches</h2>
+            <input type="date" id="search-date">
+            <button onclick="searchMatches()">Search</button>
 
-    <div id="search-results"></div>
-</div>
+            <div style="text-align:right; margin-bottom:10px;">
+                <input type="text" id="filter-league-venue" placeholder="Filter by League | Venue" onkeyup="filterSearchResults()">
+            </div>
 
-<footer>
-    &copy; 2025 TcR Arena. All rights reserved. |
-    <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-    <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
-</footer>
+            <div id="search-results"></div>
+        </div>
+        </div>
 
-<script>
-function toggleEvents(id){
-    const el=document.getElementById(id);
-    el.style.display = (el.style.display==="none")?"block":"none";
-}
+        <div id="table" class="tab-content">
+            <p>League tables will be shown here.</p>
+        </div>
+        <!-- <div id="players-header"></div> -->
+        <div id="players-header" style="text-align:center; font-size:1.3rem; font-weight:500; margin:20px 0; color:#222;"></div>
 
-function formatDateToDDMMYYYY(dateStr){
-    const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2,'0');
-    const month = String(d.getMonth()+1).padStart(2,'0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-}
 
-(function setDatePickerLimits(){
-    const today = new Date();
-    const past7 = new Date(); past7.setDate(today.getDate()-7);
-    const next7 = new Date(); next7.setDate(today.getDate()+7);
-    function formatForInput(d){
-        const yyyy=d.getFullYear(), mm=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
-        return `${yyyy}-${mm}-${dd}`;
+        <div id="top-players" class="tab-content"><div id="players-table-container"></div></div>
+        <!-- <div id="fighters-header"></div> -->
+        <div id="fighters-header" style="text-align:center; font-size:1.3rem; font-weight:500; margin:20px 0; color:#222;"></div>
+        <div id="top-fighters" class="tab-content"><div id="fighters-table-container"></div></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 TcR Arena. All rights reserved. |
+        <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+        <a href="{{ url_for('join') }}">Contact</a>
+        </p>
+    </footer>
+    <script>
+    function toggleEvents(id){
+        const el=document.getElementById(id);
+        el.style.display = (el.style.display==="none")?"block":"none";
     }
-    const dateInput=document.getElementById('search-date');
-    dateInput.min=formatForInput(past7);
-    dateInput.max=formatForInput(next7);
-})();
 
-function searchMatches(){
-    const dateInput=document.getElementById('search-date').value;
-    if(!dateInput) return alert('Please select a date');
-    const formattedDate=formatDateToDDMMYYYY(dateInput);
-    fetch(`/search?date=${formattedDate}`)
-        .then(res=>res.json())
-        .then(data=>{
-            const container=document.getElementById('search-results');
-            if(data.error){ container.innerHTML=`<p style="color:red;">${data.error}</p>`; return;}
-            if(data.matches.length===0){ container.innerHTML="<p>No matches found.</p>"; return;}
-            let html='';
-            data.matches.forEach((m,i)=>{
-                html+=`<div class="search-card">
-                    <div class="match-header">
-                        <div class="match-info">${m.date} | ${m.league} | ${m.venue}</div>
-                        <div class="match-info">${m.status} | ${m.time}</div>
-                    </div>
-                    <div class="teams">
-                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.local_team)}">${m.local_team}</a>` : m.local_team}</div>
-                        <div class="score">${m.local_goals} - ${m.visitor_goals}</div>
-                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.visitor_team)}">${m.visitor_team}</a>` : m.visitor_team}</div>
-                    </div>
-                    <button class="expand-btn" onclick="toggleEvents('search-events-${i}')">View Events</button>
-                    <div id="search-events-${i}" style="display:none; margin-top:10px;">`;
-                if(m.events.length){
-                    html+=`<table class="events-table"><tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>`;
-                    m.events.forEach(ev=>{
-                        html+=`<tr>
-                            <td>${ev.minute}${ev.extra_min? '+'+ev.extra_min:''}</td>
-                            <td>${ev.type}</td><td>${ev.team}</td><td>${ev.player}</td><td>${ev.assist}</td><td>${ev.result}</td>
-                        </tr>`;
-                    });
-                    html+='</table>';
-                } else { html+='<i>No events</i>'; }
-                html+='</div></div>';
-            });
-            container.innerHTML=html;
-        })
-        .catch(err=>document.getElementById('search-results').innerHTML=`<p style="color:red;">Error: ${err}</p>`);
-}
+    function formatDateToDDMMYYYY(dateStr){
+        const d = new Date(dateStr);
+        const day = String(d.getDate()).padStart(2,'0');
+        const month = String(d.getMonth()+1).padStart(2,'0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
 
-function filterSearchResults() {
-    const filterText = document.getElementById('filter-league-venue').value.toLowerCase();
-    const cards = document.querySelectorAll('#search-results .search-card');
-    cards.forEach(card => {
-        const matchInfo = card.querySelector('.match-header .match-info:first-child').innerText.toLowerCase();
-        card.style.display = matchInfo.includes(filterText) ? '' : 'none';
+    (function setDatePickerLimits(){
+        const today = new Date();
+        const past7 = new Date(); past7.setDate(today.getDate()-7);
+        const next7 = new Date(); next7.setDate(today.getDate()+7);
+        function formatForInput(d){
+            const yyyy=d.getFullYear(), mm=String(d.getMonth()+1).padStart(2,'0'), dd=String(d.getDate()).padStart(2,'0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        const dateInput=document.getElementById('search-date');
+        dateInput.min=formatForInput(past7);
+        dateInput.max=formatForInput(next7);
+    })();
+
+    function searchMatches(){
+        const dateInput=document.getElementById('search-date').value;
+        if(!dateInput) return alert('Please select a date');
+        const formattedDate=formatDateToDDMMYYYY(dateInput);
+        fetch(`/search?date=${formattedDate}`)
+            .then(res=>res.json())
+            .then(data=>{
+                const container=document.getElementById('search-results');
+                if(data.error){ container.innerHTML=`<p style="color:red;">${data.error}</p>`; return;}
+                if(data.matches.length===0){ container.innerHTML="<p>No matches found.</p>"; return;}
+                let html='';
+                data.matches.forEach((m,i)=>{
+                    html+=`<div class="search-card">
+                        <div class="match-header">
+                            <div class="match-info">${m.date} | ${m.league} | ${m.venue}</div>
+                            <div class="match-info">${m.status} | ${m.time}</div>
+                        </div>
+                        <div class="teams">
+                            <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.local_team)}">${m.local_team}</a>` : m.local_team}</div>
+                            <div class="score">${m.local_goals} - ${m.visitor_goals}</div>
+                            <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.visitor_team)}">${m.visitor_team}</a>` : m.visitor_team}</div>
+                        </div>
+                        <button class="expand-btn" onclick="toggleEvents('search-events-${i}')">View Events</button>
+                        <div id="search-events-${i}" style="display:none; margin-top:10px;">`;
+                    if(m.events.length){
+                        html+=`<table class="events-table"><tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>`;
+                        m.events.forEach(ev=>{
+                            html+=`<tr>
+                                <td>${ev.minute}${ev.extra_min? '+'+ev.extra_min:''}</td>
+                                <td>${ev.type}</td><td>${ev.team}</td><td>${ev.player}</td><td>${ev.assist}</td><td>${ev.result}</td>
+                            </tr>`;
+                        });
+                        html+='</table>';
+                    } else { html+='<i>No events</i>'; }
+                    html+='</div></div>';
+                });
+                container.innerHTML=html;
+            })
+            .catch(err=>document.getElementById('search-results').innerHTML=`<p style="color:red;">Error: ${err}</p>`);
+    }
+
+    function filterSearchResults() {
+        const filterText = document.getElementById('filter-league-venue').value.toLowerCase();
+        const cards = document.querySelectorAll('#search-results .search-card');
+        cards.forEach(card => {
+            const matchInfo = card.querySelector('.match-header .match-info:first-child').innerText.toLowerCase();
+            card.style.display = matchInfo.includes(filterText) ? '' : 'none';
+        });
+    }
+
+    function openTab(evt, tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tc => tc.style.display = 'none');
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+
+    // Mobile nav toggle
+    document.getElementById('navToggle').addEventListener('click', function() {
+        document.getElementById('navMenu').classList.toggle('active');
     });
-}
-</script>
+
+    function showSport(sport) {
+        const container = document.getElementById('players-table-container');
+        fetch(`/top-players-json?sport=${encodeURIComponent(sport)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.players || data.players.length === 0) {
+                    container.innerHTML = "<p>No players found for " + sport + ".</p>";
+                    return;
+                }
+
+                let html = `<table class="events-table">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Club (2025)</th>
+                        <th>Nationality</th>
+                        <th>Source(s)</th>
+                        <th>Credits</th>
+                    </tr>`;
+
+                data.players.forEach(p => {
+                    html += `<tr>
+                        <td>${p.rank}</td>
+                        <td>${p.player_name}</td>
+                        <td>${p.club || ''}</td>
+                        <td>${p.nationality || ''}</td>
+                        <td>${p.sources || ''}</td>
+                        <td>${p.credits || ''}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                container.innerHTML = html;
+            })
+            .catch(err => container.innerHTML = `<p style="color:red;">Error loading players: ${err}</p>`);
+    }
+
+    function showSport(sport) {
+        // Hide fighters header
+        document.getElementById('fighters-header').innerText = '';
+
+        // Close the TOP PLAYERS dropdown
+        document.getElementById('players-list').style.display = 'none';
+
+        // Switch to the Top Players tab
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tc => tc.style.display = 'none');
+        document.getElementById('top-players').style.display = 'block';
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        document.querySelector(".collapsible-wrapper .tab-button").classList.add("active");
+
+        // Set dynamic header
+        const now = new Date();
+        const month = now.toLocaleString('default', { month: 'long' }).toUpperCase(); 
+        const year = now.getFullYear();
+        document.getElementById('players-header').innerText = `${sport.toUpperCase()} TOP PLAYER | MONTH: ${month} ${year}`;
+
+        // Fetch and render players
+        const container = document.getElementById('players-table-container');
+        fetch(`/top-players-json?sport=${encodeURIComponent(sport)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.players || data.players.length === 0) {
+                    container.innerHTML = "<p>No players found for " + sport + ".</p>";
+                    return;
+                }
+
+                let html = `<table class="events-table">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player Name</th>
+                        <th>Club (${year})</th>
+                        <th>Nationality</th>
+                        <th>Source(s)</th>
+                        <th>Credits</th>
+                    </tr>`;
+
+                data.players.forEach(p => {
+                    html += `<tr>
+                        <td>${p.rank}</td>
+                        <td>${p.player_name}</td>
+                        <td>${p.club || ''}</td>
+                        <td>${p.nationality || ''}</td>
+                        <td>${p.sources || ''}</td>
+                        <td>${p.credits || ''}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                container.innerHTML = html;
+            })
+            .catch(err => container.innerHTML = `<p style="color:red;">Error loading players: ${err}</p>`);
+    }
+
+
+    function showFighters(sport) {
+        // Hide players header
+        document.getElementById('players-header').innerText = '';
+
+        // Close the TOP FIGHTERS dropdown
+        document.getElementById('fighters-list').style.display = 'none';
+
+        // Switch to Top Fighters tab
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tc => tc.style.display = 'none');
+        document.getElementById('top-fighters').style.display = 'block';
+
+        // Set dynamic header
+        const now = new Date();
+        const month = now.toLocaleString('default', { month: 'long' }).toUpperCase();
+        const year = now.getFullYear();
+        document.getElementById('fighters-header').innerText = `${sport.toUpperCase()} TOP FIGHTER | MONTH: ${month} ${year}`;
+
+        // Fetch and render fighters
+        const container = document.getElementById('fighters-table-container');
+        fetch(`/top-fighters-json?sport=${encodeURIComponent(sport)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (!data.players || data.players.length === 0) {
+                    container.innerHTML = "<p>No fighters found for " + sport + ".</p>";
+                    return;
+                }
+
+                let html = `<table class="events-table">
+                    <tr>
+                        <th>Rank</th>
+                        <th>Fighter Name</th>
+                        <th>Club (${year})</th>
+                        <th>Nationality</th>
+                        <th>Source(s)</th>
+                        <th>Credits</th>
+                    </tr>`;
+
+                data.players.forEach(p => {
+                    html += `<tr>
+                        <td>${p.rank}</td>
+                        <td>${p.player_name}</td>
+                        <td>${p.club || ''}</td>
+                        <td>${p.nationality || ''}</td>
+                        <td>${p.sources || ''}</td>
+                        <td>${p.credits || ''}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                container.innerHTML = html;
+            })
+            .catch(err => container.innerHTML = `<p style="color:red;">Error loading fighters: ${err}</p>`);
+    }
+
+    function toggleTopPlayersList() {
+        const list = document.getElementById("top-players-list");
+        list.style.display = (list.style.display === "none") ? "block" : "none";
+    }
+    function togglePlayersList() {
+        const list = document.getElementById("players-list");
+        list.style.display = (list.style.display === "block") ? "none" : "block";
+    }
+
+    function toggleFightersList() {
+        const list = document.getElementById("fighters-list");
+        list.style.display = (list.style.display === "block") ? "none" : "block";
+    }
+
+    // Close list if clicked outside
+    document.addEventListener("click", function(event) {
+        const wrapper = document.querySelector(".collapsible-wrapper");
+        if (!wrapper.contains(event.target)) {
+            document.getElementById("players-list").style.display = "none";
+        }
+    });
+
+    document.addEventListener("click", function(event) {
+        if (!document.querySelector("#players-list").contains(event.target) &&
+            !event.target.closest("button[onclick='togglePlayersList()']")) {
+            document.getElementById("players-list").style.display = "none";
+        }
+        if (!document.querySelector("#fighters-list").contains(event.target) &&
+            !event.target.closest("button[onclick='toggleFightersList()']")) {
+            document.getElementById("fighters-list").style.display = "none";
+        }
+    });
+
+    function openTab(evt, tabName) {
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(tc => tc.style.display = 'none');
+
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+
+        // Hide TOP PLAYERS / TOP FIGHTERS headers for LIVE MATCH and TABLE tabs
+        if (tabName === 'live' || tabName === 'table') {
+            document.getElementById('players-header').innerText = '';
+            document.getElementById('fighters-header').innerText = '';
+        }
+    }
+
+    </script>
 
 </body>
 </html>

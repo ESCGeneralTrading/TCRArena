@@ -626,9 +626,13 @@ class YouTubeVideoAdmin(ModelView):
         return redirect(url_for('login'))
 
 admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
+
 # ====================
 # --- LIVE SCORES ---
 # ====================
+
+
+
 LIVE_FEED_URL = "http://www.goalserve.com/getfeed/538e881e9f4c4cb1d74708ddd91c6aa4/soccernew/live?json=1"
 
 def date_to_day_code(input_date_str):

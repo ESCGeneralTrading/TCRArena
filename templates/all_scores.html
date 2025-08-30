@@ -533,19 +533,18 @@
                     {% endif %}
                 </div>
             {% endif %}
-        </div>
 
+             <div id="search-section">
+                <h2>Search Past/Upcoming Matches</h2>
+                <input type="date" id="search-date">
+                <button onclick="searchMatches()">Search</button>
 
-        <div id="search-section">
-            <h2>Search Past/Upcoming Matches</h2>
-            <input type="date" id="search-date">
-            <button onclick="searchMatches()">Search</button>
-
-            <div style="text-align:right; margin-bottom:10px;">
-                <input type="text" id="filter-league-venue" placeholder="Filter by League | Venue" onkeyup="filterSearchResults()">
-            </div>
+                <div style="text-align:right; margin-bottom:10px;">
+                    <input type="text" id="filter-league-venue" placeholder="Filter by League | Venue" onkeyup="filterSearchResults()">
+                </div>
 
             <div id="search-results"></div>
+         </div>
         </div>
         </div>
 

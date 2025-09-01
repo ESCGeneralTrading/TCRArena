@@ -162,6 +162,7 @@
     .expand-btn:hover { background: #e67343; transform: scale(1.05); }
 
     .events-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .events-table th1 { background: #007bff; color: #fff; font-weight: 500; font-size: 13px; padding: 8px; border-radius: 4px; }
     .events-table th { background: #333; color: #fff; font-weight: 500; font-size: 13px; padding: 8px; border-radius: 4px; }
     .events-table td { font-size: 13px; padding: 8px; border-bottom: 1px solid #eee; text-align: center; }
 
@@ -200,6 +201,53 @@
         }
     }
 
+    .oval-button {
+        background-color: black;
+        color: white;
+        border: 3px solid white;
+        border-radius: 50px; /* more rounded for true oval */
+        padding: 10px 25px;
+        font-weight: bold;
+        font-size: 1rem;  
+        cursor: pointer;
+        transition: all 0.2s;
+        min-width: 120px;        /* ensures buttons don't get too small */
+        text-align: center;
+        flex: 1 1 auto;          /* allows buttons to grow/shrink */
+        max-width: 200px;        /* prevents extremely wide buttons */
+    }
+
+    .oval-button:hover {
+        background-color: #333;
+        transform: scale(1.05);
+    }
+
+    /* Container to manage button wrapping */
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+        .oval-button {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            min-width: 90px;
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .oval-button {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            min-width: 70px;
+        }
+    }
+
     .error { color: red; font-weight: 500; }
 
     footer {
@@ -219,6 +267,28 @@
     .players-list { display: none; position: absolute; top: 100%; left: 0; background: #fff; list-style: none; margin: 0; padding: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 999; min-width: 160px; }
     .players-list li { padding: 10px 16px; cursor: pointer; font-weight: 500; color: #021638; }
     .players-list li:hover { background: #f2f2f2; }
+    .table-header-row th {
+        background-color: #227fe3; /* Example: orange for the main header */
+        color: #fff;
+        text-align: center;
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+
+    .table-column-headers th {
+        background-color: #333; /* Dark grey for column headers */
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    .events-table td {
+        font-size: 13px;
+        padding: 8px;
+        border-bottom: 1px solid #eee;
+        text-align: center;
+    }
 
     .tabs-container { display: flex; justify-content: center; margin: 30px 0; flex-wrap: wrap; gap: 9px; font-family: 'Montserrat', sans-serif; }
     .tab-button { background-color: transparent; border: none; padding: 12px 24px; cursor: pointer; color: #021638; font-weight: bold; font-size: 1rem; text-decoration: none; transition: all 0.2s; }
@@ -338,7 +408,15 @@
             <button class="tab-button active" onclick="openTab(event, 'live')">
                 LIVE MATCH <span class="live-dot"></span>
             </button>
-            <button class="tab-button" onclick="openTab(event, 'table')">TABLE</button>
+            
+
+            <div class="collapsible-wrapper">
+                <button class="tab-button" onclick="toggleTableList()">TABLE ▼</button>
+                <ul id="table-list" class="players-list">
+                    <li onclick="showTable('Football')">Football</li>
+                    <li onclick="showTable('Cricket')">Cricket</li>
+                </ul>
+            </div>
 
             <div class="collapsible-wrapper">
                 <button class="tab-button" onclick="togglePlayersList()">TOP PLAYERS ▼</button>
@@ -366,7 +444,7 @@
             {% elif live_matches %}
                 <div id="live-scores-container" style="color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
 
-                    {% set highlight_leagues = [
+                    <!-- {% set highlight_leagues = [
                         "England: Premier League",
                         "Spain: La Liga",
                         "Italy: Serie A",
@@ -387,12 +465,30 @@
                         "Coppa Italia",
                         "Copa del Rey",
                         "CONCACAF Champions League"
+                    ] %} -->
+
+                    {% set highlight_leagues = [
+                        "England: Premier League",
+                        "Spain: La Liga",
+                        "Italy: Serie A",
+                        "Germany: Bundesliga",
+                        "UEFA Champions League",
+                        "Saudi Arabia: Saudi Professional League",
+                        "Bhutan: Premier League",
+                        "Premier League",
+                        "La Liga",
+                        "Bundesliga",
+                        "Serie A",
+                        "Saudi Pro League",
+                        "UAE Pro League",
+                         "FIFA World Cup",
                     ] %}
 
                     {% if live_matches %}
                         {% set highlighted_matches = live_matches | selectattr("league", "in", highlight_leagues) | list %}
-                        {% set other_matches = live_matches | rejectattr("league", "in", highlight_leagues) | list %}
-                        {% set matches_to_display = highlighted_matches + other_matches %}
+                        <!-- {% set other_matches = live_matches | rejectattr("league", "in", highlight_leagues) | list %}
+                        {% set matches_to_display = highlighted_matches + other_matches %} -->
+                        {% set matches_to_display = live_matches | selectattr("league", "in", highlight_leagues) | list %}
                         {% set matches_to_display = matches_to_display[:5] %}
 
                         <div class="scores-wrapper" 
@@ -546,6 +642,9 @@
             <div id="search-results"></div>
          </div>
         </div>
+
+
+       
         </div>
 
         <div id="table" class="tab-content">
@@ -593,47 +692,77 @@
         dateInput.min=formatForInput(past7);
         dateInput.max=formatForInput(next7);
     })();
-
+    
     function searchMatches(){
-        const dateInput=document.getElementById('search-date').value;
-        if(!dateInput) return alert('Please select a date');
-        const formattedDate=formatDateToDDMMYYYY(dateInput);
-        fetch(`/search?date=${formattedDate}`)
-            .then(res=>res.json())
-            .then(data=>{
-                const container=document.getElementById('search-results');
-                if(data.error){ container.innerHTML=`<p style="color:red;">${data.error}</p>`; return;}
-                if(data.matches.length===0){ container.innerHTML="<p>No matches found.</p>"; return;}
-                let html='';
-                data.matches.forEach((m,i)=>{
-                    html+=`<div class="search-card">
-                        <div class="match-header">
-                            <div class="match-info">${m.date} | ${m.league} | ${m.venue}</div>
-                            <div class="match-info">${m.status} | ${m.time}</div>
-                        </div>
-                        <div class="teams">
-                            <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.local_team)}">${m.local_team}</a>` : m.local_team}</div>
-                            <div class="score">${m.local_goals} - ${m.visitor_goals}</div>
-                            <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.visitor_team)}">${m.visitor_team}</a>` : m.visitor_team}</div>
-                        </div>
-                        <button class="expand-btn" onclick="toggleEvents('search-events-${i}')">View Events</button>
-                        <div id="search-events-${i}" style="display:none; margin-top:10px;">`;
-                    if(m.events.length){
-                        html+=`<table class="events-table"><tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>`;
-                        m.events.forEach(ev=>{
-                            html+=`<tr>
-                                <td>${ev.minute}${ev.extra_min? '+'+ev.extra_min:''}</td>
-                                <td>${ev.type}</td><td>${ev.team}</td><td>${ev.player}</td><td>${ev.assist}</td><td>${ev.result}</td>
-                            </tr>`;
-                        });
-                        html+='</table>';
-                    } else { html+='<i>No events</i>'; }
-                    html+='</div></div>';
-                });
-                container.innerHTML=html;
-            })
-            .catch(err=>document.getElementById('search-results').innerHTML=`<p style="color:red;">Error: ${err}</p>`);
-    }
+    const dateInput=document.getElementById('search-date').value;
+    if(!dateInput) return alert('Please select a date');
+    const formattedDate=formatDateToDDMMYYYY(dateInput);
+
+    // define leagues you want to allow
+    const highlight_leagues = [
+        "England: Premier League",
+        "Spain: La Liga",
+        "Italy: Serie A",
+        "Germany: Bundesliga",
+        "Europe: UEFA Champions League",
+        "Saudi Arabia: Saudi Professional League",
+        "Bhutan: Premier League",
+        "Premier League",
+        "La Liga",
+        "Bundesliga",
+        "Serie A",
+        "Saudi Pro League",
+        "UAE Pro League",
+        "FIFA World Cup",
+    ];
+
+    fetch(`/search?date=${formattedDate}`)
+        .then(res=>res.json())
+        .then(data=>{
+            const container=document.getElementById('search-results');
+            if(data.error){ 
+                container.innerHTML=`<p style="color:red;">${data.error}</p>`; 
+                return;
+            }
+
+            // filter matches by allowed leagues
+            const filteredMatches = data.matches.filter(m => highlight_leagues.includes(m.league));
+
+            if(filteredMatches.length===0){ 
+                container.innerHTML="<p>No matches found.</p>"; 
+                return;
+            }
+
+            let html='';
+            filteredMatches.forEach((m,i)=>{
+                html+=`<div class="search-card">
+                    <div class="match-header">
+                        <div class="match-info">${m.date} | ${m.league} | ${m.venue}</div>
+                        <div class="match-info">${m.status} | ${m.time}</div>
+                    </div>
+                    <div class="teams">
+                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.local_team)}">${m.local_team}</a>` : m.local_team}</div>
+                        <div class="score">${m.local_goals} - ${m.visitor_goals}</div>
+                        <div>${m.league_id ? `<a href="/team/${m.league_id}/${encodeURIComponent(m.visitor_team)}">${m.visitor_team}</a>` : m.visitor_team}</div>
+                    </div>
+                    <button class="expand-btn" onclick="toggleEvents('search-events-${i}')">View Events</button>
+                    <div id="search-events-${i}" style="display:none; margin-top:10px;">`;
+                if(m.events.length){
+                    html+=`<table class="events-table"><tr><th>Minute</th><th>Type</th><th>Team</th><th>Player</th><th>Assist</th><th>Score</th></tr>`;
+                    m.events.forEach(ev=>{
+                        html+=`<tr>
+                            <td>${ev.minute}${ev.extra_min? '+'+ev.extra_min:''}</td>
+                            <td>${ev.type}</td><td>${ev.team}</td><td>${ev.player}</td><td>${ev.assist}</td><td>${ev.result}</td>
+                        </tr>`;
+                    });
+                    html+='</table>';
+                } else { html+='<i>No events</i>'; }
+                html+='</div></div>';
+            });
+            container.innerHTML=html;
+        })
+        .catch(err=>document.getElementById('search-results').innerHTML=`<p style="color:red;">Error: ${err}</p>`);
+}
 
     function filterSearchResults() {
         const filterText = document.getElementById('filter-league-venue').value.toLowerCase();
@@ -697,120 +826,113 @@
             .catch(err => container.innerHTML = `<p style="color:red;">Error loading players: ${err}</p>`);
     }
 
+
     function showSport(sport) {
-        // Hide fighters header
-        document.getElementById('fighters-header').innerText = '';
+    // Hide fighters header
+    document.getElementById('fighters-header').innerText = '';
+    document.getElementById('players-list').style.display = 'none';
 
-        // Close the TOP PLAYERS dropdown
-        document.getElementById('players-list').style.display = 'none';
+    // Switch to the Top Players tab
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    document.getElementById('top-players').style.display = 'block';
 
-        // Switch to the Top Players tab
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabContents.forEach(tc => tc.style.display = 'none');
-        document.getElementById('top-players').style.display = 'block';
+    const now = new Date();
+    const month = now.toLocaleString('default', { month: 'long' }).toUpperCase();
+    const year = now.getFullYear();
 
-        const tabButtons = document.querySelectorAll('.tab-button');
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        document.querySelector(".collapsible-wrapper .tab-button").classList.add("active");
+    const container = document.getElementById('players-table-container');
+    fetch(`/top-players-json?sport=${encodeURIComponent(sport)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.players || data.players.length === 0) {
+            container.innerHTML = "<p>No players found for " + sport + ".</p>";
+            return;
+        }
 
-        // Set dynamic header
-        const now = new Date();
-        const month = now.toLocaleString('default', { month: 'long' }).toUpperCase(); 
-        const year = now.getFullYear();
-        document.getElementById('players-header').innerText = `${sport.toUpperCase()} TOP PLAYER | MONTH: ${month} ${year}`;
-
-        // Fetch and render players
-        const container = document.getElementById('players-table-container');
-        fetch(`/top-players-json?sport=${encodeURIComponent(sport)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (!data.players || data.players.length === 0) {
-                    container.innerHTML = "<p>No players found for " + sport + ".</p>";
-                    return;
-                }
-
-                let html = `<table class="events-table">
-                    <tr>
-                        <th>Rank</th>
-                        <th>Player Name</th>
-                        <th>Club (${year})</th>
-                        <th>Nationality</th>
-                        <th>Source(s)</th>
-                        <th>Credits</th>
-                    </tr>`;
-
-                data.players.forEach(p => {
-                    html += `<tr>
-                        <td>${p.rank}</td>
-                        <td>${p.player_name}</td>
-                        <td>${p.club || ''}</td>
-                        <td>${p.nationality || ''}</td>
-                        <td>${p.sources || ''}</td>
-                        <td>${p.credits || ''}</td>
-                    </tr>`;
-                });
-
-                html += '</table>';
-                container.innerHTML = html;
-            })
-            .catch(err => container.innerHTML = `<p style="color:red;">Error loading players: ${err}</p>`);
-    }
+       let html = `<table class="events-table">
+        <tr class="table-header-row">
+            <th colspan="6">
+                ${sport.toUpperCase()} TOP PLAYER | MONTH: ${month} ${year}
+            </th>
+        </tr>
+        <tr class="table-column-headers">
+            <th>Rank</th>
+            <th>Player Name</th>
+            <th>Club (${year})</th>
+            <th>Nationality</th>
+            <th>Source(s)</th>
+            <th>Credits</th>
+        </tr>`;
 
 
-    function showFighters(sport) {
-        // Hide players header
-        document.getElementById('players-header').innerText = '';
+        data.players.forEach(p => {
+            html += `<tr>
+                <td>${p.rank}</td>
+                <td>${p.player_name}</td>
+                <td>${p.club || ''}</td>
+                <td>${p.nationality || ''}</td>
+                <td>${p.sources || ''}</td>
+                <td>${p.credits || ''}</td>
+            </tr>`;
+        });
 
-        // Close the TOP FIGHTERS dropdown
-        document.getElementById('fighters-list').style.display = 'none';
+        html += '</table>';
+        container.innerHTML = html;
+    })
+    .catch(err => container.innerHTML = `<p style="color:red;">Error loading players: ${err}</p>`);
+}
 
-        // Switch to Top Fighters tab
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabContents.forEach(tc => tc.style.display = 'none');
-        document.getElementById('top-fighters').style.display = 'block';
+function showFighters(sport) {
+    document.getElementById('players-header').innerText = '';
+    document.getElementById('fighters-list').style.display = 'none';
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    document.getElementById('top-fighters').style.display = 'block';
 
-        // Set dynamic header
-        const now = new Date();
-        const month = now.toLocaleString('default', { month: 'long' }).toUpperCase();
-        const year = now.getFullYear();
-        document.getElementById('fighters-header').innerText = `${sport.toUpperCase()} TOP FIGHTER | MONTH: ${month} ${year}`;
+    const now = new Date();
+    const month = now.toLocaleString('default', { month: 'long' }).toUpperCase();
+    const year = now.getFullYear();
 
-        // Fetch and render fighters
-        const container = document.getElementById('fighters-table-container');
-        fetch(`/top-fighters-json?sport=${encodeURIComponent(sport)}`)
-            .then(res => res.json())
-            .then(data => {
-                if (!data.players || data.players.length === 0) {
-                    container.innerHTML = "<p>No fighters found for " + sport + ".</p>";
-                    return;
-                }
+    const container = document.getElementById('fighters-table-container');
+    fetch(`/top-fighters-json?sport=${encodeURIComponent(sport)}`)
+    .then(res => res.json())
+    .then(data => {
+        if (!data.players || data.players.length === 0) {
+            container.innerHTML = "<p>No fighters found for " + sport + ".</p>";
+            return;
+        }
 
-                let html = `<table class="events-table">
-                    <tr>
-                        <th>Rank</th>
-                        <th>Fighter Name</th>
-                        <th>Club (${year})</th>
-                        <th>Nationality</th>
-                        <th>Source(s)</th>
-                        <th>Credits</th>
-                    </tr>`;
+        let html = `<table class="events-table">
+        <tr class="table-header-row">
+            <th colspan="6">
+                ${sport.toUpperCase()} TOP FIGHTER | MONTH: ${month} ${year}
+            </th>
+        </tr>
+        <tr class="table-column-headers">
+            <th>Rank</th>
+            <th>Fighter Name</th>
+            <th>Club (${year})</th>
+            <th>Nationality</th>
+            <th>Source(s)</th>
+            <th>Credits</th>
+        </tr>`;
 
-                data.players.forEach(p => {
-                    html += `<tr>
-                        <td>${p.rank}</td>
-                        <td>${p.player_name}</td>
-                        <td>${p.club || ''}</td>
-                        <td>${p.nationality || ''}</td>
-                        <td>${p.sources || ''}</td>
-                        <td>${p.credits || ''}</td>
-                    </tr>`;
-                });
 
-                html += '</table>';
-                container.innerHTML = html;
-            })
-            .catch(err => container.innerHTML = `<p style="color:red;">Error loading fighters: ${err}</p>`);
-    }
+        data.players.forEach(p => {
+            html += `<tr>
+                <td>${p.rank}</td>
+                <td>${p.player_name}</td>
+                <td>${p.club || ''}</td>
+                <td>${p.nationality || ''}</td>
+                <td>${p.sources || ''}</td>
+                <td>${p.credits || ''}</td>
+            </tr>`;
+        });
+
+        html += '</table>';
+        container.innerHTML = html;
+    })
+    .catch(err => container.innerHTML = `<p style="color:red;">Error loading fighters: ${err}</p>`);
+}
 
     function toggleTopPlayersList() {
         const list = document.getElementById("top-players-list");
@@ -826,13 +948,11 @@
         list.style.display = (list.style.display === "block") ? "none" : "block";
     }
 
+    function toggleTableList() {
+    const list = document.getElementById("table-list");
+    list.style.display = (list.style.display === "block") ? "none" : "block";
+}
     // Close list if clicked outside
-    document.addEventListener("click", function(event) {
-        const wrapper = document.querySelector(".collapsible-wrapper");
-        if (!wrapper.contains(event.target)) {
-            document.getElementById("players-list").style.display = "none";
-        }
-    });
 
     document.addEventListener("click", function(event) {
         if (!document.querySelector("#players-list").contains(event.target) &&
@@ -843,7 +963,103 @@
             !event.target.closest("button[onclick='toggleFightersList()']")) {
             document.getElementById("fighters-list").style.display = "none";
         }
+       
+        if (!document.querySelector("#table-list").contains(event.target) &&
+            !event.target.closest("button[onclick='toggleTableList()']")) {
+            document.getElementById("table-list").style.display = "none";
+        }
     });
+
+    function showTable(category) {
+    // Hide other dropdown headers
+    document.getElementById('players-header').innerText = '';
+    document.getElementById('fighters-header').innerText = '';
+
+    // Show TABLE tab content
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    document.getElementById('table').style.display = 'block';
+
+    let html = '<table class="events-table" style="width:100%;">';
+
+    if(category === 'Football') {
+        html += `
+        <tr style="background:black; color:white; height:20px;">  <!-- increased height -->
+            <td colspan="7" style="padding:10px 0;">
+                <div class="button-container" style="justify-content:center; gap:10px; flex-wrap:wrap;">
+                    <button class="oval-button" onclick="fetchFootballTable('Champions League')">Champions League</button>
+                    <button class="oval-button" onclick="fetchFootballTable('Premier League')">Premier League</button>
+                    <button class="oval-button" onclick="fetchFootballTable('La Liga')">La Liga</button>
+                    <button class="oval-button" onclick="fetchFootballTable('Bundesliga')">Bundesliga</button>
+                    <button class="oval-button" onclick="fetchFootballTable('Serie A')">Serie A</button>
+                    <button class="oval-button" onclick="fetchFootballTable('Saudi Pro League')">Saudi Pro League</button>
+                    <button class="oval-button" onclick="fetchFootballTable('UAE Pro League')">UAE Pro League</button>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <div id="football-table-container" style="margin-top:15px;"></div>`;
+    } else if(category === 'Cricket') {
+        html += `
+        <tr style="background:black; color:white; height:80px;">  <!-- increased height -->
+            <td colspan="4" style="padding:20px 0;">
+                <div class="button-container" style="justify-content:center; gap:15px; flex-wrap:wrap;">
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchCricketRanking('odi')">ICC Men's ODI Team</button>
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchCricketRanking('test')">ICC Men's Test Team</button>
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchCricketRanking('t20')">ICC Men's T20 Team</button>
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchCricketRanking('ipl')">IPL Teams</button>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <div id="cricket-table-container"></div>`;
+    }
+
+    document.getElementById('table').innerHTML = html;
+
+    // Hide the table dropdown
+    document.getElementById("table-list").style.display = 'none';
+    }
+
+    // function showTable(category) {
+    // // Hide other dropdown headers
+    // document.getElementById('players-header').innerText = '';
+    // document.getElementById('fighters-header').innerText = '';
+
+    // // Show TABLE tab content
+    // document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    // document.getElementById('table').style.display = 'block';
+
+    // let html = '';
+    // if(category === 'Football') {
+    //     html += `<h2>Football League Tables</h2>
+    //      <div class="button-container">
+    //          <button class="oval-button" onclick="fetchFootballTable('Champions League')">Champions League</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('Premier League')">Premier League</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('La Liga')">La Liga</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('Bundesliga')">Bundesliga</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('Serie A')">Serie A</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('Saudi Pro League')">Saudi Pro League</button>
+    //          <button class="oval-button" onclick="fetchFootballTable('UAE Pro League')">UAE Pro League</button>
+    //      </div>
+    //      <div id="football-table-container" style="margin-top:15px;"></div>`;
+
+    //   } 
+    //   else if(category === 'Cricket') {
+    //     html += `<h2>Cricket Rankings & IPL</h2>
+    //             <div class="button-container">
+    //                 <button class="oval-button" onclick="fetchCricketRanking('odi')">ICC Men's ODI Team</button>
+    //                 <button class="oval-button" onclick="fetchCricketRanking('test')">ICC Men's Test Team</button>
+    //                 <button class="oval-button" onclick="fetchCricketRanking('t20')">ICC Men's T20 Team</button>
+    //                 <button class="oval-button" onclick="fetchCricketRanking('ipl')">IPL Teams</button>
+    //             </div>
+    //             <div id="cricket-table-container"></div>`;
+    // }
+
+    // document.getElementById('table').innerHTML = html;
+
+    // // Hide the table dropdown
+    // document.getElementById("table-list").style.display = 'none';
+    // }
 
     function openTab(evt, tabName) {
         const tabContents = document.querySelectorAll('.tab-content');
@@ -863,6 +1079,95 @@
     }
 
     </script>
+    <script>
+    // Fetch Cricket ranking data from admin endpoint
+    function fetchCricketRanking(type) {
+        const container = document.getElementById('cricket-table-container');
+        container.innerHTML = '<p>Loading...</p>';
+
+        // Admin endpoint mapping
+        let endpoint = `/cricket-rankings?type=${encodeURIComponent(type)}`;
+
+        fetch(endpoint)
+            .then(res => res.json())
+            .then(data => {
+                if(!data.teams || data.teams.length === 0) {
+                    container.innerHTML = '<p>No data available.</p>';
+                    return;
+                }
+
+                // Friendly titles for buttons
+                let title = "";
+                switch(type) {
+                    case 'odi': title = "ICC Men's ODI Team"; break;
+                    case 'test': title = "ICC Men's Test Team"; break;
+                    case 't20': title = "ICC Men's T20 Team"; break;
+                    case 'ipl': title = "IPL Teams"; break;
+                    default: title = type.toUpperCase();
+                }
+
+                let html = `<h3>${title}</h3>`;
+                html += '<table class="events-table">';
+                html += '<tr><th>Rank</th><th>Team</th><th>Matches</th><th>Points</th><th>Rating</th></tr>';
+
+                data.teams.forEach(team => {
+                    html += `<tr>
+                        <td>${team.rank}</td>
+                        <td>${team.name}</td>
+                        <td>${team.matches}</td>
+                        <td>${team.points}</td>
+                        <td>${team.rating}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
+            });
+    }
+    </script>
+    <script>
+    function fetchFootballTable(league) {
+        const container = document.getElementById('football-table-container');
+        container.innerHTML = '<p>Loading...</p>';
+
+        // Admin endpoint for football tables
+        let endpoint = `/football-tables?league=${encodeURIComponent(league)}`;
+
+        fetch(endpoint)
+            .then(res => res.json())
+            .then(data => {
+                if(!data.teams || data.teams.length === 0) {
+                    container.innerHTML = '<p>No data available.</p>';
+                    return;
+                }
+
+                let html = `<h3>${league} Table</h3>`;
+                html += '<table class="events-table">';
+                html += '<tr><th>Rank</th><th>Team</th><th>Played</th><th>Won</th><th>Draw</th><th>Lost</th><th>Points</th></tr>';
+
+                data.teams.forEach(team => {
+                    html += `<tr>
+                        <td>${team.rank}</td>
+                        <td>${team.name}</td>
+                        <td>${team.played}</td>
+                        <td>${team.won}</td>
+                        <td>${team.draw}</td>
+                        <td>${team.lost}</td>
+                        <td>${team.points}</td>
+                    </tr>`;
+                });
+
+                html += '</table>';
+                container.innerHTML = html;
+            })
+            .catch(err => {
+                container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
+            });
+    }
+</script>
 
 </body>
 </html>

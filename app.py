@@ -126,6 +126,26 @@ class TopFighter(db.Model):
     sources = db.Column(db.String(255))  # comma-separated
     credits = db.Column(db.String(255))  # image/video credit
 
+class FootballTable(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    league = db.Column(db.String(150), nullable=False)   # e.g., Premier League, Serie A
+    rank = db.Column(db.Integer, nullable=False)
+    team_name = db.Column(db.String(150), nullable=False)
+    played = db.Column(db.Integer, default=0)
+    won = db.Column(db.Integer, default=0)
+    draw = db.Column(db.Integer, default=0)
+    lost = db.Column(db.Integer, default=0)
+    points = db.Column(db.Integer, default=0)
+
+class CricketRanking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)  # 'odi', 'test', 't20', 'ipl'
+    rank = db.Column(db.Integer, nullable=False)
+    team_name = db.Column(db.String(150), nullable=False)
+    matches = db.Column(db.Integer, default=0)
+    points = db.Column(db.Integer, default=0)
+    rating = db.Column(db.Integer, default=0)
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -406,6 +426,28 @@ class TopFighterAdmin(ModelView):
         return current_user.is_authenticated
 
 admin.add_view(TopFighterAdmin(TopFighter, db.session))
+
+class FootballTableAdmin(ModelView):
+    column_list = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
+    form_columns = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
+    column_sortable_list = ('league', 'rank', 'team_name', 'points')
+    column_searchable_list = ('league', 'team_name')
+    
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+class CricketRankingAdmin(ModelView):
+    column_list = ('type', 'rank', 'team_name', 'matches', 'points', 'rating')
+    form_columns = ('type', 'rank', 'team_name', 'matches', 'points', 'rating')
+    column_sortable_list = ('type', 'rank', 'team_name', 'points')
+    column_searchable_list = ('type', 'team_name')
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+# Add to admin
+admin.add_view(FootballTableAdmin(FootballTable, db.session))
+admin.add_view(CricketRankingAdmin(CricketRanking, db.session))
 
 class MemorabiliaAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -778,6 +820,44 @@ def top_fighters_json():
 
     return jsonify({"players": fighters_list})
 
+@app.route('/football-tables')
+def football_tables():
+    league = request.args.get('league', '').strip()
+    if not league:
+        return jsonify({"teams": []})
+
+    teams = FootballTable.query.filter_by(league=league).order_by(FootballTable.rank).all()
+
+    teams_list = [{
+        "rank": t.rank,
+        "name": t.team_name,
+        "played": t.played,
+        "won": t.won,
+        "draw": t.draw,
+        "lost": t.lost,
+        "points": t.points
+    } for t in teams]
+
+    return jsonify({"teams": teams_list})
+
+@app.route('/cricket-rankings')
+def cricket_rankings():
+    ranking_type = request.args.get('type', '').strip()  # 'odi', 'test', 't20', 'ipl'
+    if not ranking_type:
+        return jsonify({"teams": []})
+
+    teams = CricketRanking.query.filter_by(type=ranking_type).order_by(CricketRanking.rank).all()
+
+    teams_list = [{
+        "rank": t.rank,
+        "name": t.team_name,
+        "matches": t.matches,
+        "points": t.points,
+        "rating": t.rating
+    } for t in teams]
+
+    return jsonify({"teams": teams_list})
+
 @app.route('/search')
 def search_matches():
     input_date = request.args.get('date', '').strip()  # format: dd/mm/yyyy
@@ -803,6 +883,7 @@ def search_matches():
         return jsonify({"error": error}), 500
 
     return jsonify({"matches": matches})
+    
 @app.route('/leagues')
 def leagues():
     data, error = fetch_json(LEAGUES_URL)

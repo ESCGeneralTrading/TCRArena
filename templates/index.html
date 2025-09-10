@@ -1066,6 +1066,192 @@
             font-size: 9px;
         }
     }
+
+    h1 { margin-bottom:20px;color:#0c0c0c; }
+    h2 { margin-top:30px; color:#0c0c0c; }
+
+    .scores-wrapper,
+    #matches-container {
+        display: flex;
+        flex-wrap: nowrap;       
+        overflow-x: auto;        
+        gap: 15px;
+        padding: 10px;
+        scroll-behavior: smooth;
+        justify-content: center;
+        align-items: flex-start; /* prevent stretching */
+    }
+    #matches-container {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 15px;
+        padding: 10px 20px; /* left and right padding adds space before first and after last card */
+        scroll-behavior: smooth;
+        justify-content: flex-start; /* keeps cards aligned from left */
+    }
+
+
+    .scores-wrapper::-webkit-scrollbar,
+    #matches-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    .scores-wrapper::-webkit-scrollbar-thumb,
+    #matches-container::-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 4px;
+    }
+
+    .match-card {
+        background:#1c1c1c;
+        border-radius:10px;
+        padding:18px 10px;
+        width: 220;
+        flex: 0 0 auto;           
+        box-shadow:0 4px 8px rgba(0,0,0,0.4);
+        transition:0.2s;
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
+        align-items:center;
+        position:relative;
+    }
+    .match-card:hover { transform: translateY(-3px); }
+
+    .team-name, .score, .match-header, .events strong, .match-info { text-align:center;font-size:0.85rem;color: white; }
+    .score { font-weight:700; font-size:1.4rem; margin:6px 0; color:#ff7f50; }
+    .match-header { font-size:17px; font-weight:bold; color:#ccc; margin-bottom:6px; }
+
+    .match-card.live::before { 
+        content:"LIVE"; 
+        background:red; 
+        padding:2px 4px; 
+        position:absolute; 
+        top:4px; left:6px; 
+        border-radius:3px; 
+        font-size:8px; 
+        font-weight:bold; 
+        color:#fff; 
+    }
+
+    .match-card.upcoming::before { 
+        content:"UPCOMING"; 
+        background:green; 
+        padding:2px 4px; 
+        position:absolute; 
+        top:4px; left:6px; 
+        border-radius:3px; 
+        font-size:8px; 
+        font-weight:bold; 
+        color:#fff; 
+    }
+
+    .match-card.past::before { 
+        content:"FINISHED"; 
+        background:gray; 
+        padding:2px 4px; 
+        position:absolute; 
+        top:4px; left:6px; 
+        border-radius:3px; 
+        font-size:8px; 
+        font-weight:bold; 
+        color:#fff; 
+    }
+
+    .match-card.past { 
+        background: linear-gradient(145deg, #2a2a2a, #1a1a1a); 
+        border-left:4px solid #888; 
+    }
+    .match-card.past:hover { 
+        transform: translateY(-2px); 
+        box-shadow:0 6px 12px rgba(0,0,0,0.6); 
+    }
+
+    .button-container { text-align:center; margin-bottom:10px; }
+    .button-container button {
+        padding: 10px 20px;
+        background-color: #000000;
+        border: 4px solid #ffffff; /* added border */
+        color: #fff;
+        cursor: pointer;
+        border-radius: 50px;
+        font-size: 14px;
+        margin: 4px;
+        transition: 0.3s;
+        white-space: nowrap;      
+        min-width: 100px;        
+        text-overflow: ellipsis;  
+        overflow: hidden;         
+    }
+
+    .button-container button:hover {
+        background-color: #0056b3;
+        border-color: #fff; /* optional: change border color on hover */
+    }
+
+    #match-date { display:block; margin:10px auto; color:#0c0c0c;}
+
+    /* Professional Event styling */
+    .events {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+        background: #222;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .events.show {
+        max-height: 500px;
+    }
+    .event-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-bottom: 1px solid #333;
+        font-size: 13px;
+        color: #eee;
+    }
+    .event-item:last-child { border-bottom: none; }
+    .event-type {
+        font-weight: bold;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #fff;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+    .event-type.goal { background: #28a745; }        
+    .event-type.booking { background: #ffc107; }     
+    .event-type.substitution { background: #17a2b8; } 
+    .event-info { flex: 1; }
+    .event-time { font-size: 11px; color: #aaa; white-space: nowrap; }
+
+    #league-row {
+        background-color: #000;
+    }
+
+    #matches-row {
+        background-color: #fff;
+    }
+
+    @media(max-width:768px){ 
+        .team-name{font-size:13px;} 
+        .score{font-size:24px;} 
+    }
+    @media(max-width:480px){ 
+        .match-card{padding:15px;} 
+        .team-name{font-size:14px;} 
+        .score{font-size:22px;} 
+    }
+
+    .status-live { color: #d9534f; font-weight: 700; }
+    .status-finished { color: #28a745; font-weight: 700; }
+    .status-upcoming { color: #ffc107; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -1117,149 +1303,253 @@
   
   <!-- Live Score -->
   <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
+  <div class="scores-wrapper">
+                  {% if matches %}
+                      {% if matches[0].league and matches[0].get('home') is none %}
+                          <div class="button-container-wrapper">
+                              <table id="upcoming-table" style="width:100%; border-collapse:collapse; height: 80px;">
+                                  <tr id="league-row" style="background:#000000; text-align:center; padding:10px;">
+                                      <td>
+                                          <div class="button-container" id="league-buttons">
+                                              {% for item in matches %}
+                                                  <button class="league-btn" onclick="fetchNearestUpcoming('{{ item.league }}')">{{ item.league }}</button>
+                                              {% endfor %}
+                                          </div>
+                                      </td>
+                                  </tr>
+                                  <tr id="matches-row" style="background:#ffffff; padding:10px;">
+                                      <td>
+                                          <div id="upcoming-container" style="display:flex; flex-wrap: nowrap; gap:15px; overflow-x:auto; padding:10px 0;"></div>
+                                      </td>
+                                  </tr>
+                              </table>
+                          </div>
 
-    {% set highlight_leagues = [
-        "England: Premier League",
-        "Spain: La Liga",
-        "Italy: Serie A",
-        "Germany: Bundesliga",
-        "France: Ligue 1",
-        "Portugal: Primeira Liga",
-        "Netherlands: Eredivisie",
-        "Brazil: Campeonato Brasileiro Série A",
-        "USA: Major League Soccer",
-        "Saudi Arabia: Saudi Pro League",
-        "FIFA World Cup",
-        "UEFA Champions League",
-        "Copa Libertadores",
-        "UEFA European Championship",
-        "Copa America",
-        "FA Cup",
-        "DFB-Pokal",
-        "Coppa Italia",
-        "Copa del Rey",
-        "CONCACAF Champions League",
-    ] %}
-
-    {% if live_matches %}
-        {% set highlighted_matches = live_matches | selectattr("league", "in", highlight_leagues) | list %}
-        {% set other_matches = live_matches | rejectattr("league", "in", highlight_leagues) | list %}
-        {% set matches_to_display = highlighted_matches + other_matches %}
-        {% set matches_to_display = matches_to_display[:5] %}
-
-        <div class="scores-wrapper" 
-        style="max-width:1500px; margin:auto; padding:20px 15px; display:flex; gap:16px; flex-wrap:nowrap; overflow-x:auto; -webkit-overflow-scrolling:touch;">
-
-        {% for match in matches_to_display %}
-        <div class="match-card-wrapper" style="flex:0 0 auto; width:280px; display:flex; flex-direction:column;">
-
-          <div class="match-card" 
-              onclick="window.location.href='/all-scores'" 
-              style="background:{% if match.league in highlight_leagues %}#1e1e2f{% else %}#1c1c1c{% endif %}; 
-                      border-radius:10px; padding:16px; cursor:pointer; 
-                      box-shadow:0 4px 8px rgba(0,0,0,0.4); transition: transform 0.2s ease;
-                      display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-
-            <style>
-              .match-card:hover { transform: translateY(-3px); }
-              @media (min-width: 992px) {
-                .scores-wrapper { overflow-x: visible; }
-                .match-card-wrapper { width: calc((100% - 4*16px)/5); }
-              }
-            </style>
-
-            <!-- Top content -->
-            <div>
-              <!-- League & Date -->
-              <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
-                {{ match.date or '' }} • {{ match.league }}
+                      {% else %}
+                          <!-- Live matches -->
+                          {% for match in matches %}
+                              <div class="match-card {{ match.status }}">
+                                  <div class="match-header">{{ match.league }}</div>
+                                  <div class="team-name">{{ match.home }} vs {{ match.away }}</div>
+                                  <div class="score">{{ match.score_home }} - {{ match.score_away }}</div>
+                                  <div class="match-info">
+                                      <span>Date: {{ match.date }}</span> | 
+                                      <span>Time: {{ match.time }}</span> | 
+                                      <span>Venue: {{ match.venue or "TBD" }}</span>
+                                  </div>
+                              </div>
+                          {% endfor %}
+                      {% endif %}
+                  {% else %}
+                      <div style="color:#ff7f50; font-weight:bold; font-size:18px; margin-top:20px;">
+                          No live or upcoming matches available.
+                      </div>
+                  {% endif %}
               </div>
+              <script>
+            const leagues = [
+                {name:"UEFA Champions League", label:"Champions League"},
+                {name:"England: Premier League", label:"Premier League"},
+                {name:"La Liga", label:"La Liga"},
+                {name:"Germany: Bundesliga", label:"Bundesliga"},
+                {name:"Serie A", label:"Serie A"},
+                {name:"Saudi Pro League", label:"Saudi Pro League"},
+                {name:"FIFA World Cup", label:"World Cup"},
+            ];
 
-              <!-- Teams & Score -->
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <div style="display:flex; flex-direction:column; gap:2px;">
-                  <span style="font-weight:700; font-size:16px;">{{ match.local_team }}</span>
-                  <span style="font-weight:700; font-size:16px;">{{ match.visitor_team }}</span>
-                </div>
-                <div style="font-size:20px; font-weight:bold; background:#000; border-radius:6px; padding:6px 12px; min-width:60px; text-align:center;">
-                  {{ match.local_goals }} - {{ match.visitor_goals }}
-                </div>
-              </div>
+            function formatDate(date){ 
+                const parts = date.split("-"); 
+                return `${parts[2]}.${parts[1]}.${parts[0]}`; 
+            }
 
-              <!-- Status -->
-              <div style="margin-bottom:6px; font-size:14px; font-weight:600; color:
-                  {% if match.status == 'LIVE' %}#ff3b3b
-                  {% elif match.status == 'FT' %}#4caf50
-                  {% else %}#ffc107{% endif %};">
-                {{ match.status }}{% if match.time %} • {{ match.time }}{% endif %}
-              </div>
+            function prepareLeagueButtons(){
+                const dateInput = document.getElementById("match-date").value;
+                if(!dateInput){ alert("Please select a date"); return; }
 
-              <!-- Venue spacer -->
-              <div style="font-size:12px; color:#888; margin-bottom:6px; min-height:18px;">
-                {% if match.venue %}Venue: {{ match.venue }}{% else %}&nbsp;{% endif %}
-              </div>
-            </div>
+                const selectedDate = new Date(dateInput);
+                const now = new Date();
+                now.setHours(0,0,0,0);
 
-            <!-- Match Events button -->
-            <!-- <button onclick="event.stopPropagation(); toggleEvents('events-{{ loop.index }}')" 
-                    style="margin-top:8px; background:none; border:1px solid #444; color:#fff; font-size:12px; padding:6px 10px; border-radius:5px; cursor:pointer; width:100%;">
-              Match Events ▼
-            </button> -->
+                document.getElementById("matches-container").innerHTML="";
+                document.getElementById("matches-buttons").innerHTML="";
+                document.getElementById("matches-title").style.display="none";
+                document.getElementById("matches-buttons").style.display="none";
+                document.getElementById("matches-container").style.display="none";
 
-          </div>
+                const targetTitle = document.getElementById("matches-title");
+                const targetButtons = document.getElementById("matches-buttons");
+                const isPast = selectedDate < now;
+                targetTitle.textContent = isPast ? "Past Matches" : "Upcoming Matches";
+                targetTitle.style.display = "block";
+                targetButtons.style.display = "block";
 
-          <!-- Hidden Events -->
-          <!-- <div id="events-{{ loop.index }}" 
-              style="display:none; background:#1e1e2f; padding:10px; border-radius:0 0 10px 10px; margin-top:-4px; max-height:300px; overflow-y:auto; transition: max-height 0.3s ease;">
-            {% if match.events %}
-            <table style="width:100%; border-collapse:collapse; font-size:12px; color:#ddd;">
-              <thead>
-                <tr style="background:#333;">
-                  <th style="padding:6px;">Min</th>
-                  <th style="padding:6px;">Type</th>
-                  <th style="padding:6px;">Team</th>
-                  <th style="padding:6px;">Player</th>
-                  <th style="padding:6px;">Assist</th>
-                  <th style="padding:6px;">Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for ev in match.events %}
-                <tr style="background:{% if loop.index0 % 2 == 0 %}#2a2a2a{% else %}#1a1a1a{% endif %};">
-                  <td style="padding:5px; text-align:center;">{{ ev.minute }}{% if ev.extra_min %}+{{ ev.extra_min }}{% endif %}</td>
-                  <td style="padding:5px; text-align:center;">{{ ev.type }}</td>
-                  <td style="padding:5px; text-align:center;">{{ ev.team }}</td>
-                  <td style="padding:5px;">{{ ev.player }}</td>
-                  <td style="padding:5px;">{{ ev.assist }}</td>
-                  <td style="padding:5px; text-align:center;">{{ ev.result }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            {% else %}
-            <i style="color:#aaa;">No events</i>
-            {% endif %}
-          </div> -->
+                leagues.forEach(league=>{
+                    const btn = document.createElement("button");
+                    btn.textContent = league.label;
+                    btn.onclick = () => fetchMatches(league.name, isPast);
+                    targetButtons.appendChild(btn);
+                });
+            }
+
+            function fetchMatches(selectedLeague, isPast){
+                const dateInput = document.getElementById("match-date").value;
+                if(!dateInput){ alert("Please select a date"); return; }
+
+                const formattedDate = formatDate(dateInput);
+                const url = `/matches?date=${formattedDate}&league=${encodeURIComponent(selectedLeague)}`;
+                const parts = dateInput.split("-");
+                const selectedDate = new Date(parts[0], parts[1]-1, parts[2]); 
+
+                fetch(url).then(res=>res.json()).then(data=>{
+                    const container = document.getElementById("matches-container");
+                    container.innerHTML = "";
+                    const now = new Date();
+                    now.setHours(0,0,0,0);
+
+                    if(!data || data.length===0){
+                        document.getElementById("message").innerText = `No matches found for ${formattedDate}${selectedLeague ? " in "+selectedLeague : ""}`;
+                        container.style.display = "none";
+                        return;
+                    }
+
+                    let filteredMatches = data.filter(match => {
+                        const matchDateStr = match["@date"];
+                        const matchTimeStr = match["@time"] || "00:00";
+                        const [day, month, year] = matchDateStr.split(".");
+                        const [hour, minute] = matchTimeStr.split(":");
+                        const matchDateTime = new Date(year, month-1, day, hour, minute);
+
+                        const status = match["@status"] === "LIVE" ? "live" : (matchDateTime < now ? "past" : "upcoming");
+                        match._status = status;
+
+                        if(isPast){
+                            return matchDateTime.toDateString() === selectedDate.toDateString();
+                        } else {
+                            return status !== "past";
+                        }
+                    });
+
+                    filteredMatches.sort((a,b)=>{
+                        const [d1,h1] = [a["@date"], a["@time"]||"00:00"];
+                        const [d2,h2] = [b["@date"], b["@time"]||"00:00"];
+                        const [day1, month1, year1] = d1.split("."); 
+                        const [day2, month2, year2] = d2.split(".");
+                        const [hour1, min1] = h1.split(":"); 
+                        const [hour2, min2] = h2.split(":");
+                        return new Date(year1, month1-1, day1, hour1, min1) - new Date(year2, month2-1, day2, hour2, min2);
+                    });
+
+                    if(!isPast){ filteredMatches = filteredMatches.slice(0, 8); }
+
+                    if(filteredMatches.length === 0){
+                        document.getElementById("message").innerText = "No matches found for the selected date.";
+                        container.style.display = "none";
+                        return;
+                    } else {
+                        document.getElementById("message").innerText = "";
+                    }
+
+                    filteredMatches.forEach(match => {
+                        const card = document.createElement("div");
+                        card.classList.add("match-card", match._status);
+
+                        const localTeam = match.localteam["@name"];
+                        const visitorTeam = match.visitorteam["@name"];
+                        const localGoals = match.localteam["@score"]||0;
+                        const visitorGoals = match.visitorteam["@score"]||0;
+
+                        card.innerHTML = `
+                            <div class="team-name">${localTeam} vs ${visitorTeam}</div>
+                            <div class="score">${localGoals} - ${visitorGoals}</div>
+                            <div class="match-header">${match["@date"]} • ${match["@time"]} <br> ${match.league}</div>
+                        `;
+
+                        if(match._status === "past" && match.events && match.events.length){
+                            const toggleBtn = document.createElement("button");
+                            toggleBtn.textContent = "Show Events";
+                            toggleBtn.style.marginTop = "10px";
+                            toggleBtn.style.padding = "5px 10px";
+                            toggleBtn.style.cursor = "pointer";
+                            toggleBtn.style.borderRadius = "5px";
+                            toggleBtn.style.border = "none";
+                            toggleBtn.style.backgroundColor = "#007bff";
+                            toggleBtn.style.color = "#fff";
+
+                            const eventsDiv = document.createElement("div");
+                            eventsDiv.classList.add("events");
+                            eventsDiv.innerHTML = match.events.map(ev => {
+                                let typeClass='', typeLabel='', info='';
+                                if(ev.type === "goal"){
+                                    typeClass='goal'; typeLabel='Goal'; info=`${ev.player} (${ev.team}) [${ev.score}]`;
+                                } else if(ev.type==="booking"){
+                                    typeClass='booking'; typeLabel='Booking'; info=`${ev.player} (${ev.team})`;
+                                } else if(ev.type==="substitution"){
+                                    typeClass='substitution'; typeLabel='Sub'; info=`${ev.player_out} → ${ev.player_in} (${ev.team})`;
+                                }
+                                return `<div class="event-item">
+                                            <div class="event-type ${typeClass}">${typeLabel}</div>
+                                            <div class="event-info">${info}</div>
+                                            <div class="event-time">${ev.minute}'</div>
+                                        </div>`;
+                            }).join('');
+
+                            toggleBtn.addEventListener("click", ()=>{
+                                eventsDiv.classList.toggle("show");
+                                toggleBtn.textContent = eventsDiv.classList.contains("show") ? "Hide Events" : "Show Events";
+                            });
+
+                            card.appendChild(toggleBtn);
+                            card.appendChild(eventsDiv);
+                        }
+
+                        container.appendChild(card);
+                    });
+
+                    container.style.display = "flex";
+                }).catch(err=>console.error(err));
+            }
+
+            function fetchNearestUpcoming(leagueName){
+                fetch(`/matches?league=${encodeURIComponent(leagueName)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const container = document.getElementById('upcoming-container');
+                        container.innerHTML = "";  // clear previous
+
+                        if(!data || data.length === 0){
+                            container.innerHTML = `<div style="color:#ff7f50; font-weight:bold; font-size:16px;">
+                                No upcoming matches for ${leagueName}.</div>`;
+                            return;
+                        }
+
+                        // take first 5 upcoming matches
+                        const upcomingMatches = data.slice(0, 5);
+
+                        upcomingMatches.forEach(match => {
+                        const card = document.createElement('div');
+                        card.classList.add('match-card', 'upcoming');
+                        card.style.Width = '206px'; // same as live cards
+                        card.style.maxWidth = '260px'; // same as live cards
+                        card.style.margin = '0';        // remove extra margin
+                        card.innerHTML = `
+                            <div class="match-header">${match.league}</div>
+                            <div class="team-name">${match.localteam["@name"]} vs ${match.visitorteam["@name"]}</div>
+                            <div class="score"> --- : --- </div>
+                            <div class="match-info">
+                                <span>Date: ${match["@date"]}</span> | 
+                                <span>Time: ${match["@time"] || "TBD"}</span> | 
+                                <span>Venue: ${match["@venue"] || "TBD"}</span>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                    })
+                    .catch(err => console.error(err));
+            }
+
+            </script>
+      
     </div>
-    {% endfor %}
-  </div>
-
-
-    {% else %}
-        <p style="text-align:center; font-size:14px; color:#bbb;">No live matches right now.</p>
-    {% endif %}
-  </div>
-
-  <script>
-  function toggleEvents(id) {
-    const el = document.getElementById(id);
-    if (el.style.display === "none" || el.style.display === "") {
-      el.style.display = "block";
-    } else {
-      el.style.display = "none";
-    }
-  }
-  </script>
 
 
 

@@ -1,5 +1,7 @@
 import datetime  # instead of "from datetime import datetime, timedelta"
 import os
+from datetime import datetime, timedelta
+
 import sys
 import getpass
 from flask import Flask, jsonify, render_template, redirect, url_for, request, flash
@@ -29,7 +31,8 @@ try:
 except OSError:
     pass
 
-today = datetime.datetime.now().date()
+today = datetime.now().date()
+
 
 
 app.config['MAIL_SERVER'] = 'smtp.titan.email'
@@ -50,6 +53,17 @@ LIVE_FEED_URL = f"http://www.goalserve.com/getfeed/{API_KEY}/soccernew/live?json
 LEAGUES_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerfixtures/data/mapping?json=1"
 LEAGUE_TEAMS_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerleague/{{}}?json=1"  # leagueID
 PLAYER_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/player/{{}}?json=1"
+
+LEAGUE_IDS = {
+    "England: Premier League": 1204,
+    "La Liga": 1399,
+    "Serie A": 1269,
+    "Germany: Bundesliga": 1229,
+    "UEFA Champions League": 1005,
+    "Saudi Pro League": 1368,
+    "FIFA World Cup": 1211,
+    "Bhutan: Premier League": 18915
+}
 
 def allowed_file(filename, allowed_set):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_set
@@ -130,12 +144,12 @@ class FootballTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     league = db.Column(db.String(150), nullable=False)   # e.g., Premier League, Serie A
     rank = db.Column(db.Integer, nullable=False)
-    team_name = db.Column(db.String(150), nullable=False)
-    played = db.Column(db.Integer, default=0)
-    won = db.Column(db.Integer, default=0)
-    draw = db.Column(db.Integer, default=0)
-    lost = db.Column(db.Integer, default=0)
-    points = db.Column(db.Integer, default=0)
+    Team = db.Column(db.String(150), nullable=False)
+    MP = db.Column(db.Integer, default=0)
+    W = db.Column(db.Integer, default=0)
+    D = db.Column(db.Integer, default=0)
+    L = db.Column(db.Integer, default=0)
+    PTS = db.Column(db.Integer, default=0)
 
 class CricketRanking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -428,10 +442,10 @@ class TopFighterAdmin(ModelView):
 admin.add_view(TopFighterAdmin(TopFighter, db.session))
 
 class FootballTableAdmin(ModelView):
-    column_list = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
-    form_columns = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
-    column_sortable_list = ('league', 'rank', 'team_name', 'points')
-    column_searchable_list = ('league', 'team_name')
+    column_list = ('league', 'rank', 'Team', 'MP', 'W', 'D', 'L', 'PTS')
+    form_columns = ('league', 'rank', 'Team', 'MP', 'W', 'D', 'L', 'PTS')
+    column_sortable_list = ('league', 'rank', 'Team', 'PTS')
+    column_searchable_list = ('league', 'Team')
     
     def is_accessible(self):
         return current_user.is_authenticated
@@ -672,117 +686,220 @@ admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 # ====================
 # --- LIVE SCORES ---
 # ====================
+API_KEY = "538e881e9f4c4cb1d74708ddd91c6aa4"
 
+LEAGUE_IDS = {
+    "England: Premier League": 1204,
+    "La Liga": 1399,
+    "Serie A": 1269,
+    "Germany: Bundesliga": 1014,
+    "UEFA Champions League": 1005,
+    "Saudi Pro League": 1368,
+    # "India: Calcutta Premier Division - Relegation Group": 4426
+}
 
+def fetch_matches():
+    """Fetch live matches or nearest upcoming matches if no live matches exist"""
+    live_matches = []
+    upcoming_matches = []
+    now = datetime.now()
+    print("Current time =", now)
 
-LIVE_FEED_URL = "http://www.goalserve.com/getfeed/538e881e9f4c4cb1d74708ddd91c6aa4/soccernew/live?json=1"
-
-def date_to_day_code(input_date_str):
     try:
-        input_date = datetime.datetime.strptime(input_date_str, "%d/%m/%Y").date()
-    except ValueError:
-        return None
-    today = datetime.datetime.now().date()
-    delta = (input_date - today).days
-    return f"d{delta}"
+        live_url = f"http://www.goalserve.com/getfeed/{API_KEY}/soccernew/live?json=1"
+        resp = requests.get(live_url, timeout=10)
+        data = resp.json()
+        categories = data.get("scores", {}).get("category", [])
+        if isinstance(categories, dict):
+            categories = [categories]
 
-def get_dynamic_feed_url(day_code):
-    base_url = "http://www.goalserve.com/getfeed/538e881e9f4c4cb1d74708ddd91c6aa4/soccernew/"
-    if day_code == "d0":
-        return f"{base_url}home?json=1"  # use live feed for today
-    return f"{base_url}{day_code}?json=1"
+        for category in categories:
+            league_name = category.get("@name", "")
+            if league_name not in LEAGUE_IDS:
+                continue
+            matches_data = category.get("matches", {}).get("match", [])
+            if isinstance(matches_data, dict):
+                matches_data = [matches_data]
 
-def sort_matches(matches):
-    def match_key(m):
-        if m['status'] in ['FT', 'Finished']:
-            return (0, datetime.datetime.min.time())
-        try:
-            t = datetime.datetime.strptime(m['time'], "%H:%M").time()
-        except:
-            t = datetime.datetime.max.time()
-        return (1, t)
-    return sorted(matches, key=match_key)
+            for match in matches_data:
+                date_str = match.get("@date")
+                time_str = match.get("@time", "00:00")
+                try:
+                    match_dt = datetime.strptime(f"{date_str} {time_str}", "%d.%m.%Y %H:%M")
+                except:
+                    match_dt = now
 
-def fetch_matches(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        data = response.json()
-    except requests.exceptions.RequestException as e:
-        return None, str(e)
-    matches_list = []
-    categories = data.get('scores', {}).get('category', [])
-    if isinstance(categories, dict):
-        categories = [categories]
+                status_raw = match.get("@status", "").upper()
+                status = "live" if status_raw == "LIVE" or (match_dt <= now < match_dt + timedelta(hours=2)) \
+                         else ("past" if match_dt < now else "upcoming")
 
-    for cat in categories:
-        league_name = cat.get('@name', 'Unknown League')
-        league_id = cat.get('@id', '')  # capture league ID
-        matches = cat.get('matches', {}).get('match', [])
-        if isinstance(matches, dict):
-            matches = [matches]
-        for match in matches:
-            raw_date = match.get('@date', '')
-            try:
-                date_obj = datetime.strptime(raw_date, "%b %d")
-                formatted_date = date_obj.strftime("%d/%m")
-            except:
-                formatted_date = raw_date
-            events_raw = match.get('events') or {}
-            events_data = events_raw.get('event', [])
-            if isinstance(events_data, dict):
-                events_data = [events_data]
-            events = []
-            for ev in events_data:
-                events.append({
-                    'minute': ev.get('@minute', ''),
-                    'extra_min': ev.get('@extra_min', ''),
-                    'type': ev.get('@type', ''),
-                    'team': ev.get('@team', ''),
-                    'player': ev.get('@player', ''),
-                    'assist': ev.get('@assist', ''),
-                    'result': ev.get('@result', '')
-                })
-            matches_list.append({
-                'league': league_name,
-                'league_id': league_id,  # store it
-                'venue': match.get('@venue', ''),
-                'local_team': match.get('localteam', {}).get('@name', ''),
-                'local_goals': match.get('localteam', {}).get('@goals', 0),
-                'visitor_team': match.get('visitorteam', {}).get('@name', ''),
-                'visitor_goals': match.get('visitorteam', {}).get('@goals', 0),
-                'status': match.get('@status', 'NS'),
-                'time': match.get('@time', ''),
-                'date': formatted_date,
-                'events': events,
-                'match_id': match.get('@id', '')
-            })
-    return matches_list, None
+                match_obj = {
+                    "league": league_name,
+                    "home": match.get("localteam", {}).get("@name", ""),
+                    "away": match.get("visitorteam", {}).get("@name", ""),
+                    "score_home": match.get("localteam", {}).get("@goals") \
+                                  or match.get("localteam", {}).get("@score") or "-",
+                    "score_away": match.get("visitorteam", {}).get("@goals") \
+                                  or match.get("visitorteam", {}).get("@score") or "-",
+                    "status": status,
+                    "timer": match.get("@timer", ""),
+                    "time": time_str,
+                    "date": date_str,
+                    "venue": match.get("@venue", "")
+                }
 
-def fetch_json(url):
-    try:
-        resp = requests.get(url, timeout=10)
-        resp.raise_for_status()
-        return resp.json(), None
+                if status == "live":
+                    live_matches.append(match_obj)
+                elif status == "upcoming":
+                    upcoming_matches.append(match_obj)
+
     except Exception as e:
-        return None, str(e)
-# Routes
+        print("Error fetching live matches:", e)
 
-@app.route('/live-scores')
-def live_scores():
-    matches, error = fetch_matches(LIVE_FEED_URL)
-    if matches:
-        matches = sort_matches(matches)
-    if error:
-        return jsonify({"error": error}), 500
-    return jsonify(matches)
+    # 2️⃣ Return live matches if they exist
+    if live_matches:
+        return live_matches
 
-@app.route('/all-scores')
+    # 3️⃣ No live matches → return nearest upcoming matches
+    if upcoming_matches:
+        # Optional: sort upcoming matches to get nearest ones first
+        upcoming_matches.sort(key=lambda x: datetime.strptime(f"{x['date']} {x['time']}", "%d.%m.%Y %H:%M"))
+        return upcoming_matches[:5]  # return top 5 upcoming matches
+
+    # 4️⃣ No live or upcoming matches → fallback to league list
+    return [{"league": name} for name in LEAGUE_IDS.keys()]
+
+@app.route("/matches")
+def matches_by_date():
+    date_query = request.args.get("date")
+    selected_league = request.args.get("league")
+    now = datetime.now()
+
+    # Use the query date if provided, otherwise consider today
+    selected_dt = datetime.strptime(date_query, "%d.%m.%Y") if date_query else now
+
+    all_matches = []
+    upcoming_matches = []
+
+    for league_name, league_id in LEAGUE_IDS.items():
+        if selected_league and selected_league != league_name:
+            continue
+
+        url = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerfixtures/leagueid/{league_id}?json=1"
+        try:
+            resp = requests.get(url, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+
+            results = data.get("results") or {}
+            tournament = results.get("tournament") or {}
+            weeks = tournament.get("week") or []
+            if isinstance(weeks, dict):
+                weeks = [weeks]
+
+            for week in weeks:
+                week = week or {}
+                matches = week.get("match") or []
+                if isinstance(matches, dict):
+                    matches = [matches]
+
+                for match in matches:
+                    match_date_str = match.get("@date")
+                    match_time_str = match.get("@time", "00:00")
+                    if not match_date_str:
+                        continue
+                    try:
+                        match_dt = datetime.strptime(f"{match_date_str} {match_time_str}", "%d.%m.%Y %H:%M")
+                    except:
+                        continue
+
+                    # Filter by date if provided
+                    if date_query and match_dt.date() != selected_dt.date():
+                        # Keep for upcoming fallback
+                        if match_dt > now:
+                            match["league"] = league_name
+                            upcoming_matches.append(match)
+                        continue
+
+                    # Filter out past matches if no date query
+                    if not date_query and match_dt < now:
+                        continue
+
+                    match["league"] = league_name
+
+                    # Process events (goals, bookings, substitutions)
+                    events = []
+
+                    # Goals
+                    goals_data = (match.get("goals") or {}).get("goal") or []
+                    if isinstance(goals_data, dict):
+                        goals_data = [goals_data]
+                    for g in goals_data:
+                        events.append({
+                            "type": "goal",
+                            "team": g.get("@team"),
+                            "player": g.get("@player"),
+                            "minute": g.get("@minute"),
+                            "assist": g.get("@assist"),
+                            "score": g.get("@score")
+                        })
+
+                    # Bookings
+                    for side in ["localteam", "visitorteam"]:
+                        lineup = ((match.get("lineups") or {}).get(side) or {}).get("player") or []
+                        if isinstance(lineup, dict):
+                            lineup = [lineup]
+                        for p in lineup:
+                            booking = p.get("@booking")
+                            if booking:
+                                events.append({
+                                    "type": "booking",
+                                    "team": side,
+                                    "player": p.get("@name"),
+                                    "minute": booking.split(" ")[-1]
+                                })
+
+                    # Substitutions
+                    for side in ["localteam", "visitorteam"]:
+                        subs = ((match.get("substitutions") or {}).get(side) or {}).get("substitution") or []
+                        if isinstance(subs, dict):
+                            subs = [subs]
+                        for s in subs:
+                            events.append({
+                                "type": "substitution",
+                                "team": side,
+                                "player_in": s.get("@player_in_name"),
+                                "player_out": s.get("@player_out_name"),
+                                "minute": s.get("@minute")
+                            })
+
+                    match["events"] = events
+                    all_matches.append(match)
+
+            # Sort matches by datetime
+            all_matches.sort(
+                key=lambda x: datetime.strptime(
+                    f"{x.get('@date','01.01.1970')} {x.get('@time','00:00')}", "%d.%m.%Y %H:%M"
+                )
+            )
+
+        except Exception as e:
+            print(f"Error fetching {league_name}: {e}")
+
+    # If no matches found for selected date, return nearest upcoming matches
+    if date_query and not all_matches and upcoming_matches:
+        upcoming_matches.sort(key=lambda x: datetime.strptime(
+            f"{x.get('@date','01.01.1970')} {x.get('@time','00:00')}", "%d.%m.%Y %H:%M"
+        ))
+        all_matches = upcoming_matches[:5]  # top 5 nearest matches
+
+    return jsonify(all_matches)
+
+
+@app.route('/all-scores',methods=["GET"])
 def all_scores():
-    matches, error = fetch_matches(LIVE_FEED_URL)
-    if matches:
-        matches = sort_matches(matches)
-    return render_template('all_scores.html', live_matches=matches or [], live_error=error)
+    matches = fetch_matches()
+    return render_template("all_scores.html", matches=matches)
 
 @app.route('/top-players-json')
 def top_players_json():
@@ -831,11 +948,11 @@ def football_tables():
     teams_list = [{
         "rank": t.rank,
         "name": t.team_name,
-        "played": t.played,
-        "won": t.won,
-        "draw": t.draw,
-        "lost": t.lost,
-        "points": t.points
+        "MP": t.MP,
+        "W": t.W,
+        "D": t.D,
+        "L": t.L,
+        "PTS": t.PTS
     } for t in teams]
 
     return jsonify({"teams": teams_list})
@@ -858,141 +975,15 @@ def cricket_rankings():
 
     return jsonify({"teams": teams_list})
 
-@app.route('/search')
-def search_matches():
-    input_date = request.args.get('date', '').strip()  # format: dd/mm/yyyy
-    day_code = date_to_day_code(input_date)
-    if not day_code:
-        return jsonify({"error": "Invalid date format. Use dd/mm/yyyy"}), 400
-
-    try:
-        date_obj = datetime.datetime.strptime(input_date, "%d/%m/%Y").date()
-    except ValueError:
-        return jsonify({"error": "Invalid date format. Use dd/mm/yyyy"}), 400
-
-    today = datetime.datetime.now().date()
-    if not (today - datetime.timedelta(days=7) <= date_obj <= today + datetime.timedelta(days=7)):
-        return jsonify({"error": "Only dates within past 7 or next 7 days are allowed."}), 400
-
-    url = get_dynamic_feed_url(day_code)
-    matches, error = fetch_matches(url)
-    if matches:
-        matches = sort_matches(matches)
-
-    if error:
-        return jsonify({"error": error}), 500
-
-    return jsonify({"matches": matches})
-    
-@app.route('/leagues')
-def leagues():
-    data, error = fetch_json(LEAGUES_URL)
-    if error:
-        return f"Error fetching leagues: {error}", 500
-    leagues_list = data.get('fixtures', {}).get('mapping', [])
-    if isinstance(leagues_list, dict):
-        leagues_list = [leagues_list]
-    return render_template('leagues.html', leagues=leagues_list)
-
-@app.route('/league/<league_id>')
-def league_details(league_id):
-    url = LEAGUE_TEAMS_URL.format(league_id)
-    data, error = fetch_json(url)
-    if error:
-        return f"Error fetching league details: {error}", 500
-
-    league = data.get('league', {})
-    teams = league.get('team', [])
-    if isinstance(teams, dict):
-        teams = [teams]
-
-    # Flatten player info per team
-    for team in teams:
-        squad = team.get('squad', {}).get('player', [])
-        if isinstance(squad, dict):
-            squad = [squad]
-        team['squad'] = squad
-        team['coach'] = team.get('coach', {"@name": "N/A", "@id": ""})
-
-    return render_template('league_teams.html', league=league, teams=teams)
-
-@app.route('/team/<league_id>/<team_name>')
-def team_details(league_id, team_name):
-    url = LEAGUE_TEAMS_URL.format(league_id)
-    data, error = fetch_json(url)
-    if error:
-        return f"Error fetching team details: {error}", 500
-
-    league = data.get('league', {}) 
-    teams = league.get('team', [])
-    if isinstance(teams, dict):
-        teams = [teams]
-
-    selected_team = None
-    for team in teams:
-        if team.get('@name', '').lower() == team_name.lower():
-            squad = team.get('squad', {}).get('player', [])
-            if isinstance(squad, dict):
-                squad = [squad]
-            team['squad'] = squad
-            team['coach'] = team.get('coach', {"@name": "N/A", "@id": ""})
-            selected_team = team
-            break
-
-    if not selected_team:
-        return render_template(
-            'error.html',
-            error_code=404,
-            message=f"Team '{team_name}' not found in league {league.get('@name', '')}"
-        ), 404
-
-
-    return render_template('team_details.html', league=league, team=selected_team)
-
-
-# @app.route('/')
-# def home():
-#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
-#     products = Product.query.order_by(Product.id.desc()).limit(5).all()
-#     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
-#     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
-#     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
-#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-#     return render_template('index.html', news_items=news_items, products=products, memorabilia_stories=memorabilia_stories,youtube_videos=youtube_videos,advertisement=ad,welcome_text=welcome_text)
-
 # --- TCR Home Page ---
-# @app.route('/')
-# def home():
-#     news_items = News.query.order_by(News.id.desc()).limit(6).all()
-#     products = Product.query.order_by(Product.id.desc()).limit(5).all()
-#     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
-#     youtube_videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).limit(5).all()
-#     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
-#     live_matches, live_error = fetch_matches(LIVE_FEED_URL)
-#     if live_matches:
-#         live_matches = sort_matches(live_matches)
-#     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
-#     return render_template(
-#         'index.html',
-#         news_items=news_items,
-#         products=products,
-#         memorabilia_stories=memorabilia_stories,
-#         youtube_videos=youtube_videos,
-#         advertisement=ad,
-#         welcome_text=welcome_text,
-#         live_matches=live_matches or [],
-#         live_error=live_error
-#     )
 @app.route('/')
 def home():
+    matches = fetch_matches()
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
     products = Product.query.order_by(Product.id.desc()).limit(5).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
-    live_matches, live_error = fetch_matches(LIVE_FEED_URL)
-    if live_matches:
-        live_matches = sort_matches(live_matches)
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
     return render_template(
         'index.html',
@@ -1002,8 +993,7 @@ def home():
         youtube_videos=youtube_shorts,
         advertisement=ad,
         welcome_text=welcome_text,
-        live_matches=live_matches or [],
-        live_error=live_error
+        matches=matches
     )
 
 @app.route('/login', methods=['GET', 'POST'])

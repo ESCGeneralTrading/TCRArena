@@ -619,7 +619,7 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('all_scores') }}">Live Scores</a>
+        <a href="{{ url_for('all_scores') }}">Live Matches</a>
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
@@ -646,6 +646,7 @@
       <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
     </div>
 
+    {% if videos %}
     <h1>Relive Greatness in the Arena Collectors Community</h1>
     <!-- video section -->
     <p class="video-hpara"  style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
@@ -688,8 +689,9 @@
       </div>
       {% endfor %}
     </div>
-
     <hr style="margin: 3rem 0; border: none; border-top: 2px solid #ccc;">
+    {% endif %}
+    
     <!-- image section -->
     <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</p>
     <div class="images-grid">

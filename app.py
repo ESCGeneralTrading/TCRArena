@@ -69,7 +69,9 @@ def allowed_file(filename, allowed_set):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_set
 
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static/uploads')
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Limit max upload size (e.g., 50MB)
+# app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Limit max upload size (e.g., 50MB)
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 1024  # 1GB
+
 
 db_path = os.path.join(app.instance_path, 'news.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
@@ -78,11 +80,6 @@ app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://tcrarena_db_user:ZLwPUckLOzUHE8Y07wQOTM2oPF7ooOkd@dpg-d25gn52li9vc73f9m400-a.singapore-postgres.render.com/tcrarena_db"
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SECRET_KEY'] = 'this-should-be-a-secret-key'
-# db.init_app(app)
-# migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -140,16 +137,18 @@ class TopFighter(db.Model):
     sources = db.Column(db.String(255))  # comma-separated
     credits = db.Column(db.String(255))  # image/video credit
 
+
 class FootballTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     league = db.Column(db.String(150), nullable=False)   # e.g., Premier League, Serie A
     rank = db.Column(db.Integer, nullable=False)
-    Team = db.Column(db.String(150), nullable=False)
-    MP = db.Column(db.Integer, default=0)
-    W = db.Column(db.Integer, default=0)
-    D = db.Column(db.Integer, default=0)
-    L = db.Column(db.Integer, default=0)
-    PTS = db.Column(db.Integer, default=0)
+    team_name = db.Column(db.String(150), nullable=False)
+    played = db.Column(db.Integer, default=0)
+    won = db.Column(db.Integer, default=0)
+    draw = db.Column(db.Integer, default=0)
+    lost = db.Column(db.Integer, default=0)
+    points = db.Column(db.Integer, default=0)
+
 
 class CricketRanking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -418,8 +417,8 @@ admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
 
 class TopPlayerAdmin(ModelView):
-    column_list = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
-    form_columns = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources', 'credits')
+    column_list = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources')
+    form_columns = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources')
     column_sortable_list = ('rank', 'sport', 'player_name')
     column_searchable_list = ('player_name', 'club', 'nationality')
     page_size = 20
@@ -442,13 +441,14 @@ class TopFighterAdmin(ModelView):
 admin.add_view(TopFighterAdmin(TopFighter, db.session))
 
 class FootballTableAdmin(ModelView):
-    column_list = ('league', 'rank', 'Team', 'MP', 'W', 'D', 'L', 'PTS')
-    form_columns = ('league', 'rank', 'Team', 'MP', 'W', 'D', 'L', 'PTS')
-    column_sortable_list = ('league', 'rank', 'Team', 'PTS')
-    column_searchable_list = ('league', 'Team')
+    column_list = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
+    form_columns = ('league', 'rank', 'team_name', 'played', 'won', 'draw', 'lost', 'points')
+    column_sortable_list = ('league', 'rank', 'team_name', 'points')
+    column_searchable_list = ('league', 'team_name')
     
     def is_accessible(self):
         return current_user.is_authenticated
+
 
 class CricketRankingAdmin(ModelView):
     column_list = ('type', 'rank', 'team_name', 'matches', 'points', 'rating')
@@ -948,14 +948,15 @@ def football_tables():
     teams_list = [{
         "rank": t.rank,
         "name": t.team_name,
-        "MP": t.MP,
-        "W": t.W,
-        "D": t.D,
-        "L": t.L,
-        "PTS": t.PTS
+        "played": t.played,
+        "won": t.won,
+        "draw": t.draw,
+        "lost": t.lost,
+        "points": t.points
     } for t in teams]
 
     return jsonify({"teams": teams_list})
+
 
 @app.route('/cricket-rankings')
 def cricket_rankings():

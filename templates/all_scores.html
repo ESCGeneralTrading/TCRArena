@@ -538,7 +538,7 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('all_scores') }}">Live Scores</a>
+        <a href="{{ url_for('all_scores') }}">Live Matches</a>
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
@@ -1023,8 +1023,7 @@
                         <th>Player Name</th>
                         <th>Club (2025)</th>
                         <th>Nationality</th>
-                        <th>Source(s)</th>
-                        <th>Credits</th>
+                        <th>Source(s) & Credits</th>
                     </tr>`;
 
                 data.players.forEach(p => {
@@ -1034,7 +1033,6 @@
                         <td>${p.club || ''}</td>
                         <td>${p.nationality || ''}</td>
                         <td>${p.sources || ''}</td>
-                        <td>${p.credits || ''}</td>
                     </tr>`;
                 });
 
@@ -1078,8 +1076,7 @@
             <th>Player Name</th>
             <th>Club (${year})</th>
             <th>Nationality</th>
-            <th>Source(s)</th>
-            <th>Credits</th>
+            <th>Source(s) & Credits</th>
         </tr>`;
 
 
@@ -1090,7 +1087,6 @@
                 <td>${p.club || ''}</td>
                 <td>${p.nationality || ''}</td>
                 <td>${p.sources || ''}</td>
-                <td>${p.credits || ''}</td>
             </tr>`;
         });
 
@@ -1130,8 +1126,7 @@ function showFighters(sport) {
             <th>Fighter Name</th>
             <th>Club (${year})</th>
             <th>Nationality</th>
-            <th>Source(s)</th>
-            <th>Credits</th>
+            <th>Source(s) & Credits</th>
         </tr>`;
 
 
@@ -1142,7 +1137,7 @@ function showFighters(sport) {
                 <td>${p.club || ''}</td>
                 <td>${p.nationality || ''}</td>
                 <td>${p.sources || ''}</td>
-                <td>${p.credits || ''}</td>
+
             </tr>`;
         });
 

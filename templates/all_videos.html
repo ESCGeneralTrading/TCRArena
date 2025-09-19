@@ -290,7 +290,76 @@
 
 .tab-content { max-width: 1200px; margin: 0 auto 3rem auto; }
 .section-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; color: #021638; text-align: center; }
+.featured-cta {
+      background-color: #ffcc66;
+      padding: 4rem 2rem;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      margin-top: 2rem;
+    }
+    .featured-cta h2 {
+      margin: 0;
+      font-size: 3rem;
+      font-weight: bold;
+      color: #222;
+      line-height: 1.5;
+    }
+    .featured-cta .email-label {
+      margin: 0.5rem 0 0;
+      font-size: 1.4rem;
+      color: #222;
+      line-height: 1.5;
+      font-weight: bold;
+    }
+    .featured-cta .email-link {
+      margin: 0.5rem 0 0;
+      font-size: 1.6rem;
+      font-weight: normal;
+      display: inline-block;
+      background-color: black;
+      padding: 1rem 2rem;
+      border-radius: 6px;
+      line-height: 1;
+    }
+    .featured-cta .email-link a {
+      color: #fff;
+      text-decoration: underline;
+      word-break: break-word; /* keep it neat on small screens */
+    }
 
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .featured-cta {
+        padding: 3rem 1.5rem;
+      }
+      .featured-cta h2 {
+        font-size: 2.25rem;
+      }
+      .featured-cta .email-label {
+        font-size: 1.2rem;
+        line-height: 1.4;
+      }
+      .featured-cta .email-link {
+        font-size: 1.4rem;
+        padding: 1rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .featured-cta {
+        padding: 2rem 1rem;
+      }
+      .featured-cta h2 {
+        font-size: 1.8rem;
+      }
+      .featured-cta .email-label {
+        font-size: 1rem;
+      }
+      .featured-cta .email-link {
+        font-size: 1.2rem;
+        padding: 0.75rem 1rem;
+      }
+    }  
   </style>
 </head>
 <body>
@@ -433,7 +502,7 @@ function showTab(tab, el) {
         {% endif %}
 
         {% if full_videos %} -->
-        <hr>
+        <!-- <hr> -->
         <!-- Full-Length Videos Section -->
         <!-- <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
         <div class="youtube-grid">
@@ -456,6 +525,15 @@ function showTab(tab, el) {
     </div> -->
 
   </div>
+
+  <section class="featured-cta">
+      <h2>TO GET FEATURED IN TcR ARENA</h2>
+      <p class="email-label">Showcase your personal coleections for free</p>
+      <p class="email-link">
+        <!-- <a href="mailto:digital@tcrarena.com">digital@tcrarena.com</a> -->
+        <a href="{{ url_for('join') }}" style="text-decoration-line: none;">CONNECT WITH US</a>
+      </p>
+  </section>
 
   <!-- Footer -->
   <footer>

@@ -1308,21 +1308,22 @@
       top: 0;
       background:#111;
       text-align:center;
-      font-size:clamp(16px, 2vw, 22px); /* Responsive text size */
+      font-size:clamp(14px, 2vw, 40px); /* Responsive text size */
       font-weight:bold;
       padding:12px 5px;
       z-index:10;
       border-bottom:1px solid #333;
       color: #ffffff;
       height:150px;
-      padding-top: 50px;">
-    ⚽ Match Center
+      padding-top: 50px;
+      letter-spacing: 2px; /* Extra spacing inside text */
+  ">
+    READ IT ⚪&nbsp;&nbsp;&nbsp;&nbsp;  LIVE IT ⚪ &nbsp;&nbsp;&nbsp;&nbsp; COLLECT IT ⚪
   </div>
+
 
   <!-- Live Score -->
   <!-- <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
-
-  
   <div class="scores-wrapper">
                   {% if matches %}
                       {% if matches[0].league and matches[0].get('home') is none %}

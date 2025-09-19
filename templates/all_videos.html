@@ -359,20 +359,7 @@
 
 <!-- YouTube Tab -->
 <div id="youtube-tab" class="tab-content">
-    {% if shorts or full_videos %}
-        {% if shorts %}
-        <div class="section-title">Arena Highlights</div>
-        <div class="youtube-grid">
-            {% for video in shorts %}
-            <div class="youtube-card shorts">
-                <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
-                <p class="youtube-title">{{ video.title }}</p>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if full_videos %}
+      {% if full_videos %}
         <hr>
         <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
         <div class="youtube-grid">
@@ -383,10 +370,22 @@
             </div>
             {% endfor %}
         </div>
-        {% endif %}
-    {% else %}
-        <p style="text-align:center;">No YouTube videos available.</p>
-    {% endif %}
+      {% endif %}
+      {% if shorts or full_videos %}
+          {% if shorts %}
+          <div class="section-title">Arena Highlights</div>
+          <div class="youtube-grid">
+              {% for video in shorts %}
+              <div class="youtube-card shorts">
+                  <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
+                  <p class="youtube-title">{{ video.title }}</p>
+              </div>
+              {% endfor %}
+          </div>
+      {% endif %}
+      {% else %}
+            <p style="text-align:center;">No YouTube videos available.</p>
+      {% endif %}
 </div>
 
 <!-- TikTok Tab -->
@@ -462,7 +461,7 @@ function showTab(tab, el) {
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-      <a href="https://www.thecollectroom.com/pages/contact">Contact</a>
+      <a href="{{ url_for('join') }}">Contact</a>
     </p>
   </footer>
 

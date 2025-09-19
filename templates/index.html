@@ -1120,6 +1120,7 @@
 
     .team-name, .score, .match-header, .events strong, .match-info { text-align:center;font-size:0.85rem;color: white; }
     .score { font-weight:700; font-size:1.4rem; margin:6px 0; color:#ff7f50; }
+    .timer { font-weight:normal; font-size:0.8rem; margin:6px 0; color:#187609; }
     .match-header { font-size:17px; font-weight:bold; color:#ccc; margin-bottom:6px; }
 
     .match-card.live::before { 
@@ -1281,7 +1282,7 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('all_scores') }}">Live Matches</a>
+        <!-- <a href="{{ url_for('all_scores') }}">Live Matches</a> -->
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
@@ -1301,8 +1302,27 @@
     </div>
   </header>
   
+  <!-- ✅ Responsive Sticky Header -->
+  <div style="
+      position: sticky;
+      top: 0;
+      background:#111;
+      text-align:center;
+      font-size:clamp(16px, 2vw, 22px); /* Responsive text size */
+      font-weight:bold;
+      padding:12px 5px;
+      z-index:10;
+      border-bottom:1px solid #333;
+      color: #ffffff;
+      height:150px;
+      padding-top: 50px;">
+    ⚽ Match Center
+  </div>
+
   <!-- Live Score -->
-  <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
+  <!-- <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
+
+  
   <div class="scores-wrapper">
                   {% if matches %}
                       {% if matches[0].league and matches[0].get('home') is none %}
@@ -1325,13 +1345,14 @@
                               </table>
                           </div>
 
-                      {% else %}
+                      {% else %} -->
                           <!-- Live matches -->
-                          {% for match in matches %}
+                          <!-- {% for match in matches %}
                               <div class="match-card {{ match.status }}">
                                   <div class="match-header">{{ match.league }}</div>
                                   <div class="team-name">{{ match.home }} vs {{ match.away }}</div>
                                   <div class="score">{{ match.score_home }} - {{ match.score_away }}</div>
+                                  <div class="timer">{{ match.timer }}</div>
                                   <div class="match-info">
                                       <span>Date: {{ match.date }}</span> | 
                                       <span>Time: {{ match.time }}</span> | 
@@ -1550,7 +1571,7 @@
             </script>
       
     </div>
-
+ -->
 
 
   <!-- Blog Section -->

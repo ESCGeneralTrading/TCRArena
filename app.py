@@ -20,6 +20,8 @@ from extensions import db
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
+from googleapiclient.discovery import build
+import isodate
 
 load_dotenv()
 
@@ -54,16 +56,8 @@ LEAGUES_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerfixtures/data/
 LEAGUE_TEAMS_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerleague/{{}}?json=1"  # leagueID
 PLAYER_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/player/{{}}?json=1"
 
-LEAGUE_IDS = {
-    "England: Premier League": 1204,
-    "La Liga": 1399,
-    "Serie A": 1269,
-    "Germany: Bundesliga": 1229,
-    "UEFA Champions League": 1005,
-    "Saudi Pro League": 1368,
-    "FIFA World Cup": 1211,
-    "Bhutan: Premier League": 18915
-}
+  
+
 
 def allowed_file(filename, allowed_set):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_set
@@ -158,6 +152,29 @@ class CricketRanking(db.Model):
     matches = db.Column(db.Integer, default=0)
     points = db.Column(db.Integer, default=0)
     rating = db.Column(db.Integer, default=0)
+
+class Formula1Ranking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False)  
+    rank = db.Column(db.Integer, nullable=False)
+    driver_name = db.Column(db.String(150), nullable=False)
+    won = db.Column(db.Integer, default=0)
+    podiums = db.Column(db.Integer, default=0)
+    points = db.Column(db.Integer, default=0)
+
+class BoxingRanking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False) 
+    rank = db.Column(db.Integer, nullable=False)
+    boxer_name = db.Column(db.String(150), nullable=False)
+    titles = db.Column(db.String(350), nullable=False)
+
+class MmaRanking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50), nullable=False) 
+    rank = db.Column(db.Integer, nullable=False)
+    fighter_name = db.Column(db.String(150), nullable=False)
+    division = db.Column(db.String(350), nullable=False)    
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -292,6 +309,50 @@ class Advertisement(db.Model):
         return None
 
 
+# Cricket Match Model
+class CricketMatchDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    line1 = db.Column(db.String(255))
+    line2 = db.Column(db.String(255))
+    line3 = db.Column(db.String(255))
+    line4 = db.Column(db.String(255))
+    line5 = db.Column(db.String(255))
+    active = db.Column(db.Boolean, default=True)
+
+# Basketball Match Model
+class BasketballMatchDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    line1 = db.Column(db.String(255))
+    line2 = db.Column(db.String(255))
+    line3 = db.Column(db.String(255))
+    line4 = db.Column(db.String(255))
+    line5 = db.Column(db.String(255))
+    active = db.Column(db.Boolean, default=True)
+
+# formula1 Match Model
+class Formula1MatchDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    line1 = db.Column(db.String(255))
+    line2 = db.Column(db.String(255))
+    line3 = db.Column(db.String(255))
+    line4 = db.Column(db.String(255))
+    line5 = db.Column(db.String(255))
+    active = db.Column(db.Boolean, default=True)
+
+# Boxing Match Model
+class BoxingMatchDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    line1 = db.Column(db.String(255))
+    line2 = db.Column(db.String(255))
+    line3 = db.Column(db.String(255))
+    line4 = db.Column(db.String(255))
+    line5 = db.Column(db.String(255))
+    active = db.Column(db.Boolean, default=True)
+
 # Admin Views
 
 class MyAdminIndexView(AdminIndexView):
@@ -416,6 +477,68 @@ admin = Admin(
 admin.add_view(NewsAdmin(News, db.session))
 admin.add_view(ProductAdmin(Product, db.session))
 
+# Cricket Admin Panel
+class CricketMatchDetailAdmin(ModelView):
+    column_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    form_columns = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    column_sortable_list = ('title', 'active')
+    column_searchable_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5')
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(CricketMatchDetailAdmin(CricketMatchDetail, db.session))
+
+# Basketball Admin Panel
+class BasketballMatchDetailAdmin(ModelView):
+    column_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    form_columns = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    column_sortable_list = ('title', 'active')
+    column_searchable_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5')
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(BasketballMatchDetailAdmin(BasketballMatchDetail, db.session))
+
+
+class Formula1MatchDetailAdmin(ModelView):
+    # Columns to display in the list view
+    column_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+
+    # Columns available in the add/edit form
+    form_columns = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+
+    # Columns you can sort by
+    column_sortable_list = ('title', 'active')
+
+    # Columns searchable in the admin list view
+    column_searchable_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5')
+
+    # Pagination size
+    page_size = 20
+
+    # Only allow access to authenticated users
+    def is_accessible(self):
+        return current_user.is_authenticated
+    
+admin.add_view(Formula1MatchDetailAdmin(Formula1MatchDetail, db.session))
+
+# Boxing Admin Panel
+class BoxingMatchDetailAdmin(ModelView):
+    column_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    form_columns = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
+    column_sortable_list = ('title', 'active')
+    column_searchable_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5')
+    page_size = 20
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+admin.add_view(BoxingMatchDetailAdmin(BoxingMatchDetail, db.session))
+
 class TopPlayerAdmin(ModelView):
     column_list = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources')
     form_columns = ('sport', 'rank', 'player_name', 'club', 'nationality', 'sources')
@@ -459,9 +582,40 @@ class CricketRankingAdmin(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated
 
+class Formula1RankingAdmin(ModelView):
+    column_list = ('type', 'rank', 'driver_name', 'won', 'points', 'podiums')
+    form_columns = ('type', 'rank', 'driver_name', 'won', 'points', 'podiums')
+    column_sortable_list = ('type', 'rank', 'driver_name', 'points')
+    column_searchable_list = ('type', 'driver_name')
+
+    def is_accessible(self):
+        return current_user.is_authenticated    
+    
+
+class BoxingRankingAdmin(ModelView):
+    column_list = ('type', 'rank', 'boxer_name', 'titles')
+    form_columns = ('type', 'rank', 'boxer_name', 'titles')
+    column_sortable_list = ('type', 'rank', 'boxer_name', 'titles')
+    column_searchable_list = ('type', 'boxer_name')
+
+    def is_accessible(self):
+        return current_user.is_authenticated    
+
+class MmaRankingAdmin(ModelView):
+    column_list = ('type', 'rank', 'fighter_name', 'division')
+    form_columns = ('type', 'rank', 'fighter_name', 'division')
+    column_sortable_list = ('type', 'rank', 'fighter_name', 'division')
+    column_searchable_list = ('type', 'fighter_name')
+
+    def is_accessible(self):
+        return current_user.is_authenticated    
+    
 # Add to admin
 admin.add_view(FootballTableAdmin(FootballTable, db.session))
 admin.add_view(CricketRankingAdmin(CricketRanking, db.session))
+admin.add_view(Formula1RankingAdmin(Formula1Ranking, db.session))
+admin.add_view(BoxingRankingAdmin(BoxingRanking, db.session))
+admin.add_view(MmaRankingAdmin(MmaRanking, db.session))
 
 class MemorabiliaAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -695,6 +849,7 @@ LEAGUE_IDS = {
     "Germany: Bundesliga": 1014,
     "UEFA Champions League": 1005,
     "Saudi Pro League": 1368,
+    # "Bhutan: Premier League": 18915,
     # "India: Calcutta Premier Division - Relegation Group": 4426
 }
 
@@ -769,6 +924,71 @@ def fetch_matches():
     # 4️⃣ No live or upcoming matches → fallback to league list
     return [{"league": name} for name in LEAGUE_IDS.keys()]
 
+
+# Cricket Match API
+@app.route("/cricketmatch-details")
+def cricketmatch_details():
+    details = CricketMatchDetail.query.filter_by(active=True).order_by(CricketMatchDetail.id.desc()).all()
+    if details:
+        return jsonify([
+            {
+                "title": d.title,
+                "lines": [d.line1, d.line2, d.line3, d.line4, d.line5]
+            }
+            for d in details
+        ])
+    else:
+        return jsonify([])
+
+# Basketball Match API
+@app.route("/basketballmatch-details")
+def basketballmatch_details():
+    details = BasketballMatchDetail.query.filter_by(active=True).order_by(BasketballMatchDetail.id.desc()).all()
+    if details:
+        return jsonify([
+            {
+                "title": d.title,
+                "lines": [d.line1, d.line2, d.line3, d.line4, d.line5]
+            }
+            for d in details
+        ])
+    else:
+        return jsonify([])
+
+
+# Formula1 Match API
+
+@app.route("/formula1match-details")
+def formula1match_details():
+    details = Formula1MatchDetail.query.filter_by(active=True).order_by(Formula1MatchDetail.id.desc()).all()
+    if details:
+        return jsonify([
+            {
+                "title": d.title,
+                "lines": [d.line1, d.line2, d.line3, d.line4, d.line5]
+            }
+            for d in details
+        ])
+    else:
+        return jsonify([])
+
+
+# Boxing Match API
+@app.route("/boxingmatch-details")
+def boxingmatch_details():
+    details = BoxingMatchDetail.query.filter_by(active=True).order_by(BoxingMatchDetail.id.desc()).all()
+    if details:
+        return jsonify([
+            {
+                "title": d.title,
+                "lines": [d.line1, d.line2, d.line3, d.line4, d.line5]
+            }
+            for d in details
+        ])
+    else:
+        return jsonify([])
+
+    
 @app.route("/matches")
 def matches_by_date():
     date_query = request.args.get("date")
@@ -975,6 +1195,58 @@ def cricket_rankings():
     } for t in teams]
 
     return jsonify({"teams": teams_list})
+
+@app.route('/formula1-rankings')
+def formula1_tables():
+    ranking_type = request.args.get('type', '').strip()
+    if not ranking_type:
+        return jsonify({"teams": []})
+
+    drivers = Formula1Ranking.query.filter_by(type=ranking_type).order_by(Formula1Ranking.rank).all()
+
+    drivers_list = [{
+        "rank": d.rank,
+        "driver_name": d.driver_name,
+        "won": d.won,
+        "podiums": d.podiums,
+        "points": d.points
+    } for d in drivers]
+
+    return jsonify({"teams": drivers_list})
+
+
+@app.route('/boxing-rankings')
+def boxing_tables():
+    ranking_type = request.args.get('type', '').strip()
+    if not ranking_type:
+        return jsonify({"teams": []})
+
+    boxers = BoxingRanking.query.filter_by(type=ranking_type).order_by(BoxingRanking.rank).all()
+
+    boxers_list = [{
+        "rank": d.rank,
+        "boxer_name": d.boxer_name,
+        "titles": d.titles
+    } for d in boxers]
+
+    return jsonify({"teams": boxers_list})
+
+
+@app.route('/mma-rankings')
+def mma_tables():
+    ranking_type = request.args.get('type', '').strip()
+    if not ranking_type:
+        return jsonify({"teams": []})
+
+    fighters = MmaRanking.query.filter_by(type=ranking_type).order_by(MmaRanking.rank).all()
+
+    fighters_list = [{
+        "rank": d.rank,
+        "fighter_name": d.fighter_name,
+        "division": d.division,
+    } for d in fighters]
+
+    return jsonify({"teams": fighters_list})
 
 # --- TCR Home Page ---
 @app.route('/')
@@ -1367,13 +1639,115 @@ def join_collectors():
 
 # @app.route('/videos')
 # def all_videos():
-#     videos = YouTubeVideo.query.order_by(YouTubeVideo.id.desc()).all()
-#     return render_template('all_videos.html', videos=videos)
+#     shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).all()
+#     full_videos = YouTubeVideo.query.filter_by(is_short=False).order_by(YouTubeVideo.id.desc()).all()
+#     return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
+
+
+YOUTUBE_API_KEY = 'AIzaSyDg4UvVFz06U-64ydsG_gC3_qkN8sntrLU'
+CHANNEL_ID = 'UCjr5E_A1k7cKaTcvGjjl44A'
+
+# Playlist containing all Shorts videos
+SHORTS_PLAYLIST_ID = 'PLgsIMVkeMYCwFXqG8U39kXyN0WtGFM40l'
+
+# Playlist containing all full-length videos (main uploads or custom playlist)
+FULL_PLAYLIST_ID = 'PLgsIMVkeMYCwd2MlJum2Y0UMY6d-UfhR6'
+
+
+# def fetch_videos_from_playlist(playlist_id):
+#     """
+#     Fetch all videos from a given YouTube playlist.
+#     Returns a list of dictionaries: [{'video_id': ..., 'title': ...}, ...]
+#     """
+#     videos = []
+#     url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+#     params = {
+#         'key': YOUTUBE_API_KEY,
+#         'playlistId': playlist_id,
+#         'part': 'snippet',
+#         'maxResults': 50
+#     }
+
+#     while True:
+#         response = requests.get(url, params=params).json()
+#         items = response.get('items', [])
+
+#         for item in items:
+#             snippet = item['snippet']
+#             video_id = snippet['resourceId']['videoId']
+#             title = snippet['title']
+
+#             videos.append({
+#                 'video_id': video_id,
+#                 'title': title
+#             })
+
+#         # Pagination
+#         if 'nextPageToken' in response:
+#             params['pageToken'] = response['nextPageToken']
+#         else:
+#             break
+
+#     return videos
+
+
+# @app.route('/videos')
+# def all_videos():
+#     # Fetch Shorts and Full-length videos from playlists
+#     shorts = fetch_videos_from_playlist(SHORTS_PLAYLIST_ID)
+#     full_videos = fetch_videos_from_playlist(FULL_PLAYLIST_ID)
+
+#     return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
+
+def fetch_videos_from_playlist(playlist_id):
+    """Fetch all videos from a given YouTube playlist."""
+    videos = []
+    url = 'https://www.googleapis.com/youtube/v3/playlistItems'
+    params = {
+        'key': YOUTUBE_API_KEY,
+        'playlistId': playlist_id,
+        'part': 'snippet',
+        'maxResults': 50
+    }
+
+    while True:
+        response = requests.get(url, params=params).json()
+        items = response.get('items', [])
+
+        for item in items:
+            snippet = item['snippet']
+            video_id = snippet['resourceId']['videoId']
+            title = snippet['title']
+
+            videos.append({
+                'video_id': video_id,
+                'title': title
+            })
+
+        if 'nextPageToken' in response:
+            params['pageToken'] = response['nextPageToken']
+        else:
+            break
+
+    return videos
+
+
 @app.route('/videos')
 def all_videos():
-    shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).all()
-    full_videos = YouTubeVideo.query.filter_by(is_short=False).order_by(YouTubeVideo.id.desc()).all()
-    return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
+    # Fetch YouTube Shorts + Full videos
+    shorts = fetch_videos_from_playlist(SHORTS_PLAYLIST_ID)
+    full_videos = fetch_videos_from_playlist(FULL_PLAYLIST_ID)
+
+    # TikTok username to embed
+    tiktok_username = "thecollectroom"
+
+    return render_template(
+        'all_videos.html',
+        shorts=shorts,
+        full_videos=full_videos,
+        tiktok_username=tiktok_username
+    )
+
 
 @app.route("/privacy")
 def privacy():

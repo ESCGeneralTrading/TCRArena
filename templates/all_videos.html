@@ -256,6 +256,41 @@
       margin-bottom: 1rem;
       color: #021638;
     }
+
+    .tabs {
+    text-align: center;
+    margin: 2rem 0;
+}
+.tabs a {
+    display: inline-block;
+    margin: 0 0.6rem;
+    text-decoration: none;
+    color: #021638;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 5px;
+}
+.tabs a.active {
+    background-color: #021638;
+    color: #fff;
+}
+.youtube-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+@media (max-width: 1024px) { .youtube-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) { .youtube-grid { grid-template-columns: 1fr; } }
+
+.youtube-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+.youtube-card iframe { width: 100%; border-radius: 8px; border: none; }
+.youtube-card.shorts iframe { aspect-ratio: 9 / 16; }
+.youtube-card.full iframe { aspect-ratio: 16 / 9; }
+.youtube-title { padding: 0.5rem 1rem; font-size: 1rem; font-weight: 500; color: #333; }
+
+.tab-content { max-width: 1200px; margin: 0 auto 3rem auto; }
+.section-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 1rem; color: #021638; text-align: center; }
+
   </style>
 </head>
 <body>
@@ -314,11 +349,80 @@
 
     <h1>Arena Vault: Exclusive Plays & Highlights</h1>
 
-    {% if shorts or full_videos %}
 
+<div class="tabs">
+    <a href="#" class="active" onclick="showTab('youtube', this)">YouTube</a>
+    <a href="#" onclick="showTab('tiktok', this)">TikTok</a>
+</div>
+
+<!-- <h1 style="text-align:center; margin-bottom:2rem; color:#021638;">Arena Vault: Exclusive Plays & Highlights</h1> -->
+
+<!-- YouTube Tab -->
+<div id="youtube-tab" class="tab-content">
+    {% if shorts or full_videos %}
         {% if shorts %}
-        <!-- YouTube Shorts Section -->
         <div class="section-title">Arena Highlights</div>
+        <div class="youtube-grid">
+            {% for video in shorts %}
+            <div class="youtube-card shorts">
+                <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
+                <p class="youtube-title">{{ video.title }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if full_videos %}
+        <hr>
+        <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
+        <div class="youtube-grid">
+            {% for video in full_videos %}
+            <div class="youtube-card full">
+                <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
+                <p class="youtube-title">{{ video.title }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+        <p style="text-align:center;">No YouTube videos available.</p>
+    {% endif %}
+</div>
+
+<!-- TikTok Tab -->
+<div id="tiktok-tab" class="tab-content" style="display:none;">
+    <div class="section-title">TikTok Highlights</div>
+    <blockquote class="tiktok-embed"
+                cite="https://www.tiktok.com/@{{ tiktok_username }}"
+                data-unique-id="{{ tiktok_username }}"
+                data-embed-type="creator"
+                style="max-width:780px; min-width:288px; margin:auto;">
+        <section>
+            <a target="_blank" href="https://www.tiktok.com/@{{ tiktok_username }}">
+                @{{ tiktok_username }}
+            </a>
+        </section>
+    </blockquote>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+</div>
+
+<script>
+function showTab(tab, el) {
+    // Hide both tabs
+    document.getElementById('youtube-tab').style.display = (tab === 'youtube') ? 'block' : 'none';
+    document.getElementById('tiktok-tab').style.display = (tab === 'tiktok') ? 'block' : 'none';
+
+    // Highlight active tab
+    document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+}
+</script>
+
+    <!-- {% if shorts or full_videos %}
+
+        {% if shorts %} -->
+        <!-- YouTube Shorts Section -->
+        <!-- <div class="section-title">Arena Highlights</div>
         <div class="youtube-grid">
           {% for video in shorts %}
             <div class="youtube-card shorts">
@@ -329,10 +433,10 @@
         </div>
         {% endif %}
 
-        {% if full_videos %}
+        {% if full_videos %} -->
         <hr>
         <!-- Full-Length Videos Section -->
-        <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
+        <!-- <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
         <div class="youtube-grid">
           {% for video in full_videos %}
             <div class="youtube-card full">
@@ -345,7 +449,7 @@
 
     {% else %}
         <p style="text-align:center; font-size:1.2rem;">No videos available at the moment.</p>
-    {% endif %}
+    {% endif %} -->
 
     <!-- Back Link -->
     <!-- <div style="text-align: center;">

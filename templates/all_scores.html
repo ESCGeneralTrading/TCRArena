@@ -324,7 +324,7 @@
     .events-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     .events-table th1 { background: #007bff; color: #fff; font-weight: 500; font-size: 13px; padding: 8px; border-radius: 4px; }
     .events-table th { background: #333; color: #fff; font-weight: 500; font-size: 13px; padding: 8px; border-radius: 4px; }
-    .events-table td { font-size: 13px; padding: 8px; border-bottom: 1px solid #eee; text-align: center; }
+    .events-table td { font-size: 13px; padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
 
     #filter-league-venue { padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; width: 250px; transition: all 0.2s; }
     #filter-league-venue:focus { border-color: #007bff; box-shadow: 0 0 6px rgba(0,123,255,0.2); }
@@ -499,16 +499,396 @@
     .players-list li:hover, .fighters-list li:hover {
         background: #f2f2f2;
     }
-}
+    }
     
 
-    /* @media(max-width: 1024px){ .logo-banner img { max-height: 10vh; } .teams { font-size: 16px; } .score { font-size: 1.1rem; width: 60px; } } */
     @media(max-width: 768px){ .match-header { flex-direction: column; align-items: flex-start; } .teams { flex-direction: column; align-items: flex-start; line-height: 1.5rem; } .score { margin: 5px 0; } #filter-league-venue { width: 100%; margin-bottom: 10px; } }
-    /* @media(max-width: 480px){ .logo-banner img { max-height: 8vh; } .teams { font-size: 14px; } .score { font-size: 1rem; width: 50px; } #search-section input, #search-section button { font-size: 13px; padding: 10px 14px; } } */
-
     .live-dot { display: inline-block; width: 13px; height: 13px; margin-left: 4px; margin-top: -2px; border-radius: 30%; background-color: #d9534f; position: relative; vertical-align: middle; animation: pulse 1.2s infinite; }
     .live-dot::after { content: ''; position: absolute; top: 3px; left: 3px; width: 7px; height: 7px; background: #fff; border-radius: 50%; }
     @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
+
+    /* Wrapper to control consistent width cricket match details */
+    #cricket-match-wrapper {
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1070px;
+        box-sizing: border-box;
+    }
+
+    /* Clickable bar default: white background, black text */
+    #cricket-match-bar {
+        background: white;
+        color: black;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        border: 2px solid black;
+        font-weight: bold;
+        font-size: 20px;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        height: 80px;
+        box-sizing: border-box;
+        user-select: none;
+        justify-content: center;
+    }
+
+    /* Hover effect */
+    #cricket-match-bar:hover {
+        background: #f0f0f0;
+        transform: scale(1.01);
+    }
+
+    /* Active state: black background, white text */
+    #cricket-match-bar.active {
+        background: black;
+        color: white;
+        border: 2px solid white;
+    }
+
+    /* Expandable box hidden by default */
+    #cricket-match-box {
+        display: none;
+        width: 100%;
+        overflow-x: auto; /* allows horizontal scroll on small screens */
+        margin-top: 0;
+        box-sizing: border-box;
+    }
+
+    /* Table styling */
+    #cricket-match-box table {
+        width: 100%;
+        border: 2px solid black;
+        border-top: none;
+        border-collapse: collapse;
+        background: #111;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 0 0 8px 8px;
+        box-sizing: border-box;
+    }
+
+    /* Table content styling */
+    #cricket-match-content h3 {
+        margin: 8px 0;
+        font-size: 1.2rem;
+        color: #ff7f50;
+    }
+
+    #cricket-match-content p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive typography */
+    @media (max-width: 768px) {
+        #cricket-match-content h3 {
+            font-size: 1rem;
+        }
+        #cricket-match-content p {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #cricket-match-content h3 {
+            font-size: 0.9rem;
+        }
+        #cricket-match-content p {
+            font-size: 0.8rem;
+        }
+        #cricket-match-bar {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Wrapper to control consistent width */
+   /* Wrapper for consistent width */
+    #match-detail-wrapper {
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1070px;
+        box-sizing: border-box;
+    }
+
+    /* Clickable bar default: white background, black text */
+    #match-detail-bar {
+        background: white;
+        color: black;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        border: 2px solid black;
+        font-weight: bold;
+        font-size: 20px;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        height: 80px;
+        box-sizing: border-box;
+        user-select: none;
+        justify-content: center;
+    }
+
+    /* Hover effect */
+    #match-detail-bar:hover {
+        background: #f0f0f0;
+        transform: scale(1.01);
+    }
+
+    /* Active state: black background, white text */
+    #match-detail-bar.active {
+        background: black;
+        color: white;
+        border: 2px solid white;
+    }
+
+    /* Expandable box hidden by default */
+    #match-detail-box {
+        display: none;
+        width: 100%;
+        overflow-x: auto; /* allows horizontal scroll on small screens */
+        margin-top: 0;
+        box-sizing: border-box;
+    }
+
+    /* Table styling */
+    #match-detail-box table {
+        width: 100%;
+        border: 2px solid black;
+        border-top: none;
+        border-collapse: collapse;
+        background: #111;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 0 0 8px 8px;
+        box-sizing: border-box;
+    }
+
+    /* Table content styling */
+    #match-detail-content h3 {
+        margin: 8px 0;
+        font-size: 1.2rem;
+        color: #ff7f50;
+    }
+
+    #match-detail-content p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive typography */
+    @media (max-width: 768px) {
+        #match-detail-content h3 {
+            font-size: 1rem;
+        }
+        #match-detail-content p {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #match-detail-content h3 {
+            font-size: 0.9rem;
+        }
+        #match-detail-content p {
+            font-size: 0.8rem;
+        }
+        #match-detail-bar {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Wrapper to control consistent width basketball */
+    #basketball-match-wrapper {
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1070px;
+        box-sizing: border-box;
+    }
+
+    /* Clickable bar default: white background, black text */
+    #basketball-match-bar {
+        background: white;
+        color: black;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        border: 2px solid black;
+        font-weight: bold;
+        font-size: 20px;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        height: 80px;
+        box-sizing: border-box;
+        user-select: none;
+        justify-content: center;
+    }
+
+    /* Hover effect */
+    #basketball-match-bar:hover {
+        background: #f0f0f0;
+        transform: scale(1.01);
+    }
+
+    /* Active state: black background, white text */
+    #basketball-match-bar.active {
+        background: black;
+        color: white;
+        border: 2px solid white;
+    }
+
+    /* Expandable box hidden by default */
+    #basketball-match-box {
+        display: none;
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 0;
+        box-sizing: border-box;
+    }
+
+    /* Table styling */
+    #basketball-match-box table {
+        width: 100%;
+        border: 2px solid black;
+        border-top: none;
+        border-collapse: collapse;
+        background: #111;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 0 0 8px 8px;
+        box-sizing: border-box;
+    }
+
+    /* Table content styling */
+    #basketball-match-content h3 {
+        margin: 8px 0;
+        font-size: 1.2rem;
+        color: #ff7f50;
+    }
+
+    #basketball-match-content p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive typography */
+    @media (max-width: 768px) {
+        #basketball-match-content h3 {
+            font-size: 1rem;
+        }
+        #basketball-match-content p {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #basketball-match-content h3 {
+            font-size: 0.9rem;
+        }
+        #basketball-match-content p {
+            font-size: 0.8rem;
+        }
+        #basketball-match-bar {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* boxing match style */
+    #boxing-match-wrapper {
+        margin: 20px auto;
+        width: 100%;
+        max-width: 1070px;
+        box-sizing: border-box;
+    }
+
+    #boxing-match-bar {
+        background: white;
+        color: black;
+        padding: 28px 20px;
+        text-align: center;
+        cursor: pointer;
+        border: 2px solid black;
+        font-weight: bold;
+        font-size: 20px;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        width: 100%;
+        height: 80px;
+        box-sizing: border-box;
+        user-select: none;
+        justify-content: center;
+    }
+
+    #boxing-match-bar:hover {
+        background: #f0f0f0;
+        transform: scale(1.01);
+    }
+
+    #boxing-match-bar.active {
+        background: black;
+        color: white;
+        border: 2px solid white;
+    }
+
+    #boxing-match-box {
+        display: none;
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 0;
+        box-sizing: border-box;
+    }
+
+    #boxing-match-box table {
+        width: 100%;
+        border: 2px solid black;
+        border-top: none;
+        border-collapse: collapse;
+        background: #111;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 0 0 8px 8px;
+        box-sizing: border-box;
+    }
+
+    #boxing-match-content h3 {
+        margin: 8px 0;
+        font-size: 1.2rem;
+        color: #ff7f50;
+    }
+
+    #boxing-match-content p {
+        margin: 4px 0;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        #boxing-match-content h3 {
+            font-size: 1rem;
+        }
+        #boxing-match-content p {
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #boxing-match-content h3 {
+            font-size: 0.9rem;
+        }
+        #boxing-match-content p {
+            font-size: 0.8rem;
+        }
+        #boxing-match-bar {
+            padding: 10px 12px;
+            font-size: 0.9rem;
+        }
+    }
+
 
 </style>
 </head>
@@ -538,7 +918,7 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <a href="{{ url_for('all_scores') }}">Live Matches</a>
+        <!-- <a href="{{ url_for('all_scores') }}">Live Matches</a> -->
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
@@ -570,6 +950,9 @@
                 <ul id="table-list" class="players-list">
                     <li onclick="showTable('Football')">Football</li>
                     <li onclick="showTable('Cricket')">Cricket</li>
+                    <li onclick="showTable('Formula 1')">Formula 1</li>
+                    <li onclick="showTable('Boxing')">Boxing</li>
+                    <li onclick="showTable('MMA')">MMA</li>
                 </ul>
             </div>
 
@@ -857,8 +1240,251 @@
                     })
                     .catch(err => console.error(err));
             }
-
             </script>
+            
+            <!-- CLICKABLE BARS UNDER LIVE/UPCOMING MATCHES -->
+
+            <!-- Cricket Match Section -->
+            <div id="cricket-match-wrapper">
+            <!-- Clickable Bar -->
+            <div id="cricket-match-bar" onclick="toggleCricketMatchDetail()">
+                CRICKET
+            </div>
+
+            <!-- Expandable Box -->
+            <div id="cricket-match-box" style="display:none;">
+                <div id="cricket-match-content">
+                        <!-- Tables will load here -->
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            function toggleCricketMatchDetail() {
+                const bar = document.getElementById("cricket-match-bar");
+                const box = document.getElementById("cricket-match-box");
+
+                if (box.style.display === "block") {
+                    box.style.display = "none";
+                    bar.classList.remove("active");
+                } else {
+                    box.style.display = "block";
+                    bar.classList.add("active");
+
+                    fetch("/cricketmatch-details")
+                        .then(res => res.json())
+                        .then(data => {
+                            const container = document.getElementById("cricket-match-content");
+                            container.innerHTML = "";
+
+                            if (data && data.length > 0) {
+                                data.forEach(match => {
+                                    const table = document.createElement("table");
+                                    table.style.marginBottom = "2px";
+                                    table.innerHTML = `
+                                        <tr><td><h3>${match.title}</h3></td></tr>
+                                        ${match.lines.map(l => l ? `<tr><td>${l}</td></tr>` : "").join("")}
+                                    `;
+                                    container.appendChild(table);
+                                });
+                            } else {
+                                // Show "No match details available" inside a table
+                                const table = document.createElement("table");
+                                table.innerHTML = `
+                                    <tr>
+                                        <td style="padding:20px; text-align:center;">
+                                            No match details available
+                                        </td>
+                                    </tr>
+                                `;
+                                container.appendChild(table);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+            </script>
+
+
+            <!-- Basketball Match Section -->
+            <div id="basketball-match-wrapper">
+                <div id="basketball-match-bar" onclick="toggleBasketballMatchDetail()">
+                    BASKETBALL
+                </div>
+                <div id="basketball-match-box" style="display:none;">
+                    <div id="basketball-match-content">
+                        <!-- Tables will load here -->
+                    </div>
+                </div>
+            </div>
+
+            <script>
+            function toggleBasketballMatchDetail() {
+                const bar = document.getElementById("basketball-match-bar");
+                const box = document.getElementById("basketball-match-box");
+
+                if (box.style.display === "block") {
+                    box.style.display = "none";
+                    bar.classList.remove("active");
+                } else {
+                    box.style.display = "block";
+                    bar.classList.add("active");
+
+                    fetch("/basketballmatch-details")
+                        .then(res => res.json())
+                        .then(data => {
+                            const container = document.getElementById("basketball-match-content");
+                            container.innerHTML = "";
+
+                            if (data && data.length > 0) {
+                                data.forEach(match => {
+                                    const table = document.createElement("table");
+                                    table.style.marginBottom = "2px";
+                                    table.innerHTML = `
+                                        <tr><td><h3>${match.title}</h3></td></tr>
+                                        ${match.lines.map(l => l ? `<tr><td>${l}</td></tr>` : "").join("")}
+                                    `;
+                                    container.appendChild(table);
+                                });
+                            } else {
+                                // Show "No match details available" inside a table
+                                const table = document.createElement("table");
+                                table.innerHTML = `
+                                    <tr>
+                                        <td style="padding:20px; text-align:center;">
+                                            No match details available
+                                        </td>
+                                    </tr>
+                                `;
+                                container.appendChild(table);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+            </script>
+
+
+            <!-- FORMULA 1 Match section -->
+            <div id="match-detail-wrapper">
+            <!-- Clickable Bar -->
+            <div id="match-detail-bar" onclick="toggleMatchDetail()">
+                FORMULA 1
+            </div>
+
+            <!-- Expandable Box -->
+            <div id="match-detail-box" style="display:none;">
+                <div id="match-detail-content">
+                    <!-- Tables will load here -->
+                </div>
+            </div>
+        </div>
+
+        <script>
+        function toggleMatchDetail() {
+            const bar = document.getElementById("match-detail-bar");
+            const box = document.getElementById("match-detail-box");
+
+            if (box.style.display === "block") {
+                box.style.display = "none";
+                bar.classList.remove("active");
+            } else {
+                box.style.display = "block";
+                bar.classList.add("active");
+
+                fetch("/formula1match-details")
+                    .then(res => res.json())
+                    .then(data => {
+                        const container = document.getElementById("match-detail-content");
+                        container.innerHTML = "";
+
+                        if (data && data.length > 0) {
+                            data.forEach(match => {
+                                const table = document.createElement("table");
+                                table.style.marginBottom = "2px";
+                                table.innerHTML = `
+                                    <tr><td><h3>${match.title}</h3></td></tr>
+                                    ${match.lines.map(l => l ? `<tr><td>${l}</td></tr>` : "").join("")}
+                                `;
+                                container.appendChild(table);
+                            });
+                        } else {
+                            // Show "No match details available" inside a table
+                            const table = document.createElement("table");
+                            table.innerHTML = `
+                                <tr>
+                                    <td style="padding:20px; text-align:center;">
+                                        No match details available
+                                    </td>
+                                </tr>
+                            `;
+                            container.appendChild(table);
+                        }
+                    })
+                    .catch(err => console.error(err));
+            }
+        }
+        </script>
+
+
+        <!-- Boxing Match Section -->
+        <div id="boxing-match-wrapper">
+        <div id="boxing-match-bar" onclick="toggleBoxingMatchDetail()">
+            BOXING
+        </div>
+        <div id="boxing-match-box" style="display:none;">
+            <div id="boxing-match-content">
+                <!-- Tables will load here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleBoxingMatchDetail() {
+        const bar = document.getElementById("boxing-match-bar");
+        const box = document.getElementById("boxing-match-box");
+
+        if (box.style.display === "block") {
+            box.style.display = "none";
+            bar.classList.remove("active");
+        } else {
+            box.style.display = "block";
+            bar.classList.add("active");
+
+            fetch("/boxingmatch-details")
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById("boxing-match-content");
+                    container.innerHTML = "";
+
+                    if (data && data.length > 0) {
+                        data.forEach(match => {
+                            const table = document.createElement("table");
+                            table.style.marginBottom = "20px";
+                            table.innerHTML = `
+                                <tr><td><h3>${match.title}</h3></td></tr>
+                                ${match.lines.map(l => l ? `<tr><td>${l}</td></tr>` : "").join("")}
+                            `;
+                            container.appendChild(table);
+                        });
+                    } else {
+                        // Show "No match details available" inside a table
+                        const table = document.createElement("table");
+                        table.innerHTML = `
+                            <tr>
+                                <td style="padding:20px; text-align:center;">
+                                    No match details available
+                                </td>
+                            </tr>
+                        `;
+                        container.appendChild(table);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+    }
+    </script>
+  
             
         </div>
         </div>
@@ -868,7 +1494,6 @@
         </div>
         <!-- <div id="players-header"></div> -->
         <div id="players-header" style="text-align:center; font-size:1.3rem; font-weight:500; margin:20px 0; color:#222;"></div>
-
 
         <div id="top-players" class="tab-content"><div id="players-table-container"></div></div>
         <!-- <div id="fighters-header"></div> -->
@@ -1083,10 +1708,10 @@
         data.players.forEach(p => {
             html += `<tr>
                 <td>${p.rank}</td>
-                <td>${p.player_name}</td>
-                <td>${p.club || ''}</td>
-                <td>${p.nationality || ''}</td>
-                <td>${p.sources || ''}</td>
+                <td style= "text-align:left">${p.player_name}</td>
+                <td style= "text-align:left">${p.club || ''}</td>
+                <td style= "text-align:left">${p.nationality || ''}</td>
+                <td style= "text-align:left">${p.sources || ''}</td>
             </tr>`;
         });
 
@@ -1133,10 +1758,10 @@ function showFighters(sport) {
         data.players.forEach(p => {
             html += `<tr>
                 <td>${p.rank}</td>
-                <td>${p.player_name}</td>
-                <td>${p.club || ''}</td>
-                <td>${p.nationality || ''}</td>
-                <td>${p.sources || ''}</td>
+                <td style= "text-align:left">${p.player_name}</td>
+                <td style= "text-align:left">${p.club || ''}</td>
+                <td style= "text-align:left">${p.nationality || ''}</td>
+                <td style= "text-align:left">${p.sources || ''}</td>
 
             </tr>`;
         });
@@ -1225,6 +1850,43 @@ function showFighters(sport) {
         </tr>
         </table>
         <div id="cricket-table-container"></div>`;
+    }
+    else if(category === 'Formula 1') {
+        html += `
+        <tr style="background:black; color:white; height:80px;">  <!-- increased height -->
+            <td colspan="4" style="padding:20px 0;">
+                <div class="button-container" style="justify-content:center; gap:15px; flex-wrap:wrap;">
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchFormula1('drivers')">Formula 1</button>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <div id="formula1-table-container"></div>`;
+    }
+    else if(category === 'Boxing') {
+        html += `
+        <tr style="background:black; color:white; height:80px;">  <!-- increased height -->
+            <td colspan="4" style="padding:20px 0;">
+                <div class="button-container" style="justify-content:center; gap:15px; flex-wrap:wrap;">
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchBoxing('world')">Boxing</button>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <div id="boxing-table-container"></div>`;
+    }
+
+    else if(category === 'MMA') {
+        html += `
+        <tr style="background:black; color:white; height:80px;">  <!-- increased height -->
+            <td colspan="4" style="padding:20px 0;">
+                <div class="button-container" style="justify-content:center; gap:15px; flex-wrap:wrap;">
+                    <button class="oval-button" style="min-width:200px; max-width:250px;" onclick="fetchMMA('fighters')">MMA</button>
+                </div>
+            </td>
+        </tr>
+        </table>
+        <div id="mma-table-container"></div>`;
     }
 
     document.getElementById('table').innerHTML = html;
@@ -1322,8 +1984,8 @@ function showFighters(sport) {
 
                 data.teams.forEach(team => {
                     html += `<tr>
-                        <td>${team.rank}</td>
-                        <td>${team.name}</td>
+                        <td style= "text-align:center">${team.rank}</td>
+                        <td style= "text-align:left">${team.name}</td>
                         <td>${team.played}</td>
                         <td>${team.won}</td>
                         <td>${team.draw}</td>
@@ -1340,6 +2002,116 @@ function showFighters(sport) {
             });
     }
 </script>
+<script>  
+    function fetchFormula1(type) {
+    const container = document.getElementById('formula1-table-container');
+    container.innerHTML = '<p>Loading...</p>';
 
+    let endpoint = `/formula1-rankings?type=${encodeURIComponent(type)}`;
+
+    fetch(endpoint)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.teams || data.teams.length === 0) {
+                container.innerHTML = '<p>No data available.</p>';
+                return;
+            }
+
+            let html = `<h3 style="text-align:center">Formula 1 Rankings</h3>`;
+            html += '<table class="events-table">';
+            html += '<tr><th>Rank</th><th>Driver</th><th>Wins</th><th>Podiums</th><th>Points</th></tr>';
+
+            data.teams.forEach(driver => {
+                html += `<tr>
+                    <td>${driver.rank}</td>
+                    <td style= "text-align:left">${driver.driver_name}</td>
+                    <td>${driver.won}</td>
+                    <td>${driver.podiums}</td>
+                    <td>${driver.points}</td>
+                </tr>`;
+            });
+
+            html += '</table>';
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
+        });
+}
+
+</script>
+<script>  
+    function fetchBoxing(type) {
+    const container = document.getElementById('boxing-table-container');
+    container.innerHTML = '<p>Loading...</p>';
+
+    let endpoint = `/boxing-rankings?type=${encodeURIComponent(type)}`;
+
+    fetch(endpoint)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.teams || data.teams.length === 0) {
+                container.innerHTML = '<p>No data available.</p>';
+                return;
+            }
+
+            let html = `<h3 style="text-align:center">Boxing Rankings</h3>`;
+            html += '<table class="events-table">';
+            html += '<tr><th>Rank</th><th>Boxer</th><th>Title</th></tr>';
+
+            data.teams.forEach(boxer => {
+                html += `<tr>
+                    <td>${boxer.rank}</td>
+                    <td style= "text-align:left">${boxer.boxer_name}</td>
+                    <td style= "text-align:left">${boxer.titles}</td>
+                </tr>`;
+            });
+
+            html += '</table>';
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
+        });
+}
+
+</script>
+
+<script>  
+    function fetchMMA(type) {
+    const container = document.getElementById('mma-table-container');
+    container.innerHTML = '<p>Loading...</p>';
+
+    let endpoint = `/mma-rankings?type=${encodeURIComponent(type)}`;
+
+    fetch(endpoint)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.teams || data.teams.length === 0) {
+                container.innerHTML = '<p>No data available.</p>';
+                return;
+            }
+
+            let html = `<h3 style="text-align:center">MMA Rankings</h3>`;
+            html += '<table class="events-table">';
+            html += '<tr><th>Rank</th><th>Fighter</th><th>Division</th></tr>';
+
+            data.teams.forEach(fighter => {
+                html += `<tr>
+                    <td>${fighter.rank}</td>
+                    <td style= "text-align:left">${fighter.fighter_name}</td>
+                    <td style= "text-align:left">${fighter.division}</td>
+                </tr>`;
+            });
+
+            html += '</table>';
+            container.innerHTML = html;
+        })
+        .catch(err => {
+            container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
+        });
+}
+
+</script>
 </body>
 </html>

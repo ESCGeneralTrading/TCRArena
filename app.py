@@ -308,6 +308,31 @@ class Advertisement(db.Model):
             return self.video_url
         return None
 
+# --- Advertisement model in videos section ---
+class ArenaplayAdvertisement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image_filename = db.Column(db.String(255))       # uploaded image filename
+    image_url = db.Column(db.String(512))            # external image URL (optional)
+    video_filename = db.Column(db.String(255))       # uploaded video filename
+    video_url = db.Column(db.String(512))            # external video URL (optional)
+    start_date = db.Column(db.String(50))            # optional scheduling (string for simplicity)
+    end_date = db.Column(db.String(50))              # optional scheduling (string for simplicity)
+    active = db.Column(db.Boolean, default=True)     # simple active toggle
+
+    def display_image(self):
+        if self.image_filename:
+            return f"/static/uploads/{self.image_filename}"
+        elif self.image_url:
+            return self.image_url
+        return None
+
+    def display_video(self):
+        if self.video_filename:
+            return f"/static/uploads/{self.video_filename}"
+        elif self.video_url:
+            return self.video_url
+        return None
+
 
 # Cricket Match Model
 class CricketMatchDetail(db.Model):
@@ -768,7 +793,61 @@ class AdvertisementAdmin(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 
+# --- Advertisement admin view ---
+class ArenaplayAdvertisementAdmin(ModelView):
+    upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+    form_extra_fields = {
+        'image_filename': FileUploadField(
+            'Upload Image',
+            base_path=upload_path,
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        ),
+        'video_filename': FileUploadField(
+            'Upload Video',
+            base_path=upload_path,
+            allowed_extensions=['mp4','mp3' 'webm', 'ogg'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        )
+    }
+
+    column_list = ('id', 'active', 'start_date', 'end_date', 'image_filename', 'image_url', 'video_filename', 'video_url')
+    form_columns = ['active', 'start_date', 'end_date', 'image_filename', 'image_url', 'video_filename', 'video_url']
+
+    form_widget_args = {
+        'title': {'style': 'width: 70%;'},
+        'details': {'rows': 4, 'style': 'width: 90%;'},
+        'image_url': {'placeholder': 'External image URL (optional)'},
+        'video_url': {'placeholder': 'External video URL (optional)'},
+    }
+
+    def _list_thumbnail(self, context, model, name):
+        if model.image_filename:
+            return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:120px;">')
+        elif model.image_url:
+            return Markup(f'<img src="{model.image_url}" style="max-height:120px;">')
+        elif model.video_filename:
+            return Markup(f'<video width="160" controls><source src="/static/uploads/{model.video_filename}" type="video/mp4">Your browser does not support video.</video>')
+        elif model.video_url:
+            return Markup(f'<a href="{model.video_url}" target="_blank">Video Link</a>')
+        return ''
+
+    column_formatters = {
+        'image_filename': _list_thumbnail,
+        'image_url': _list_thumbnail,
+        'video_filename': _list_thumbnail,
+        'video_url': _list_thumbnail,
+    }
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+    
 # register in admin:
+admin.add_view(ArenaplayAdvertisementAdmin(ArenaplayAdvertisement, db.session))
 admin.add_view(AdvertisementAdmin(Advertisement, db.session))
 
 class ContactAdmin(ModelView):
@@ -1819,11 +1898,16 @@ def all_videos():
     # TikTok username to embed
     tiktok_username = "thecollectroom"
 
+    # Fetch active advertisement
+    apad = ArenaplayAdvertisement.query.filter_by(active=True).order_by(ArenaplayAdvertisement.id.desc()).first()
+
+
     return render_template(
         'all_videos.html',
         shorts=shorts,
         full_videos=full_videos,
-        tiktok_username=tiktok_username
+        tiktok_username=tiktok_username,
+        arenaplayadvertisement=apad
     )
 
 

@@ -83,11 +83,13 @@
     }
     
     /* Tablet + Mobile Nav */
-    @media (max-width: 1024px) {
+     @media (max-width: 1024px) {
       .header-container {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row; /* keep row layout */
+        justify-content: space-between;
+        align-items: center;
       }
+
       nav {
         display: none;
         flex-direction: column;
@@ -98,15 +100,17 @@
         border-radius: 4px;
         gap: 1.5rem;
       }
+
       nav.active {
         display: flex;
       }
+
       .nav-toggle {
         display: flex;
-        align-self: flex-end;
-        margin-bottom: 0.5rem;
+        margin-left: auto; /* stick it to the right */
       }
     }
+
 
     h1 { text-align: center; margin-bottom: 2.5rem; color: #021638; font-weight: normal; letter-spacing: 1px; text-shadow: 1px 1px 1px rgba(0,0,0,0.03); }
     
@@ -360,6 +364,60 @@
         padding: 0.75rem 1rem;
       }
     }  
+
+    .ad-banner-wrap {
+      width: 100%;
+      max-width: 2000px;
+      display: flex;
+      justify-content: center;
+      margin: 18px 0;
+    }
+
+    .ad-card {
+      width: 100%;
+      max-width: 3000px;
+      background: #333;
+      border-radius: 18px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      overflow: hidden;
+    }
+
+    .ad-media {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;           /* take full available width */
+      max-width: 100%;       /* never exceed container */
+      min-height: 200px;     /* keep some height for small devices */
+    }
+
+    .ad-video, .ad-image {
+      width: 100%;           /* scale with parent */
+      height: auto;          /* maintain aspect ratio */
+      max-width: 1100px;      /* optional: cap size for large screens */
+      max-height: 500px; 
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+      .ad-card {
+        flex-direction: column;
+        padding: 16px;
+        gap: 12px;
+      }
+      .ad-media {
+        width: 100%;
+        min-height: 180px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -534,6 +592,22 @@ function showTab(tab, el) {
         <a href="{{ url_for('join') }}" style="text-decoration-line: none;">CONNECT WITH US</a>
       </p>
   </section>
+
+    <!-- free advertisement -->
+    {% if arenaplayadvertisement %}
+      <section class="ad-banner-wrap">
+        <div class="ad-media">
+          {% if arenaplayadvertisement.display_video() %}
+            <video class="ad-video" controls {% if arenaplayadvertisement.video_filename %} preload="metadata" {% endif %}>
+              <source src="{{ arenaplayadvertisement.display_video() }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          {% elif arenaplayadvertisement.display_image() %}
+            <img class="ad-image" src="{{ arenaplayadvertisement.display_image() }}" alt="Advertisement">
+          {% endif %}
+        </div>
+      </section>
+  {% endif %}
 
   <!-- Footer -->
   <footer>

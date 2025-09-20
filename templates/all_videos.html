@@ -399,7 +399,7 @@
     .ad-video, .ad-image {
       width: 100%;           /* scale with parent */
       height: auto;          /* maintain aspect ratio */
-      max-width: 1100px;      /* optional: cap size for large screens */
+      max-width: 1150px;      /* optional: cap size for large screens */
       max-height: 500px; 
       object-fit: contain;
       display: block;
@@ -415,6 +415,253 @@
       .ad-media {
         width: 100%;
         min-height: 180px;
+      }
+    }
+
+    .youtube-subscribe-card {
+      background: #fff;
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.12);
+      padding: 60px 40px; /* taller card */
+      display: flex;
+      align-items: center;
+      max-width: 1200px;
+      margin: 18px auto;
+      gap: 20px;
+      box-sizing: border-box;
+      flex-wrap: nowrap; /* keep desktop horizontal */
+    }
+
+    .youtube-subscribe-card .logo {
+      flex: 0 0 auto;
+      width: 120px;
+    }
+
+    .youtube-subscribe-card .logo img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      display: block;
+    }
+
+    /* Desktop: text + button horizontal */
+    .youtube-subscribe-card .content-wrapper {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* text left, button right */
+      gap: 20px;
+      flex-wrap: nowrap; /* horizontal on desktop */
+    }
+
+    .youtube-subscribe-card .text-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .youtube-subscribe-card h3 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #111;
+      margin: 0 0 6px 0;
+    }
+
+    .youtube-subscribe-card p {
+      font-size: 0.95rem;
+      color: #111;
+      margin: 0;
+    }
+
+    .youtube-subscribe-card .subscribe-btn {
+      background-color: #000000;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.3s;
+    }
+
+    .youtube-subscribe-card .subscribe-btn:hover {
+      background-color: #000000;
+    }
+
+    /* Tablet: stack text + button */
+    @media (max-width: 1024px) {
+      .youtube-subscribe-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .youtube-subscribe-card .content-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .youtube-subscribe-card .subscribe-btn {
+        align-self: flex-start;
+      }
+    }
+
+    /* Mobile: center logo + button */
+    @media (max-width: 480px) {
+      .youtube-subscribe-card {
+        align-items: center;
+        text-align: center;
+      }
+
+      .youtube-subscribe-card .logo {
+        margin-bottom: 16px; /* space between logo and text */
+      }
+
+      .youtube-subscribe-card .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .youtube-subscribe-card .subscribe-btn {
+        align-self: center;
+        padding: 10px 24px;
+      }
+
+      .youtube-subscribe-card h3 {
+        font-size: 1.2rem;
+      }
+
+      .youtube-subscribe-card p {
+        font-size: 0.85rem;
+      }
+    }
+
+    .tiktok-follow-card {
+      background: #000000;
+      box-shadow: 0 8px 14px rgba(0,0,0,0.12);
+      padding: 40px 20px;
+      display: flex;
+      align-items: center;
+      max-width: 750px;
+      margin: 40px auto;
+      gap: 20px;
+      flex-wrap: nowrap; /* desktop horizontal */
+    }
+
+    .tiktok-follow-card .logo {
+      flex: 0 0 auto;
+      width: 120px;
+      height: 120px;              /* make it a square for perfect circle */
+      border-radius: 50%;          /* circle shape */
+      background-color: #ffffff;   /* white background */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;            /* clip image inside circle */
+    }
+
+    .tiktok-follow-card .logo img {
+      width: 70%;                  /* scale image to fit nicely in circle */
+      height: 70%;
+      object-fit: contain;         /* maintain aspect ratio */
+      display: block;
+    }
+
+
+    .tiktok-follow-card .content-wrapper {
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; /* text left, button right on desktop */
+      gap: 20px;
+    }
+
+    .tiktok-follow-card .text-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #f9f9f9;
+    }
+
+    .tiktok-follow-card h3 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin: 0 0 6px 0;
+    }
+
+    .tiktok-follow-card p {
+      font-size: 0.95rem;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .tiktok-follow-card .follow-btn {
+      background-color: #e11111; /* TikTok dark */
+      color: #fff;
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 10px 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.3s;
+    }
+
+    .tiktok-follow-card .follow-btn:hover {
+      background-color: #e11111;
+    }
+
+    /* Tablet stack */
+    @media (max-width: 1024px) {
+      .tiktok-follow-card {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+      }
+      .tiktok-follow-card .content-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+      }
+      .tiktok-follow-card .follow-btn {
+        align-self: flex-start;
+      }
+    }
+
+    /* Mobile center logo + button */
+    @media (max-width: 480px) {
+      .tiktok-follow-card {
+        align-items: center;
+        text-align: center;
+      }
+      .tiktok-follow-card .logo {
+        margin-bottom: 16px;
+      }
+      .tiktok-follow-card .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+      }
+      .tiktok-follow-card .follow-btn {
+        align-self: center;
+        padding: 10px 24px;
+      }
+      .tiktok-follow-card h3 {
+        font-size: 1.2rem;
+      }
+      .tiktok-follow-card p {
+        font-size: 0.85rem;
       }
     }
 
@@ -451,7 +698,6 @@
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
-        <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
         <a href="{{ url_for('all_videos') }}">
           Ar <svg 
             width="20" 
@@ -513,85 +759,81 @@
       {% else %}
             <p style="text-align:center;">No YouTube videos available.</p>
       {% endif %}
-</div>
 
-<!-- TikTok Tab -->
-<div id="tiktok-tab" class="tab-content" style="display:none;">
-    <div class="section-title">TikTok Highlights</div>
-    <blockquote class="tiktok-embed"
-                cite="https://www.tiktok.com/@{{ tiktok_username }}"
-                data-unique-id="{{ tiktok_username }}"
-                data-embed-type="creator"
-                style="max-width:780px; min-width:288px; margin:auto;">
-        <section>
-            <a target="_blank" href="https://www.tiktok.com/@{{ tiktok_username }}">
-                @{{ tiktok_username }}
-            </a>
-        </section>
-    </blockquote>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-</div>
-
-<script>
-function showTab(tab, el) {
-    // Hide both tabs
-    document.getElementById('youtube-tab').style.display = (tab === 'youtube') ? 'block' : 'none';
-    document.getElementById('tiktok-tab').style.display = (tab === 'tiktok') ? 'block' : 'none';
-
-    // Highlight active tab
-    document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
-    el.classList.add('active');
-}
-</script>
-
-    <!-- {% if shorts or full_videos %}
-
-        {% if shorts %} -->
-        <!-- YouTube Shorts Section -->
-        <!-- <div class="section-title">Arena Highlights</div>
-        <div class="youtube-grid">
-          {% for video in shorts %}
-            <div class="youtube-card shorts">
-              <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
-              <p class="youtube-title">{{ video.title }}</p>
-            </div>
-          {% endfor %}
+      <!-- YouTube Subscribe Card -->
+      <section class="youtube-subscribe-card">
+        <div class="logo">
+          <img src="{{ url_for('static', filename='arena.png') }}" alt="TcR Arena Logo">
         </div>
-        {% endif %}
-
-        {% if full_videos %} -->
-        <!-- <hr> -->
-        <!-- Full-Length Videos Section -->
-        <!-- <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
-        <div class="youtube-grid">
-          {% for video in full_videos %}
-            <div class="youtube-card full">
-              <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" allowfullscreen></iframe>
-              <p class="youtube-title">{{ video.title }}</p>
-            </div>
-          {% endfor %}
+        <div class="content-wrapper">
+          <div class="text-content">
+            <h3>Subscribe to TcR Arena on YouTube!</h3>
+            <p>SPORTS FANATICS UNITE! Welcome to our collection, We present our curated assortment of genuine and exclusive sports memorabilia.</p>
+          </div>
+          <a class="subscribe-btn" href="https://www.youtube.com/channel/UCjr5E_A1k7cKaTcvGjjl44A?sub_confirmation=1" target="_blank">
+            Subscribe Now
+          </a>
         </div>
-        {% endif %}
-
-    {% else %}
-        <p style="text-align:center; font-size:1.2rem;">No videos available at the moment.</p>
-    {% endif %} -->
-
-    <!-- Back Link -->
-    <!-- <div style="text-align: center;">
-      <a href="{{ url_for('home') }}" class="back-link">Back to Home</a>
-    </div> -->
+      </section>
 
   </div>
 
-  <section class="featured-cta">
-      <h2>TO GET FEATURED IN TcR ARENA</h2>
-      <p class="email-label">Showcase your personal coleections for free</p>
-      <p class="email-link">
-        <!-- <a href="mailto:digital@tcrarena.com">digital@tcrarena.com</a> -->
-        <a href="{{ url_for('join') }}" style="text-decoration-line: none;">CONNECT WITH US</a>
-      </p>
-  </section>
+  <!-- TikTok Tab -->
+  <div id="tiktok-tab" class="tab-content" style="display:none;">
+      <div class="section-title">TikTok Highlights</div>
+      <blockquote class="tiktok-embed"
+                  cite="https://www.tiktok.com/@{{ tiktok_username }}"
+                  data-unique-id="{{ tiktok_username }}"
+                  data-embed-type="creator"
+                  style="max-width:780px; min-width:288px; margin:auto;">
+          <section>
+              <a target="_blank" href="https://www.tiktok.com/@{{ tiktok_username }}">
+                  @{{ tiktok_username }}
+              </a>
+          </section>
+      </blockquote>
+      <script async src="https://www.tiktok.com/embed.js"></script>
+
+      <!-- TikTok Follow Card -->
+      <section class="tiktok-follow-card">
+        <div class="logo">
+          <img src="{{ url_for('static', filename='Asset.png') }}" alt="TcR Arena Logo">
+        </div>
+        <div class="content-wrapper">
+          <div class="text-content">
+            <h3>Follow The Collect Room on TikTok!</h3>
+            <p>Authentic Autographs & Memorabilia. <br>Shop Online - www.thecollectroom.co.</p>
+          </div>
+          <a class="follow-btn" href="https://www.tiktok.com/@thecollectroom" target="_blank">
+            Follow
+          </a>
+        </div>
+      </section>
+
+  </div>
+
+    <script>
+      function showTab(tab, el) {
+          // Hide both tabs
+          document.getElementById('youtube-tab').style.display = (tab === 'youtube') ? 'block' : 'none';
+          document.getElementById('tiktok-tab').style.display = (tab === 'tiktok') ? 'block' : 'none';
+
+          // Highlight active tab
+          document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
+          el.classList.add('active');
+      }
+    </script>
+
+    </div>
+
+    <section class="featured-cta">
+        <h2>TO GET FEATURED IN TcR ARENA</h2>
+        <p class="email-label">Showcase your personal coleections for free</p>
+        <p class="email-link">
+          <!-- <a href="mailto:digital@tcrarena.com">digital@tcrarena.com</a> -->
+          <a href="{{ url_for('join') }}" style="text-decoration-line: none;">CONNECT WITH US</a>
+        </p>
+    </section>
 
     <!-- free advertisement -->
     {% if arenaplayadvertisement %}
@@ -607,7 +849,7 @@ function showTab(tab, el) {
           {% endif %}
         </div>
       </section>
-  {% endif %}
+    {% endif %}
 
   <!-- Footer -->
   <footer>

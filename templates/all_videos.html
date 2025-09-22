@@ -196,11 +196,14 @@
 
     /* Shorts vertical aspect ratio */
     .youtube-card.shorts iframe {
-      width: 100%;
-      aspect-ratio: 9 / 16;
-      border-radius: 8px;
-      border: none;
+        width: 100%;          /* reduce width from 100% */
+        max-width: 300px;    /* optional: cap max size */
+        aspect-ratio: 9 / 16;
+        margin: 0 auto;      /* center horizontally */
+        border-radius: 8px;
+        border: none;
     }
+
 
     /* Full-length horizontal aspect ratio */
     .youtube-card.full iframe {
@@ -728,8 +731,6 @@
     <a href="#" onclick="showTab('tiktok', this)">TikTok</a>
 </div>
 
-<!-- <h1 style="text-align:center; margin-bottom:2rem; color:#021638;">Arena Vault: Exclusive Plays & Highlights</h1> -->
-
 <!-- YouTube Tab -->
 <div id="youtube-tab" class="tab-content">
       {% if full_videos %}
@@ -771,7 +772,7 @@
             <p>SPORTS FANATICS UNITE! Welcome to our collection, We present our curated assortment of genuine and exclusive sports memorabilia.</p>
           </div>
           <a class="subscribe-btn" href="https://www.youtube.com/channel/UCjr5E_A1k7cKaTcvGjjl44A?sub_confirmation=1" target="_blank">
-            Subscribe Now
+            Subscribe
           </a>
         </div>
       </section>
@@ -802,14 +803,13 @@
         <div class="content-wrapper">
           <div class="text-content">
             <h3>Follow The Collect Room on TikTok!</h3>
-            <p>Authentic Autographs & Memorabilia. <br>Shop Online - www.thecollectroom.co.</p>
+            <p>Authentic Autographs & Memorabilia. <br>Shop Online - www.thecollectroom.com</p>
           </div>
           <a class="follow-btn" href="https://www.tiktok.com/@thecollectroom" target="_blank">
             Follow
           </a>
         </div>
       </section>
-
   </div>
 
     <script>

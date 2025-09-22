@@ -655,8 +655,6 @@
     <!-- video section -->
     <p class="video-hpara"  style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
 
-    <!-- {% set videos = (memorabilia_stories|selectattr('display_video')|list)[:4] %}
-    {% set images = (memorabilia_stories|rejectattr('display_video')|list)[:6] %} -->
     {% set videos = videos %}
     {% set images = images %}
 
@@ -742,8 +740,6 @@
   <div id="like-notification" class="like-notification">You already liked this!</div>
 
   <!-- Collector Videos section -->
-  <!-- <p style="text-align:left; color:#021638; margin:2rem; font-size: 1.3rem;">Collector Videos</p> -->
-
   <div class="video-carousel-wrapper">
     <button class="carousel-nav prev">‹</button>
     <div class="video-carousel">
@@ -760,7 +756,6 @@
 
         <!-- 🔥 Like Button Overlay -->
         <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
-          <!-- ❤️ <span class="like-count">{{ video.likes or 0 }}</span> -->
           ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
 
         </div>
@@ -787,8 +782,6 @@
   <section class="featured-cta">
     <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
     <form action="{{ url_for('join_collectors') }}" method="POST" style="margin-top:2rem; margin-left:auto; margin-right:auto;">
-      <!-- <input type="email" name="email" placeholder="yourname@domain.com" required
-            style="width:40%; padding:35px; margin-bottom:1rem; border-radius:6px; border:1px solid #ccc;font-size: 2rem;"><br> -->
       <input type="email" name="email" placeholder="yourname@domain.com" required class="email-input"><br>
       <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;font-size: 1rem;">
           Join Now

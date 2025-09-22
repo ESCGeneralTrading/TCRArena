@@ -1,7 +1,7 @@
 import datetime  # instead of "from datetime import datetime, timedelta"
 import os
 from datetime import datetime, timedelta
-
+from flask import session
 import sys
 import getpass
 from flask import Flask, jsonify, render_template, redirect, url_for, request, flash
@@ -22,6 +22,9 @@ from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
 from googleapiclient.discovery import build
 import isodate
+from flask_mail import Mail, Message
+import requests
+
 
 load_dotenv()
 
@@ -55,8 +58,6 @@ LIVE_FEED_URL = f"http://www.goalserve.com/getfeed/{API_KEY}/soccernew/live?json
 LEAGUES_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerfixtures/data/mapping?json=1"
 LEAGUE_TEAMS_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/soccerleague/{{}}?json=1"  # leagueID
 PLAYER_URL = f"https://www.goalserve.com/getfeed/{API_KEY}/player/{{}}?json=1"
-
-  
 
 
 def allowed_file(filename, allowed_set):
@@ -1336,7 +1337,7 @@ def home():
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
     youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
-    welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles, live scores, and exclusive content!"
+    welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles and exclusive content!"
     return render_template(
         'index.html',
         news_items=news_items,
@@ -1366,8 +1367,6 @@ def login():
             flash('Invalid username or password.', 'danger')
     return render_template('login.html')
 
-import requests
-from flask import jsonify
 
 @app.route('/logout')
 @login_required
@@ -1410,27 +1409,6 @@ def validate_email(email):
 def validate_phone(phone):
     return re.match(r"^\+?\d{7,15}$", phone)
 
-# @app.route('/memorabilia')
-# def memorabilia():
-#     page = request.args.get('page', 1, type=int)
-#     pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=10)
-#     return render_template(
-#         'memorabilia.html',
-#         memorabilia_stories=pagination.items,
-#         pagination=pagination
-#     )
-
-# @app.route('/memorabilia')
-# def memorabilia():
-#     page = request.args.get('page', 1, type=int)
-#     pagination = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).paginate(page=page, per_page=11)
-#     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
-#     return render_template(
-#         'memorabilia.html',
-#         memorabilia_stories=pagination.items,
-#         pagination=pagination,
-#         collector_videos=collector_videos
-#     )
 
 @app.route('/memorabilia')
 def memorabilia():
@@ -1500,8 +1478,6 @@ def memorabilia():
 
 
 
-from flask import session
-
 # --- Format Likes Helper ---
 def format_likes(num):
     if num is None:
@@ -1564,7 +1540,7 @@ def like_collector(video_id):
 
     return jsonify({"likes": video.likes})
 
-from flask_mail import Mail, Message
+
 
 # Titan SMTP config
 app.config['MAIL_SERVER'] = 'smtp.titan.email'
@@ -1643,31 +1619,6 @@ def join():
 
     return render_template('join.html')
 
-
-# @app.route('/join', methods=['GET', 'POST'])
-# def join():
-#     if request.method == 'POST':
-#         name = request.form.get('name', '').strip()
-#         email = request.form.get('email', '').strip()
-#         contact_number = request.form.get('contact_number', '').strip()
-#         message = request.form.get('message', '').strip()
-
-#         # Validation
-#         if not name or not email or not contact_number:
-#             flash("All fields are required.", "danger")
-#         elif not validate_email(email):
-#             flash("Invalid email address.", "danger")
-#         elif not validate_phone(contact_number):
-#             flash("Invalid phone number format.", "danger")
-#         else:
-#             new_contact = Contact(name=name, email=email, contact_number=contact_number, message=message)
-#             db.session.add(new_contact)
-#             db.session.commit()
-#             session['joined'] = True
-#             flash("Thanks for the submission!", "success")
-#             return redirect(request.args.get("next") or url_for('home'))
-
-#     return render_template('join.html')
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
@@ -1809,52 +1760,6 @@ SHORTS_PLAYLIST_ID = 'PLgsIMVkeMYCwFXqG8U39kXyN0WtGFM40l'
 
 # Playlist containing all full-length videos (main uploads or custom playlist)
 FULL_PLAYLIST_ID = 'PLgsIMVkeMYCwd2MlJum2Y0UMY6d-UfhR6'
-
-
-# def fetch_videos_from_playlist(playlist_id):
-#     """
-#     Fetch all videos from a given YouTube playlist.
-#     Returns a list of dictionaries: [{'video_id': ..., 'title': ...}, ...]
-#     """
-#     videos = []
-#     url = 'https://www.googleapis.com/youtube/v3/playlistItems'
-#     params = {
-#         'key': YOUTUBE_API_KEY,
-#         'playlistId': playlist_id,
-#         'part': 'snippet',
-#         'maxResults': 50
-#     }
-
-#     while True:
-#         response = requests.get(url, params=params).json()
-#         items = response.get('items', [])
-
-#         for item in items:
-#             snippet = item['snippet']
-#             video_id = snippet['resourceId']['videoId']
-#             title = snippet['title']
-
-#             videos.append({
-#                 'video_id': video_id,
-#                 'title': title
-#             })
-
-#         # Pagination
-#         if 'nextPageToken' in response:
-#             params['pageToken'] = response['nextPageToken']
-#         else:
-#             break
-
-#     return videos
-
-
-# @app.route('/videos')
-# def all_videos():
-#     # Fetch Shorts and Full-length videos from playlists
-#     shorts = fetch_videos_from_playlist(SHORTS_PLAYLIST_ID)
-#     full_videos = fetch_videos_from_playlist(FULL_PLAYLIST_ID)
-
-#     return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
 
 def fetch_videos_from_playlist(playlist_id):
     """Fetch all videos from a given YouTube playlist."""

@@ -959,19 +959,7 @@ class SubscriberAdmin(ModelView):
 
 admin.add_view(SubscriberAdmin(Subscriber, db.session))
 
-# class YouTubeVideoAdmin(ModelView):
-#     column_list = ('id', 'title', 'video_id')
-#     form_columns = ['title', 'video_id']
-#     column_searchable_list = ['title']
-#     page_size = 20
 
-#     def is_accessible(self):
-#         return current_user.is_authenticated
-
-#     def inaccessible_callback(self, name, **kwargs):
-#         return redirect(url_for('login'))
-
-# admin.add_view(YouTubeVideoAdmin(YouTubeVideo, db.session))
 class YouTubeVideoAdmin(ModelView):
     column_list = ('id', 'title', 'video_id', 'is_short')  # <-- added is_short
     form_columns = ['title', 'video_id', 'is_short']      # <-- added is_short

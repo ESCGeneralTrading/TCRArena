@@ -21,17 +21,13 @@
       display: flex;
       align-items: center;
       padding: 0 1rem;
-      font-weight: normal;
       font-size: 0.9rem;
       position: sticky;
       top: 0;
       z-index: 1100;
       overflow: hidden;
     }
-
-    .top-black-bar marquee {
-      width: 100%;
-    }
+    .top-black-bar marquee { width: 100%; }
 
     .logo-banner {
       background: #ffffff;
@@ -83,7 +79,6 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-
     .nav-toggle span {
       display: block;
       height: 3px;
@@ -91,57 +86,53 @@
       border-radius: 2px;
     }
 
-    /* Tablet + Mobile Nav */
     @media (max-width: 1024px) {
-      .header-container {
-        flex-direction: row; /* keep row layout */
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      nav {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background: #000;
-        margin-top: 0.5rem;
-        padding: 1rem;
-        border-radius: 4px;
-        gap: 1.5rem;
-      }
-
-      nav.active {
-        display: flex;
-      }
-
-      .nav-toggle {
-        display: flex;
-        margin-left: auto; /* stick it to the right */
-      }
+      .header-container { flex-direction: row; justify-content: space-between; align-items: center; }
+      nav { display: none; flex-direction: column; width: 100%; background: #000; margin-top: 0.5rem; padding: 1rem; border-radius: 4px; gap: 1.5rem; }
+      nav.active { display: flex; }
+      .nav-toggle { display: flex; margin-left: auto; }
     }
-
 
     .container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
 
     .tabs { text-align: center; margin-bottom: 2rem; }
-    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: bold; }
-    .tabs a:hover { text-decoration: underline; }
+    .tabs a { margin: 0 0.6rem; text-decoration: none; color: #021638; font-weight: bold; cursor: pointer; }
+    .tabs a.active { text-decoration: underline; color: #054a9a; }
 
-    /* Mobile view adjustments */
     @media (max-width: 768px) {
-      .tabs a {
-        font-size: 12px; /* reduce font size on mobile */
-        padding: 4px 8px; 
-        gap: 1px;
-      }
-
-      .tabs {
-        flex-direction: column; /* stack tabs vertically */
-        align-items: center;
-        
-      }
+      .tabs a { font-size: 12px; padding: 4px 8px; }
+      .tabs { flex-direction: column; align-items: center; }
     }
-    
+
+    /* subtabs */
+    .subtabs {
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .subtabs a {
+        display: inline-block;
+        margin: 0 0.6rem;
+        text-decoration: none;
+        color: #021638;
+        font-weight: bold;
+        padding: 6px 12px;
+        border-radius: 5px;
+    }
+    .subtabs a.active {
+        background-color: #021638;
+        color: #fff;
+    }
+    .youtube-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    @media (max-width: 1024px) { .youtube-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .youtube-grid { grid-template-columns: 1fr; } }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     h1 { text-align: center; margin-bottom: 2.5rem; color: #021638; font-weight: normal; letter-spacing: 1px; text-shadow: 1px 1px 1px rgba(0,0,0,0.03); }
 
     .videos-grid {
@@ -162,14 +153,15 @@
       min-height: 500px;     /* choose a fixed height you want */
       object-fit: cover;    /* cover ensures image fills area without distortion */
       object-position: top; /* aligns image starting from the top */
-      border-radius: 0;
+      /* border-radius: 0; */
       display: block;
+      /* border: 0.5px solid black; */
       
     }
 
     .blog-post {
       background: #ffffff;
-      border-radius: 12px;
+      /* border-radius: 12px; */
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.07);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -178,6 +170,7 @@
       position: relative;
       width: 100%;
       min-height: auto;
+      border: 2px solid black;
     }
     .blog-post:hover { transform: translateY(-5px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
 
@@ -346,6 +339,31 @@
       .images-grid, .videos-grid { grid-template-columns: 1fr; }
     }
 
+
+    .images-grid-collectible {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+      margin: 0 1rem;
+    }
+    .images-grid-collectible .blog-post img {
+      width: 100%;          /* fill the card width */
+      height: 100%;    
+      min-height: 500px;     /* choose a fixed height you want */
+      object-fit: cover;    /* cover ensures image fills area without distortion */
+      object-position: top; /* aligns image starting from the top */
+      border-radius: 0;
+      display: block;
+    }
+    
+    @media (max-width: 1024px) {
+      .images-grid-collectible { grid-template-columns: repeat(2, 1fr); }
+      .videos-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .images-grid-collectible, .videos-grid { grid-template-columns: 1fr; }
+    }
+
     /* Carousel */
     .video-carousel-wrapper {
       position: relative;
@@ -364,7 +382,7 @@
 
     .video-carousel .carousel-item {
       flex: 0 0 35%;
-      max-width: 280px;
+      max-width: 270px;
       aspect-ratio: 9 / 16;
       scroll-snap-align: center;
       background: #fff;
@@ -596,13 +614,13 @@
       color: #ffd700;
       text-decoration: underline;
     }
+
   </style>
 </head>
 <body>
-  <!-- Black top band with marquee -->
   <div class="top-black-bar">
-    <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop();" onmouseout="this.start();">
-      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Exclusive offers, rare collectibles, limited editions &amp; more!&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Sign up today and never miss a deal!
+    <marquee behavior="scroll" direction="left" scrollamount="8">
+      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room | Exclusive offers, rare collectibles, limited editions & more! | Sign up today and never miss a deal!
     </marquee>
   </div>
 
@@ -612,32 +630,19 @@
     </a>
   </div>
 
-  <!-- Header / Nav -->
   <header>
     <div class="header-container">
-      <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation" role="button" tabindex="0">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="nav-toggle" id="navToggle">
+        <span></span><span></span><span></span>
       </div>
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <!-- <a href="{{ url_for('all_scores') }}">Live Matches</a> -->
-        <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
         <a href="#">Partner's Tickets</a>
         <a href="https://www.thecollectroom.com/">Shop</a>
-        <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
         <a href="{{ url_for('all_videos') }}">
-          Ar <svg 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24"
-            fill="white" 
-            style="vertical-align: middle; border: 1px solid white; padding: 1.5px; box-sizing: content-box; border-radius: 5px;">
-            <polygon points="6,4 20,12 6,20" />
-          </svg> na Play
+          Ar <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="vertical-align: middle; border: 1px solid white; padding: 1.5px; border-radius: 5px;"><polygon points="6,4 20,12 6,20" /></svg> na Play
         </a>
       </nav>
     </div>
@@ -650,21 +655,24 @@
       <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
     </div>
 
-    {% if videos %}
-    <h1>Relive Greatness in the Arena Collectors Community</h1>
-    <!-- video section -->
-    <p class="video-hpara"  style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
+    <div class="subtabs">
+      <a class="tab-link active" data-tab="collectors">Collector's Stories</a>
+      <a class="tab-link" data-tab="collectibles">Collectible Stories</a>
+    </div>
 
-    {% set videos = videos %}
-    {% set images = images %}
+    <div class="tab-content active" id="collectors">
+      {% if videos %}
+      <h1>Relive Greatness in the Arena Collectors Community</h1>
+      <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
 
-    <div class="videos-grid">
-      {% for item in videos %}
-      <div class="blog-post">
-        <video id="video-{{ loop.index }}" autoplay muted loop playsinline>
-          <source src="{{ item.display_video }}" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+      <div class="videos-grid">
+        {% for item in videos %}
+        <!-- video loop -->
+	      <div class="blog-post">
+          <video id="video-{{ loop.index }}" autoplay muted loop playsinline>
+            <source src="{{ item.display_video }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
         <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">❚❚</button>
         <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">🔇</button>
@@ -689,22 +697,22 @@
           </div>
         </div>
       </div>
-      {% endfor %}
-    </div>
-    <hr style="margin: 3rem 0; border: none; border-top: 2px solid #ccc;">
-    {% endif %}
-    
-    <!-- image section -->
-    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size: 1.3rem;">Collectible Stories: Legends, Moments & Memorabilia</p>
-    <div class="images-grid">
-      {% for item in images %}
-      <div class="blog-post">
+	    {% endfor %}
+      </div>
+      <hr style="margin:3rem 0; border:none; border-top:2px solid #ccc;">
+      {% endif %}
+
+      <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collector’s Gallery: Icons, Artifacts & Stories</p>
+      <div class="images-grid">
+        {% for item in images %}
+        <!-- image loop -->
+	      <div class="blog-post">
         <img src="{{ item.display_image }}" alt="{{ item.title }}" />
         <div class="blog-post-content">
           <div>
             <h3>{{ item.title }}</h3>
             <small>{{ item.date }} | {{ item.image_credit }}</small>
-            <p>{{ item.subtitle }}</p>
+            <!-- <p>{{ item.subtitle }}</p> -->
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
           <div class="heart-container" data-item-id="{{ item.id }}">
@@ -712,93 +720,159 @@
               <!-- <span class="heart-count">{{ item.likes or 0 }}</span> -->
               <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
 
+            </div>
           </div>
-
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
 
-    {% if pagination %}
-    <div class="pagination">
-      {% if pagination.has_prev %}
-        <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
-      {% endif %}
-      {% for page_num in pagination.iter_pages() %}
-        {% if page_num %}
-          <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+      {% if pagination %}
+      <div class="pagination">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
         {% endif %}
-      {% endfor %}
-      {% if pagination.has_next %}
-        <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
-      {% endif %}
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- Notification popup -->
-  <div id="like-notification" class="like-notification">You already liked this!</div>
-
-  <!-- Collector Videos section -->
-  <div class="video-carousel-wrapper">
-    <button class="carousel-nav prev">‹</button>
-    <div class="video-carousel">
-      {% for video in collector_videos %}
-      <div class="carousel-item">
-        <video id="collector-video-{{ loop.index }}" autoplay muted loop playsinline>
-          <source src="{{ video.display_video }}" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-
-        <button class="video-control pause-btn1" data-video-id="collector-video-{{ loop.index }}">❚❚</button>
-        <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
-        <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
-
-        <!-- 🔥 Like Button Overlay -->
-        <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
-          ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
-
-        </div>
-        
-        <div class="blog-post-content">
-          <h3>{{ video.title }}</h3>
-          <small>{{ video.date }}</small>
-          <p>{{ video.subtitle }}</p>
-        </div>
+        {% for page_num in pagination.iter_pages() %}
+          {% if page_num %}
+            <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
+        {% endif %}
       </div>
-      {% endfor %}
-    </div>
-    <button class="carousel-nav next">›</button>
-  </div>
+      {% endif %}
+ 
 
+    <!-- Notification popup -->
+    <div id="like-notification" class="like-notification">You already liked this!</div>
+
+    <div class="video-carousel-wrapper">
+      <!-- carousel loop -->
+      <button class="carousel-nav prev">‹</button>
+      <div class="video-carousel">
+        {% for video in collector_videos %}
+        <div class="carousel-item">
+          <video id="collector-video-{{ loop.index }}" autoplay muted loop playsinline>
+            <source src="{{ video.display_video }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          <button class="video-control pause-btn1" data-video-id="collector-video-{{ loop.index }}">❚❚</button>
+          <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
+          <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
+
+          <!-- 🔥 Like Button Overlay -->
+          <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
+            ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
+
+          </div>
+          
+          <div class="blog-post-content">
+            <h3>{{ video.title }}</h3>
+            <small>{{ video.date }}</small>
+            <p>{{ video.subtitle }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-nav next">›</button>
+    </div>
+  </div>
   <!-- Fullscreen overlay -->
   <div class="video-overlay" id="video-overlay">
     <button class="close-overlay" id="close-overlay">✕</button>
     <video id="overlay-video" controls autoplay></video>
   </div>
 
-  <!-- Join collectors communitity Section -->
+  <div class="tab-content" id="collectibles">
+      <h1>Explore, Admire, and Own a Piece of History</h1>
+      <!-- <p style="text-align:center; margin-top:2rem; color:#555; font-size:1.2rem;">Content coming soon...</p> -->
+       <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">
+        Collectible Stories: Legends, Moments & Memorabilia
+      </p>
+
+      <div class="images-grid-collectible">
+          {% for item in collectible_stories %}
+          <div class="blog-post">
+              <img src="{{ item.display_image }}" alt="{{ item.title }}" />
+              <div class="blog-post-content">
+                  <div>
+                      <h3>{{ item.title }}</h3>
+                      <small>{{ item.date }} | {{ item.image_credit }}</small>
+                      <p>{{ item.subtitle }}</p>
+                  </div>
+                  <a href="{{ url_for('view_collectible', item_id=item.id) }}">Read More</a>
+                  <div class="heart-container" data-type="collectible" data-item-id="{{ item.id }}">
+                      <button class="heart-btn">❤️</button>
+                      <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
+                  </div>
+
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+      
+      <!-- Optional pagination if needed -->
+      {% if collectible_stories|length > 6 %}
+      <div class="pagination">
+      <!-- Implement pagination links if desired -->
+      {% if pagination %}
+      <div class="pagination">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
+        {% endif %}
+        {% for page_num in pagination.iter_pages() %}
+          {% if page_num %}
+            <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      </div>
+      {% endif %}
+      
+    </div>
+  </div>
 
   <section class="featured-cta">
     <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
-    <form action="{{ url_for('join_collectors') }}" method="POST" style="margin-top:2rem; margin-left:auto; margin-right:auto;">
+    <form action="{{ url_for('join_collectors') }}" method="POST">
       <input type="email" name="email" placeholder="yourname@domain.com" required class="email-input"><br>
-      <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;font-size: 1rem;">
-          Join Now
-      </button>
+      <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Join Now</button>
     </form>
-
   </section>
 
   <footer>
-    <p>
-      &copy; 2025 TcR Arena. All rights reserved. |
+    <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
       <a href="{{ url_for('join') }}">Contact</a>
     </p>
   </footer>
 
   <script>
+    // Tab switching
+    document.querySelectorAll('.tab-link').forEach(link => {
+      link.addEventListener('click', () => {
+        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        link.classList.add('active');
+        document.getElementById(link.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    navToggle.addEventListener('click', () => navMenu.classList.toggle('active'));
+  </script>
+</body>
+</html>
+
+<script>
     // --- Pause/Play buttons ---
     document.querySelectorAll('.video-control.pause-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -986,25 +1060,33 @@
       }
     });
 
+    document.querySelectorAll('.heart-container').forEach(container => {
+    const btn = container.querySelector('.heart-btn');
+    const countEl = container.querySelector('.heart-count');
+    const itemId = container.dataset.itemId;
+    const type = container.dataset.type;  // <-- NEW
+
+    btn.addEventListener('click', () => {
+      fetch(`/like/${type}/${itemId}`, {   // <-- FIXED
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json().then(data => ({ status: response.status, data })))
+      .then(res => {
+        if (res.status === 200) {
+          countEl.textContent = formatLikes(res.data.likes);
+          btn.classList.add('liked');
+        } else if (res.status === 400) {
+          showNotification("You already liked this!");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showNotification("Error liking this item!");
+      });
+    });
+  });
+
+
   </script>
-</body>
-</html>
-
-<script>
-  // Get the toggle button and the nav menu
-  const navToggle = document.getElementById('navToggle');
-  const navMenu = document.getElementById('navMenu');
-
-  // Toggle the 'active' class on click
-  navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-  });
-
-  // Optional: allow toggling via keyboard for accessibility
-  navToggle.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      navMenu.classList.toggle('active');
-      e.preventDefault();
-    }
-  });
-</script>
+  

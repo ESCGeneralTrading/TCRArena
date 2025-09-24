@@ -245,6 +245,31 @@ class MemorabiliaStory(db.Model):
             return self.video_url
         else:
             return None
+
+class CollectibleStory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    subtitle = db.Column(db.String(300))
+    image_url = db.Column(db.String(512)) 
+    image_filename = db.Column(db.String(255))
+    image_credit = db.Column(db.String(100))
+    date = db.Column(db.String(50))
+    content = db.Column(db.Text)
+    
+    likes = db.Column(db.Integer, default=0)  # start at 0
+
+    def __repr__(self):
+        return f"<CollectibleStory {self.title}>"
+
+    @property
+    def display_image(self):
+        if self.image_filename:
+            return f"/static/uploads/{self.image_filename}"
+        elif self.image_url:
+            return self.image_url
+        else:
+            return "/static/uploads/default-placeholder.png"
+
         
 class CollectorJoinee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -703,6 +728,50 @@ class MemorabiliaAdmin(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
 admin.add_view(MemorabiliaAdmin(MemorabiliaStory, db.session))
+
+class CollectibleStoryAdmin(ModelView):
+    upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
+
+    form_extra_fields = {
+        'image_filename': FileUploadField(
+            'Upload Image',
+            base_path=upload_path,
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif'],
+            namegen=lambda obj, file_data: secure_filename(file_data.filename)
+        )
+    }
+
+    column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'likes', 'image_filename', 'image_url')
+    column_searchable_list = ['title', 'image_credit']
+    column_filters = ['image_credit', 'date']
+    form_columns = ['title', 'subtitle', 'image_credit', 'date', 'likes', 'image_filename', 'image_url', 'content']
+
+    form_widget_args = {
+        'content': {
+            'rows': 6,
+            'style': 'font-family: monospace; font-size: 0.9em;'
+        }
+    }
+
+    def _list_thumbnail(self, context, model, name):
+        if model.image_filename:
+            return Markup(f'<img src="/static/uploads/{model.image_filename}" style="max-height:100px;">')
+        elif model.image_url:
+            return Markup(f'<img src="{model.image_url}" style="max-height:100px;">')
+        return ''
+
+    column_formatters = {
+        'image_filename': _list_thumbnail,
+        'image_url': _list_thumbnail,
+    }
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('login'))
+
+admin.add_view(CollectibleStoryAdmin(CollectibleStory, db.session))
 
 class CollectorVideoAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -1410,22 +1479,84 @@ def validate_phone(phone):
     return re.match(r"^\+?\d{7,15}$", phone)
 
 
+# @app.route('/memorabilia')
+# def memorabilia():
+#     page = request.args.get('page', 1, type=int)
+#     videos_per_page = 4
+#     images_per_page = 6
+
+#     # Fetch all items ordered by date
+#     all_items = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).all()
+#     all_videos = [item for item in all_items if item.display_video]
+#     all_images = [item for item in all_items if not item.display_video]
+
+#     # Sort images by id
+#     all_images.sort(key=lambda x: x.id, reverse=True)
+#     all_videos.sort(key=lambda x: x.id, reverse=True)
+
+#     # Paginate videos and images separately
+#     video_start = (page - 1) * videos_per_page
+#     video_end = video_start + videos_per_page
+#     image_start = (page - 1) * images_per_page
+#     image_end = image_start + images_per_page
+
+#     videos = all_videos[video_start:video_end]
+#     images = all_images[image_start:image_end]
+
+#     # Calculate total pages based on the list that requires more pages
+#     total_video_pages = (len(all_videos) + videos_per_page - 1) // videos_per_page
+#     total_image_pages = (len(all_images) + images_per_page - 1) // images_per_page
+#     total_pages = max(total_video_pages, total_image_pages)
+
+#     # Pagination object
+#     class Pagination:
+#         def __init__(self, page, total_pages):
+#             self.page = page
+#             self.pages = total_pages
+
+#         @property
+#         def has_prev(self):
+#             return self.page > 1
+
+#         @property
+#         def has_next(self):
+#             return self.page < self.pages
+
+#         @property
+#         def prev_num(self):
+#             return self.page - 1
+
+#         @property
+#         def next_num(self):
+#             return self.page + 1
+
+#         def iter_pages(self):
+#             return range(1, self.pages + 1)
+
+#     pagination = Pagination(page=page, total_pages=total_pages)
+#     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
+
+#     return render_template(
+#         'memorabilia.html',
+#         videos=videos,
+#         images=images,
+#         pagination=pagination,
+#         memorabilia_stories=videos + images,
+#         collector_videos=collector_videos
+#     )
 @app.route('/memorabilia')
 def memorabilia():
     page = request.args.get('page', 1, type=int)
     videos_per_page = 4
     images_per_page = 6
 
-    # Fetch all items ordered by date
+    # Memorabilia stories
     all_items = MemorabiliaStory.query.order_by(MemorabiliaStory.date.desc()).all()
     all_videos = [item for item in all_items if item.display_video]
     all_images = [item for item in all_items if not item.display_video]
-
-    # Sort images by id
     all_images.sort(key=lambda x: x.id, reverse=True)
     all_videos.sort(key=lambda x: x.id, reverse=True)
 
-    # Paginate videos and images separately
     video_start = (page - 1) * videos_per_page
     video_end = video_start + videos_per_page
     image_start = (page - 1) * images_per_page
@@ -1434,7 +1565,6 @@ def memorabilia():
     videos = all_videos[video_start:video_end]
     images = all_images[image_start:image_end]
 
-    # Calculate total pages based on the list that requires more pages
     total_video_pages = (len(all_videos) + videos_per_page - 1) // videos_per_page
     total_image_pages = (len(all_images) + images_per_page - 1) // images_per_page
     total_pages = max(total_video_pages, total_image_pages)
@@ -1465,6 +1595,11 @@ def memorabilia():
             return range(1, self.pages + 1)
 
     pagination = Pagination(page=page, total_pages=total_pages)
+
+    # Collectible stories for "Collectible Stories" tab
+    collectible_stories = CollectibleStory.query.order_by(CollectibleStory.date.desc()).all()
+
+    # Collector videos for carousel
     collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
 
     return render_template(
@@ -1473,9 +1608,22 @@ def memorabilia():
         images=images,
         pagination=pagination,
         memorabilia_stories=videos + images,
-        collector_videos=collector_videos
+        collector_videos=collector_videos,
+        collectible_stories=collectible_stories
     )
 
+@app.route('/collectible/<int:item_id>')
+def view_collectible(item_id):
+    item = CollectibleStory.query.get_or_404(item_id)
+    suggestions = CollectibleStory.query.filter(
+        CollectibleStory.id != item_id
+    ).order_by(CollectibleStory.id.desc()).limit(3).all()
+    
+    return render_template(
+        'memorabilia_detail.html',
+        item=item,
+        suggestions=suggestions
+    )
 
 
 # --- Format Likes Helper ---
@@ -1540,6 +1688,28 @@ def like_collector(video_id):
 
     return jsonify({"likes": video.likes})
 
+@app.route('/like/collectible/<int:item_id>', methods=['POST'])
+def like_collectible(item_id):
+    item = CollectibleStory.query.get(item_id)
+    if not item:
+        return {"error": "Item not found"}, 404
+
+    # Track liked collectibles in session
+    liked_items = session.get('liked_collectibles', [])
+
+    if item_id in liked_items:
+        return {"error": "Already liked"}, 400
+
+    if item.likes is None:
+        item.likes = 0
+
+    item.likes += 1
+    db.session.commit()
+
+    liked_items.append(item_id)
+    session['liked_collectibles'] = liked_items
+
+    return {"likes": item.likes}
 
 
 # Titan SMTP config

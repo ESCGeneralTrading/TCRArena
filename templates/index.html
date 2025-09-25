@@ -11,7 +11,9 @@
     }
     body {
       margin: 0;
-      font-family: 'Montserrat', sans-serif;
+      /* font-family: 'Montserrat', sans-serif; */
+
+      font-family: Georgia, serif;
       background-color: #fff;
       color: #111;
       font-size: 1rem;
@@ -76,7 +78,7 @@
     nav a {
       color: #fff;
       text-decoration: none;
-      font-weight: bold;
+      /* font-weight: bold; */
       font-size: 1rem;
     }
 
@@ -640,7 +642,7 @@
       }
 
       .shop-card img {
-        height: 160px;
+        height: 100%;
       }
     }
     #subscriptionPopup {
@@ -1284,7 +1286,7 @@
         <!-- <a href="{{ url_for('all_scores') }}">Live Matches</a> -->
         <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
-        <a href="#">Partner's Tickets</a>
+        <!-- <a href="#">Partner's Tickets</a> -->
         <a href="https://www.thecollectroom.com/">Shop</a>
         <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
         <a href="{{ url_for('all_videos') }}">
@@ -1588,7 +1590,7 @@
           <strong>{{ item.title }}</strong>
           <p>{{ item.summary or '' }}</p>
           {% if item.image_caption %}
-            <p class="image-caption">{{ item.image_caption }}</p>
+            <!-- <p class="image-caption">{{ item.image_caption }}</p> -->
           {% endif %}
           {% if item.image_credit %}
             <p class="image-credit">Photo Credits: {{ item.image_credit }}</p>
@@ -1599,7 +1601,7 @@
     </div>
     <div style="text-align: center; margin-top: 1rem;">
       <a href="{{ url_for('blog') }}">
-        <button>VIEW MORE</button>
+        <button style="border-radius: 70px;">VIEW MORE</button>
       </a>
     </div>
   </section>
@@ -1692,14 +1694,14 @@
 
     <div style="text-align:center; margin-top:2rem;">
       <a href="{{ url_for('memorabilia') }}">
-        <button>VIEW MORE</button>
+        <button style="border-radius: 70px;">VIEW MORE</button>
       </a>
     </div>
   </section>
 
   <!-- Shop Section -->
   <section class="shop">
-    <p style=" font-size: 1.0rem;">TRENDING MEMORABILIA</p>
+    <p style=" font-size: 1.0rem;">TRENDING COLLECTIBLES & MEMORABILIA</p>
     <!-- <h3>TRENDING MEMORABILIA</h3> -->
     <div class="shop-cards">
       {% for product in products %}
@@ -1753,8 +1755,7 @@
 
     <!-- YouTube Section -->
     <section class="youtube-section">
-      <p style=" font-size: 1.0rem;">COLLECTING STORIES IN MOTION</p>
-      <!-- <h2>COLLECTING STORIES IN MOTION</h2> -->
+      <p style=" font-size: 1.0rem;">LATEST ON TcR ARENA PLAY</p>
 
       {% if youtube_videos %}
         <!-- Grid Videos (including the previous "featured" video as #1) -->
@@ -1769,7 +1770,7 @@
       {% endif %}
 
       <div style="text-align: center; margin-top: 20px;">
-        <a href="{{ url_for('all_videos') }}" class="view-product-btn">VIEW MORE</a>
+        <a style="border-radius: 70px;" href="{{ url_for('all_videos') }}" class="view-product-btn">VIEW MORE</a>
       </div>
     </section>
 

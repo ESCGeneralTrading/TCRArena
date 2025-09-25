@@ -1398,7 +1398,9 @@ def home():
 
     # Final mix for grid
     collectors_items = videos + images
-    youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
+    # youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
+    # Fetch latest 5 Shorts directly from YouTube API
+    youtube_shorts = fetch_videos_from_playlist(SHORTS_PLAYLIST_ID)[:5]
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles and exclusive content!"
     return render_template(
@@ -1407,7 +1409,7 @@ def home():
         products=products,
         # memorabilia_stories=memorabilia_stories,
         memorabilia_stories=collectors_items, 
-        youtube_videos=youtube_shorts,
+        youtube_videos=youtube_shorts ,
         advertisement=ad,
         welcome_text=welcome_text,
         matches=matches

@@ -106,7 +106,7 @@
 
     /* subtabs */
     .subtabs {
-        text-align: center;
+        text-align: left;
         margin: 2rem 0;
     }
     .subtabs a {
@@ -221,7 +221,6 @@
       flex-direction: column;
       padding: 1rem;
       gap: 1rem;
-     
     }
     .blog-post video {
       width: 100%;
@@ -615,6 +614,56 @@
       text-decoration: underline;
     }
 
+    /* Featured video */
+    .featured-video {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .featured-video-left {
+      flex: 2;
+      position: relative;
+    }
+    .featured-video-left video {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .featured-video-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+    .featured-video-right h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+    .featured-video-right p {
+      font-size: 1rem;
+      color: #555;
+    }
+    .featured-video-right .video-read-more {
+      margin-top: 1rem;
+    }
+
+    /* Remaining videos grid */
+    .remaining-videos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+    }
+    @media (max-width: 1024px) {
+      .remaining-videos-grid { grid-template-columns: repeat(2, 1fr); }
+      .featured-video { flex-direction: column; }
+      .featured-video-right { order: 2; }
+    }
+    @media (max-width: 768px) {
+      .remaining-videos-grid { grid-template-columns: 1fr; }
+    }
+    
   </style>
 </head>
 <body>
@@ -649,58 +698,96 @@
   </header>
 
   <div class="container">
-    <div class="tabs">
+    <!-- <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
       <a href="{{ url_for('all_videos') }}">Arena Play</a>
       <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
-    </div>
+    </div> -->
 
     <div class="subtabs">
       <a class="tab-link active" data-tab="collectors">Collector's Stories</a>
       <a class="tab-link" data-tab="collectibles">Collectible Stories</a>
     </div>
+    <hr style="box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
 
     <div class="tab-content active" id="collectors">
-      {% if videos %}
-      <h1>Relive Greatness in the Arena Collectors Community</h1>
-      <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collectibles Showcase – The Collector’s Rare Treasures</p>
+      <div class="videos-section">
+  {% if videos %}
+    {% set first_video = videos[0] %}
+    {% set remaining_videos = videos[1:] %}
 
-      <div class="videos-grid">
-        {% for item in videos %}
-        <!-- video loop -->
-	      <div class="blog-post">
-          <video id="video-{{ loop.index }}" autoplay muted loop playsinline>
+    <!-- First Video Prominent Layout -->
+    <div class="featured-video">
+      <div class="featured-video-left">
+        <video id="video-1" autoplay muted loop playsinline>
+          <source src="{{ first_video.display_video }}" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <button class="video-control pause-btn" data-video-id="video-1">❚❚</button>
+        <button class="video-control mute-btn" data-video-id="video-1">🔇</button>
+        <input type="range" class="video-slider" data-video-id="video-1" min="0" max="100" value="0">
+      </div>
+      <div class="featured-video-right">
+        <h3>{{ first_video.title }}</h3>
+        <small>{{ first_video.date }} | {{ first_video.image_credit }}</small>
+        <p>{{ first_video.subtitle }}</p>
+        <a href="{{ url_for('view_memorabilia', item_id=first_video.id) }}" class="video-read-more">Read More</a>
+        <div class="video-heart-container" data-item-id="{{ first_video.id }}">
+          <button class="video-heart-btn">❤️</button>
+          <span class="video-heart-count">{{ (first_video.likes or 0) | format_likes }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remaining Videos Grid -->
+    {% if remaining_videos %}
+      <div class="remaining-videos-grid">
+        {% for item in remaining_videos %}
+        <div class="blog-post">
+          <video preload="none" id="video-{{ loop.index + 1 }}" autoplay muted loop playsinline>
             <source src="{{ item.display_video }}" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-
-        <button class="video-control pause-btn" data-video-id="video-{{ loop.index }}">❚❚</button>
-        <button class="video-control mute-btn" data-video-id="video-{{ loop.index }}">🔇</button>
-
-
-        <input type="range" class="video-slider" data-video-id="video-{{ loop.index }}" min="0" max="100" value="0">
-
-        <div class="video-post-content">
-          <div class="video-style-content">
+          <button class="video-control pause-btn" data-video-id="video-{{ loop.index + 1 }}">❚❚</button>
+          <button class="video-control mute-btn" data-video-id="video-{{ loop.index + 1 }}">🔇</button>
+          <input type="range" class="video-slider" data-video-id="video-{{ loop.index + 1 }}" min="0" max="100" value="0">
+          <div class="video-post-content">
             <h3>{{ item.title }}</h3>
-            <small>{{ item.date }} | {{ item.image_credit }}</small>
-            <p>{{ item.subtitle }}</p>
-          </div>
-
-          <!-- Button block -->
-          <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" class="video-read-more">Read More</a>
-
-          <!-- Heart block -->
-          <div class="video-heart-container" data-item-id="{{ item.id }}">
+            <!-- <small>{{ item.date }} | {{ item.image_credit }}</small> -->
+            <!-- <p>{{ item.subtitle }}</p> -->
+            <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" class="video-read-more">Read More</a>
+            <div class="video-heart-container" data-item-id="{{ item.id }}">
               <button class="video-heart-btn">❤️</button>
               <span class="video-heart-count">{{ (item.likes or 0) | format_likes }}</span>
+            </div>
           </div>
         </div>
+        {% endfor %}
+      
       </div>
-	    {% endfor %}
+      <!-- <hr style="box-shadow: 0 2px 5px rgba(0,0,0,0.3);gap: 100px;margin-top: 50px;"> -->
+       
+    {% endif %}
+    <!-- Pagination -->
+      {% if pagination %}
+      <div class="pagination">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
+        {% endif %}
+        {% for page_num in pagination.iter_pages() %}
+          {% if page_num %}
+            <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
+        {% endif %}
       </div>
-      <hr style="margin:3rem 0; border:none; border-top:2px solid #ccc;">
       {% endif %}
+  {% endif %}
+  
+</div>
+
 
       <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collector’s Gallery: Icons, Artifacts & Stories</p>
       <div class="images-grid">
@@ -746,9 +833,9 @@
     <!-- Notification popup -->
     <div id="like-notification" class="like-notification">You already liked this!</div>
 
-    <div class="video-carousel-wrapper">
+    <!-- <div class="video-carousel-wrapper"> -->
       <!-- carousel loop -->
-      <button class="carousel-nav prev">‹</button>
+      <!-- <button class="carousel-nav prev">‹</button>
       <div class="video-carousel">
         {% for video in collector_videos %}
         <div class="carousel-item">
@@ -759,10 +846,10 @@
 
           <button class="video-control pause-btn1" data-video-id="collector-video-{{ loop.index }}">❚❚</button>
           <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
-          <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
+          <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button> -->
 
           <!-- 🔥 Like Button Overlay -->
-          <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
+          <!-- <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
             ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
 
           </div>
@@ -776,7 +863,7 @@
         {% endfor %}
       </div>
       <button class="carousel-nav next">›</button>
-    </div>
+    </div> -->
   </div>
   <!-- Fullscreen overlay -->
   <div class="video-overlay" id="video-overlay">
@@ -785,10 +872,10 @@
   </div>
 
   <div class="tab-content" id="collectibles">
-      <h1>Explore, Admire, and Own a Piece of History</h1>
+      <!-- <h1>Explore, Admire, and Own a Piece of History</h1> -->
       <!-- <p style="text-align:center; margin-top:2rem; color:#555; font-size:1.2rem;">Content coming soon...</p> -->
        <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">
-        Collectible Stories: Legends, Moments & Memorabilia
+        <!-- Collectible Stories: Legends, Moments & Memorabilia -->
       </p>
 
       <div class="images-grid-collectible">
@@ -837,15 +924,15 @@
       
     </div>
   </div>
-
-  <section class="featured-cta">
-    <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
-    <form action="{{ url_for('join_collectors') }}" method="POST">
-      <input type="email" name="email" placeholder="yourname@domain.com" required class="email-input"><br>
-      <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Join Now</button>
-    </form>
-  </section>
-
+  <div>
+    <section class="featured-cta">
+      <h2>Join the TCR Collectors Community <br> Get 20% Collector's Discount</h2>
+      <form action="{{ url_for('join_collectors') }}" method="POST">
+        <input type="email" name="email" placeholder="yourname@domain.com" required class="email-input"><br>
+        <button type="submit" style="background:#021638; color:#fff; padding:10px 20px; border:none; border-radius:6px; cursor:pointer;">Join Now</button>
+      </form>
+    </section>
+  </div>
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |

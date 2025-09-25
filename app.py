@@ -1392,6 +1392,12 @@ def home():
     news_items = News.query.order_by(News.id.desc()).limit(6).all()
     products = Product.query.order_by(Product.id.desc()).limit(5).all()
     memorabilia_stories = MemorabiliaStory.query.order_by(MemorabiliaStory.id.desc()).limit(6).all()
+    # Separate videos and images
+    videos = [s for s in memorabilia_stories if s.display_video][:2]   # max 2 videos
+    images = [s for s in memorabilia_stories if not s.display_video][:4]  # max 4 images
+
+    # Final mix for grid
+    collectors_items = videos + images
     youtube_shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).limit(5).all()
     ad = Advertisement.query.filter_by(active=True).order_by(Advertisement.id.desc()).first()
     welcome_text = "Welcome to TCR Arena - your hub for sports insights, collectibles and exclusive content!"
@@ -1399,7 +1405,8 @@ def home():
         'index.html',
         news_items=news_items,
         products=products,
-        memorabilia_stories=memorabilia_stories,
+        # memorabilia_stories=memorabilia_stories,
+        memorabilia_stories=collectors_items, 
         youtube_videos=youtube_shorts,
         advertisement=ad,
         welcome_text=welcome_text,
@@ -1704,9 +1711,9 @@ def like_collectible(item_id):
 app.config['MAIL_SERVER'] = 'smtp.titan.email'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = "maneeshamanoharan@thecollectroom.com"   # your Titan email
+app.config['MAIL_USERNAME'] = "digital@thecollectroom.com"   # your Titan email
 app.config['MAIL_PASSWORD'] = "ESC@2025"                   # Titan password
-app.config['MAIL_DEFAULT_SENDER'] = "maneeshamanoharan@thecollectroom.com"
+app.config['MAIL_DEFAULT_SENDER'] = "digital@thecollectroom.com"
 
 mail = Mail(app)
 
@@ -1739,7 +1746,7 @@ def join():
             try:
                 msg = Message(
                     subject="New Contact Form Submission - TCR Arena",
-                    recipients=["maneeshamanoharan@thecollectroom.com"]
+                    recipients=["digital@thecollectroom.com"]
                 )
 
                 # Plain text fallback (always good to have)
@@ -1964,13 +1971,16 @@ def all_videos():
     # Fetch active advertisement
     apad = ArenaplayAdvertisement.query.filter_by(active=True).order_by(ArenaplayAdvertisement.id.desc()).first()
 
+    # Collector videos for carousel
+    collector_videos = CollectorVideo.query.order_by(CollectorVideo.date.desc()).limit(10).all()
 
     return render_template(
         'all_videos.html',
         shorts=shorts,
         full_videos=full_videos,
         tiktok_username=tiktok_username,
-        arenaplayadvertisement=apad
+        arenaplayadvertisement=apad,
+        collector_videos=collector_videos
     )
 
 

@@ -265,7 +265,7 @@
     }
 
     .tabs {
-        text-align: center;
+        text-align: left;
         margin: 2rem 0;
     }
     .tabs a {
@@ -668,6 +668,206 @@
       }
     }
 
+    /* Carousel */
+    .video-carousel-wrapper {
+      position: relative;
+      margin: 2rem auto;
+      max-width: 1200px;
+    }
+    .video-carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding: 1rem 0;
+    }
+    .video-carousel::-webkit-scrollbar { display: none; }
+
+    .video-carousel .carousel-item {
+      flex: 0 0 35%;
+      max-width: 270px;
+      aspect-ratio: 9 / 16;
+      scroll-snap-align: center;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      position: relative;
+      margin: 0 0.5rem;
+    }
+    .video-control {
+      font-size: 18px;        /* consistent size */
+      line-height: 1;         /* keep tight */
+      width: 36px;            /* fixed circle size */
+      height: 36px;
+      display: flex;          /* center the icon */
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+
+    .video-carousel .carousel-item video { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Carousel navigation arrows */
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(2,22,56,0.7);
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      padding: 0.5rem 0.8rem;
+      cursor: pointer;
+      border-radius: 50%;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+    .carousel-nav:hover {
+      background: rgba(2,22,56,1);
+      transform: translateY(-50%) scale(1.15);
+      font-size: 1.5rem;
+      padding: 0.4rem 0.6rem;
+    }
+    .carousel-nav.prev { left: -1.5rem; }
+    .carousel-nav.next { right: -1.5rem; }
+
+    @media (max-width: 768px) {
+      .carousel-nav.prev { left: 0.3rem; }
+      .carousel-nav.next { right: 0.3rem; }
+    }
+    @media (max-width: 480px) {
+      .video-overlay video {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+      }
+    }
+
+    /* Fullscreen overlay */
+    .video-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      backdrop-filter: blur(12px);
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .video-overlay video {
+      width: auto;
+      height: 90%;
+      max-width: 500px;
+      aspect-ratio: 9 / 16;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .video-overlay .close-overlay {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      font-size: 2rem;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      z-index: 1010;
+    }
+
+    .like-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      font-size: 0.9rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .like-overlay.liked {
+      color: #ff4d4d;
+      transform: scale(1.2);
+      transition: transform 0.2s ease;
+    }
+
+    .heart-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .heart-btn {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .heart-btn.liked {
+      color: red;
+      transform: scale(1.3);
+    }
+
+     /* Nice popup notification */
+    .like-notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #021638;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 9999;
+      font-size: 1rem;
+    }
+    .like-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+     /* Video control buttons overlay */
+    .video-control {
+      position: absolute;
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      border: none;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 50%;
+      user-select: none;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    .video-control:hover { background: rgba(0,0,0,0.7); }
+
+    .pause-btn { left: 8px; top: 12px; }
+    .mute-btn { left: 60px; top: 12px; }
+
+    .pause-btn1 { bottom: 10px; left: 10px; }
+    .mute-btn1 { bottom: 10px; right: 10px; }
+    .fullscreen-btn { top: 10px; right: 10px; }
+
+
   </style>
 </head>
 <body>
@@ -717,11 +917,11 @@
   <div class="container">
 
     <!-- Tabs Navigation -->
-    <div class="tabs">
+    <!-- <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
       <a href="{{ url_for('all_videos') }}">Arena Play</a>
       <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
-    </div>
+    </div> -->
 
     <h1>Arena Vault: Exclusive Plays & Highlights</h1>
 
@@ -730,11 +930,12 @@
     <a href="#" class="active" onclick="showTab('youtube', this)">YouTube</a>
     <a href="#" onclick="showTab('tiktok', this)">TikTok</a>
 </div>
+<hr style="box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+
 
 <!-- YouTube Tab -->
 <div id="youtube-tab" class="tab-content">
       {% if full_videos %}
-        <hr>
         <div class="section-title">The Arena Vault: Full-Length Plays & Highlights</div>
         <div class="youtube-grid">
             {% for video in full_videos %}
@@ -826,6 +1027,44 @@
 
     </div>
 
+    <div class="video-carousel-wrapper">
+      <!-- carousel loop -->
+      <button class="carousel-nav prev">‹</button>
+      <div class="video-carousel">
+        {% for video in collector_videos %}
+        <div class="carousel-item">
+          <video id="collector-video-{{ loop.index }}" autoplay muted loop playsinline>
+            <source src="{{ video.display_video }}" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          <button class="video-control pause-btn1" data-video-id="collector-video-{{ loop.index }}">❚❚</button>
+          <button class="video-control mute-btn1" data-video-id="collector-video-{{ loop.index }}">🔇</button>
+          <button class="video-control fullscreen-btn" data-video-id="collector-video-{{ loop.index }}">⛶</button>
+
+          <!-- 🔥 Like Button Overlay -->
+          <div class="like-overlay" data-item-id="collector-{{ loop.index }}">
+            ❤️ <span class="like-count">{{ (video.likes or 0) | format_likes }}</span>
+
+          </div>
+          
+          <div class="blog-post-content">
+            <h3>{{ video.title }}</h3>
+            <small>{{ video.date }}</small>
+            <p>{{ video.subtitle }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-nav next">›</button>
+    </div>
+  </div>
+  <!-- Fullscreen overlay -->
+  <div class="video-overlay" id="video-overlay">
+    <button class="close-overlay" id="close-overlay">✕</button>
+    <video id="overlay-video" controls autoplay></video>
+  </div>
+
     <section class="featured-cta">
         <h2>TO GET FEATURED IN TcR ARENA</h2>
         <p class="email-label">Showcase your personal collections for free</p>
@@ -879,3 +1118,190 @@
     }
   });
 </script>
+<script>
+    // --- Carousel controls ---
+    document.querySelectorAll('.video-carousel-wrapper').forEach(wrapper => {
+      const carousel = wrapper.querySelector('.video-carousel');
+      const prevBtn = wrapper.querySelector('.carousel-nav.prev');
+      const nextBtn = wrapper.querySelector('.carousel-nav.next');
+      prevBtn.addEventListener('click', () => { carousel.scrollBy({ left: -carousel.clientWidth * 0.6, behavior: 'smooth' }); });
+      nextBtn.addEventListener('click', () => { carousel.scrollBy({ left: carousel.clientWidth * 0.6, behavior: 'smooth' }); });
+    });
+
+    // --- Fullscreen overlay ---
+    const overlay = document.getElementById('video-overlay');
+    const overlayVideo = document.getElementById('overlay-video');
+    const closeOverlay = document.getElementById('close-overlay');
+
+    document.querySelectorAll('.fullscreen-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const video = document.getElementById(btn.dataset.videoId);
+        overlayVideo.src = video.currentSrc;
+        overlayVideo.currentTime = video.currentTime;
+        overlayVideo.play();
+        overlay.style.display = 'flex';
+      });
+    });
+
+    closeOverlay.addEventListener('click', () => {
+      overlayVideo.pause();
+      overlay.style.display = 'none';
+      overlayVideo.src = '';
+    });
+
+    overlay.addEventListener('click', e => {
+      if(e.target === overlay){
+        overlayVideo.pause();
+        overlay.style.display = 'none';
+        overlayVideo.src = '';
+      }
+    });
+
+    // Pause/Play buttons for collector videos
+    document.querySelectorAll('.pause-btn1').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        if (vid.paused) { 
+          vid.play(); 
+          btn.textContent = '❚❚'; 
+        } else { 
+          vid.pause(); 
+          btn.textContent = '▶'; 
+        }
+      });
+    });
+
+    // Mute/Unmute buttons
+    document.querySelectorAll('.mute-btn1').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vid = document.getElementById(btn.dataset.videoId);
+        vid.muted = !vid.muted;
+        btn.textContent = vid.muted ? '🔇' : '🔊';
+      });
+    });
+
+
+  </script>
+  <script>
+    // --- Unified Like Logic for Memorabilia & Collector Videos ---
+    function showNotification(msg) {
+      const notif = document.getElementById('like-notification');
+      notif.textContent = msg;
+      notif.classList.add('show');
+      setTimeout(() => notif.classList.remove('show'), 2000);
+    }
+
+    function formatLikes(num) {
+      if (num < 1000) return num.toString();
+      if (num < 1_000_000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
+      return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + "M";
+    }
+
+
+    // Handle memorabilia likes
+    document.querySelectorAll('.heart-container').forEach(container => {
+      const btn = container.querySelector('.heart-btn');
+      const countEl = container.querySelector('.heart-count');
+      const itemId = container.dataset.itemId;
+
+      btn.addEventListener('click', () => {
+        fetch(`/like/memorabilia/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              // countEl.textContent = res.data.likes;
+              countEl.textContent = formatLikes(res.data.likes);
+              btn.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this item!");
+          });
+      });
+    });
+
+    // Handle collector video likes
+    document.querySelectorAll('.like-overlay').forEach(container => {
+      const countEl = container.querySelector('.like-count');
+      const itemId = container.dataset.itemId.replace('collector-', '');
+      
+      container.addEventListener('click', () => {
+        fetch(`/like/collector/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              // countEl.textContent = res.data.likes;
+              countEl.textContent = formatLikes(res.data.likes);
+              container.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this video!");
+          });
+      });
+    });
+    // Handle main videos grid likes
+    document.querySelectorAll('.video-heart-container').forEach(container => {
+      const btn = container.querySelector('.video-heart-btn');
+      const countEl = container.querySelector('.video-heart-count');
+      const itemId = container.dataset.itemId;
+
+      btn.addEventListener('click', () => {
+        fetch(`/like/memorabilia/${itemId}`, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+          .then(response => response.json().then(data => ({ status: response.status, data })))
+          .then(res => {
+            if (res.status === 200) {
+              countEl.textContent = formatLikes(res.data.likes);
+              btn.classList.add('liked');
+            } else if (res.status === 400) {
+              showNotification("You already liked this!");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            showNotification("Error liking this video!");
+          });
+      });
+
+      // Optional: mark already liked buttons on page load
+      if (container.dataset.liked === "true") {
+        btn.classList.add('liked');
+      }
+    });
+
+    document.querySelectorAll('.heart-container').forEach(container => {
+    const btn = container.querySelector('.heart-btn');
+    const countEl = container.querySelector('.heart-count');
+    const itemId = container.dataset.itemId;
+    const type = container.dataset.type;  // <-- NEW
+
+    btn.addEventListener('click', () => {
+      fetch(`/like/${type}/${itemId}`, {   // <-- FIXED
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json().then(data => ({ status: response.status, data })))
+      .then(res => {
+        if (res.status === 200) {
+          countEl.textContent = formatLikes(res.data.likes);
+          btn.classList.add('liked');
+        } else if (res.status === 400) {
+          showNotification("You already liked this!");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showNotification("Error liking this item!");
+      });
+    });
+  });
+
+
+  </script>
+  

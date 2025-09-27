@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Blog - TCR Arena</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <title>Join TCR Arena</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      /* font-family: 'Montserrat', sans-serif; */
+      /* font-family: Montserrat; */
       font-family: "Futura", "Trebuchet MS", Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background: #f9f9f9;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
+
     .top-black-bar {
       background-color: #000;
       color: #fff;
@@ -31,6 +33,9 @@
     .top-black-bar marquee {
       width: 100%;
     }
+
+
+    /* Header (Logo) */
     .logo-banner {
       background: #fff;
       text-align: center;
@@ -122,127 +127,45 @@
       }
     }
 
-    .container {
-      max-width: 1200px;
+
+    /* Form */
+    .form-container {
+      max-width: 500px;
       margin: 2rem auto;
-      padding: 1rem;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
-      color: #021638;
-    }
-
-    .tabs {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .tabs a {
-      margin: 0 0.6rem;
-      text-decoration: none;
-      font-weight: bold;
-      color: #021638;
-    }
-
-    .tabs a:hover {
-      text-decoration: underline;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr); /* 3 columns for each page */
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 1024px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screen sizes */
-      }
-    }
-
-    @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: 1fr; /* 1 column for smaller screens */
-      }
-    }
-
-    .blog-post {
       background: #fff;
+      padding: 2rem;
       border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 6px rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .blog-post img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      object-position: top;
-    }
-
-    .blog-post-content {
-      padding: 1rem;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .blog-post-content h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1.2rem;
-      color: #222;
-    }
-
-    .blog-post-content small {
-      color: #666;
-      font-size: 0.9rem;
-    }
-
-    .blog-post-content a {
-      margin-top: 1rem;
-      background: #021638;
-      color: white;
-      padding: 0.4rem 0.8rem;
-      border-radius: 4px;
-      text-decoration: none;
-      align-self: flex-start;
-    }
-
-    .blog-post-content a:hover {
-      background: #054a9a;
-    }
-
-    .pagination {
       text-align: center;
-      margin-top: 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .pagination a {
-      display: inline-block;
-      margin: 0 0.3rem;
-      padding: 0.4rem 0.8rem;
-      background: #021638;
-      color: #fff;
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
       border-radius: 4px;
-      text-decoration: none;
+      font-size: 1rem;
     }
 
-    .pagination a.active {
+    button {
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
       background: #054a9a;
-      font-weight: bold;
     }
 
-    .pagination a:hover {
-      background: #003366;
+    .flash {
+      color: green;
+      margin-bottom: 1rem;
     }
 
     /* Footer */
-    footer {
+     footer {
       background: #000000; 
       color: #bbb;
       text-align: center;
@@ -267,16 +190,29 @@
       color: #fff;
     }
 
+
+    
+    @media (max-width: 600px) {
+      .form-container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      .logo-banner img {
+        height: 80px;
+      }
+    }
   </style>
 </head>
 <body>
+  <!-- Black top band with marquee -->
   <div class="top-black-bar">
     <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop();" onmouseout="this.start();">
       Join TcR Arena — get 20% off all signed memorabilia at The Collect Room&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Exclusive offers, rare collectibles, limited editions &amp; more!&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Sign up today and never miss a deal!
     </marquee>
   </div>
 
-  <!-- Logo -->
+  <!-- Header / Logo -->
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
       <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
@@ -314,50 +250,25 @@
     </div>
   </header>
 
-  <div class="container">
-    <div class="tabs">
-      <a href="{{ url_for('blog') }}">All</a>
-      {% for cat in categories %}
-        <a href="{{ url_for('blog', category=cat[0]) }}">{{ cat[0] }}</a>
-      {% endfor %}
-    </div>
+  <!-- Form -->
+  <div class="form-container">
+    <h2>Share Your Collectible Stories With Us</h2>
 
-    <div class="grid">
-      {% for item in news_items %}
-      <div class="blog-post">
-        <img src="{{ item.image_url }}" alt="{{ item.title }}">
-        <div class="blog-post-content">
-          <div>
-            <h3>{{ item.title }}</h3>
-            <small>{{ item.date }} | {{ item.category }}</small>
-            <p style="color: #555; font-size: 0.95rem;">{{ item.summary }}</p>
-          </div>
-          <a href="{{ url_for('view_news', news_id=item.id) }}">Read More</a>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-
-    {% if not news_items %}
-      <p>No posts found for this category.</p>
-    {% endif %}
-
-    <!-- Pagination -->
-    {% if pagination %}
-    <div class="pagination">
-      {% if pagination.has_prev %}
-        <a href="{{ url_for('blog', page=pagination.prev_num, category=request.args.get('category')) }}">« Prev</a>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
       {% endif %}
-      {% for page_num in pagination.iter_pages() %}
-        {% if page_num %}
-          <a href="{{ url_for('blog', page=page_num, category=request.args.get('category')) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
-        {% endif %}
-      {% endfor %}
-      {% if pagination.has_next %}
-        <a href="{{ url_for('blog', page=pagination.next_num, category=request.args.get('category')) }}">Next »</a>
-      {% endif %}
-    </div>
-    {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="text" name="contact_number" placeholder="Whatsapp Number" required />
+      <input type="text" name="message" placeholder="Message" required />
+      <button type="submit">Submit</button>
+    </form>
   </div>
 
   <!-- Footer -->

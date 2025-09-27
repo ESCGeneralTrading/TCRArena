@@ -185,20 +185,32 @@
       font-weight: 600;
     }
 
+    /* Footer */
     footer {
-      background: #000;
-      color: #fff;
+      background: #000000; 
+      color: #bbb;
       text-align: center;
-      padding: 1.5rem 1rem;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      border-top: 1px solid #222;
       margin-top: auto;
-      font-size: 0.9rem;
+    }
+
+    footer p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
     }
 
     footer a {
       color: #ffd700;
-      text-decoration: underline;
+      text-decoration: none;
       margin: 0 0.5rem;
     }
+
+    footer a:hover {
+      color: #fff;
+    }
+
     /* Responsive tweaks */
     @media (max-width: 600px) {
       .container {
@@ -300,11 +312,14 @@
     <p>📧 Email: <a href="mailto:info@thecollectroom.com" class="email-link">info@thecollectroom.com</a></p>
   </div>
 
+  <!-- Footer -->
   <footer>
+    <p>&copy; 2025 TcR Arena. All rights reserved.</p>
     <p>
-      &copy; 2025 TCR Arena. All rights reserved. |
-      <a href="{{ url_for('privacy') }}">Privacy</a> |
-      <a href="{{ url_for('join') }}">Contact</a>
+      <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+      <a href="{{ url_for('join') }}">Contact Us</a> |
+      <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
+      <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
     </p>
   </footer>
 

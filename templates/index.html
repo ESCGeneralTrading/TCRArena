@@ -15,7 +15,7 @@
       font-family: "Futura", "Trebuchet MS", Arial, sans-serif;
       /* font-family: Georgia, serif; */
       background-color: #fff;
-      color: #111;
+      color: #000000;
       font-size: 1rem;
     }
 
@@ -975,7 +975,7 @@
       color: #000;
     }
 
-    footer {
+    /* footer {
       background: #000;
       color: #fff;
       text-align: center;
@@ -986,7 +986,32 @@
     footer a {
       color: #ffd700;
       text-decoration: underline;
+    } */
+    footer {
+      background: #000000; /* Softer than pure black */
+      color: #bbb;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      border-top: 1px solid #222;
     }
+
+    footer p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: #ffd700;
+      text-decoration: none;
+      margin: 0 0.6rem;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #fff;
+    }
+
     /* Table Styles */
     .live-scores-table {
         width: 100%;
@@ -1340,8 +1365,6 @@
         alt="Banner" 
         style="width: 70%; height: auto; object-fit: cover;">
   </div>
-
-
 
   <!-- Live Score -->
   <!-- <div id="live-scores-container" style="background:#111; color:#fff; padding:15px 0; width:100%; font-family:Arial, sans-serif;">
@@ -1842,10 +1865,22 @@
     </section>
 
   <!-- Footer -->
-  <footer>
+  <!-- <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved. |
       <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-      <a href="{{ url_for('join') }}">Contact</a>
+      <a href="{{ url_for('join') }}">Contact Us</a> |
+      <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
+      <a href="{{ url_for('advertise') }}">Share Your Collectible Stories With Us</a>
+    </p>
+  </footer> -->
+
+  <footer>
+    <p>&copy; 2025 TcR Arena. All rights reserved.</p>
+    <p>
+      <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+      <a href="{{ url_for('join') }}">Contact Us</a> |
+      <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
+      <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
     </p>
   </footer>
 

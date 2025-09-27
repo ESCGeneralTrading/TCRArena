@@ -407,16 +407,30 @@
 
     .error { color: red; font-weight: 500; }
 
+    /* Footer */
     footer {
-        background: #000;
-        color: #fff;
-        text-align: center;
-        padding: 2rem 1rem;
-        font-size: 0.9rem;
+      background: #000000; 
+      color: #bbb;
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+      border-top: 1px solid #222;
+      margin-top: auto;
     }
+
+    footer p {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
     footer a {
-        color: #ffd700;
-        text-decoration: underline;
+      color: #ffd700;
+      text-decoration: none;
+      margin: 0 0.5rem;
+    }
+
+    footer a:hover {
+      color: #fff;
     }
 
     /* Collapsible / Tabs / Responsive Styles */
@@ -1504,9 +1518,12 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 TcR Arena. All rights reserved. |
+        <p>&copy; 2025 TcR Arena. All rights reserved.</p>
+        <p>
         <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-        <a href="{{ url_for('join') }}">Contact</a>
+        <a href="{{ url_for('join') }}">Contact Us</a> |
+        <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
+        <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
         </p>
     </footer>
     <script>

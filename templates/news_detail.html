@@ -296,6 +296,28 @@
         font-size: 1rem;
       }
     }
+    .share-buttons {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .share-buttons a,
+      .share-buttons button {
+        margin-right: 10px;
+        color: #0077cc;
+        text-decoration: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font: inherit;
+        padding: 0;
+      }
+
+      .share-buttons a:hover,
+      .share-buttons button:hover {
+        text-decoration: underline;
+      }
   </style>
 </head>
 <body>
@@ -365,15 +387,42 @@
       {% endfor %}
     </div>
 
-    <div class="share-buttons">
+    <!-- <div class="share-buttons">
       Share:
       <a href="https://twitter.com/intent/tweet?url={{ request.url }}&text={{ news.title }}" target="_blank">Twitter</a>
       <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank">Facebook</a>
       <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url }}" target="_blank">LinkedIn</a>
       <a href="mailto:?subject={{ news.title }}&body=Check this out: {{ request.url }}">Email</a>
       <a href="https://www.instagram.com/" target="_blank">Instagram</a> 
+    </div> -->
+
+    <!-- SHARE BUTTONS -->
+    <div class="share-buttons">
+      <span>Share:</span>
+      <a href="https://twitter.com/intent/tweet?url={{ request.url|urlencode }}&text={{ news.title|urlencode }}" target="_blank" rel="noopener noreferrer">Twitter</a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url|urlencode }}" target="_blank" rel="noopener noreferrer">Facebook</a>
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url|urlencode }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="mailto:?subject={{ news.title|urlencode }}&body=Check this out: {{ request.url|urlencode }}">Email</a>
+      <button type="button" id="instagramBtn">Instagram</button>
+      <button type="button" id="copyLinkBtn">Copy Link</button>
     </div>
 
+    <script>
+      // Copy current URL to clipboard
+      document.getElementById('copyLinkBtn').addEventListener('click', () => {
+        navigator.clipboard.writeText("{{ request.url }}")
+          .then(() => alert('Link copied to clipboard!'))
+          .catch(err => alert('Failed to copy: ' + err));
+      });
+
+      // Instagram workaround
+      document.getElementById('instagramBtn').addEventListener('click', () => {
+        const url = "{{ request.url }}";
+        const message = `Open Instagram and share this link in your story or bio:\n${url}`;
+        alert(message);
+      });
+    </script>
+    
     <a href="{{ url_for('blog') }}" class="back-link">Back to Blogs</a>
 
     <!-- News Suggestions -->

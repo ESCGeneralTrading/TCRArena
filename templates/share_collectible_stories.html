@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      /* font-family: Montserrat; */
       font-family: "Futura", "Trebuchet MS", Arial, sans-serif;
       background: #f9f9f9;
       margin: 0;
@@ -22,20 +21,16 @@
       display: flex;
       align-items: center;
       padding: 0 1rem;
-      font-weight: normal;
       font-size: 0.9rem;
       position: sticky;
       top: 0;
       z-index: 1100;
-      overflow: hidden;
     }
 
     .top-black-bar marquee {
       width: 100%;
     }
 
-
-    /* Header (Logo) */
     .logo-banner {
       background: #fff;
       text-align: center;
@@ -77,7 +72,6 @@
     nav a {
       color: #fff;
       text-decoration: none;
-      /* font-weight: bold; */
       font-size: 1rem;
     }
 
@@ -88,7 +82,6 @@
       width: 25px;
       height: 20px;
       cursor: pointer;
-      flex-shrink: 0;
     }
 
     .nav-toggle span {
@@ -98,10 +91,9 @@
       border-radius: 2px;
     }
 
-    /* Tablet + Mobile Nav */
     @media (max-width: 1024px) {
       .header-container {
-        flex-direction: row; /* keep row layout */
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
       }
@@ -123,12 +115,10 @@
 
       .nav-toggle {
         display: flex;
-        margin-left: auto; /* stick it to the right */
+        margin-left: auto;
       }
     }
 
-
-    /* Form */
     .form-container {
       max-width: 500px;
       margin: 2rem auto;
@@ -164,8 +154,7 @@
       margin-bottom: 1rem;
     }
 
-    /* Footer */
-     footer {
+    footer {
       background: #000000; 
       color: #bbb;
       text-align: center;
@@ -190,36 +179,85 @@
       color: #fff;
     }
 
-
-    
     @media (max-width: 600px) {
       .form-container {
         margin: 1rem;
         padding: 1.5rem;
       }
-
       .logo-banner img {
         height: 80px;
       }
     }
+
+    /* Image preview container */
+    #previewContainer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    #previewContainer div {
+      position: relative;
+      display: inline-block;
+    }
+    #previewContainer img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #previewContainer button {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+      padding: 0;
+    }
+
+    /* Style only for Add Image button */
+    #addImageBtn {
+      display: inline-block;
+      width: auto;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem 0 1rem 0; /* space above and below */
+      background: #f0f0f0;
+      color: #333;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-align: left;  /* align text inside */
+    }
+
+    #addImageBtn:hover {
+      background: #e0e0e0;
+    }
+
   </style>
 </head>
 <body>
-  <!-- Black top band with marquee -->
   <div class="top-black-bar">
     <marquee behavior="scroll" direction="left" scrollamount="8" onmouseover="this.stop();" onmouseout="this.start();">
-      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Exclusive offers, rare collectibles, limited editions &amp; more!&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Sign up today and never miss a deal!
+      Join TcR Arena — get 20% off all signed memorabilia at The Collect Room | Exclusive offers, rare collectibles, limited editions & more! | Sign up today and never miss a deal!
     </marquee>
   </div>
 
-  <!-- Header / Logo -->
   <div class="logo-banner">
     <a href="{{ url_for('home') }}">
       <img src="{{ url_for('static', filename='arena.png') }}" alt="TCR Arena Logo" />
     </a>
   </div>
 
-  <!-- Header / Nav -->
   <header>
     <div class="header-container">
       <div class="nav-toggle" id="navToggle" aria-label="Toggle navigation" role="button" tabindex="0">
@@ -230,19 +268,10 @@
       <nav id="navMenu">
         <a href="{{ url_for('blog', category='Sports') }}">Sports</a>
         <a href="{{ url_for('blog', category='Entertainment') }}">Entertainment</a>
-        <!-- <a href="{{ url_for('all_scores') }}">Live Matches</a> -->
-        <!-- <a href="{{ url_for('memorabilia') }}">Collectible Stories</a> -->
         <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
-        <!-- <a href="#">Partner's Tickets</a> -->
         <a href="https://www.thecollectroom.com/">Shop</a>
-        <!-- <a href="{{ url_for('all_videos') }}">Ar▷na Play</a> -->
         <a href="{{ url_for('all_videos') }}">
-          Ar <svg 
-            width="20" 
-            height="20" 
-            viewBox="0 0 24 24"
-            fill="white" 
-            style="vertical-align: middle; border: 1px solid white; padding: 1.5px; box-sizing: content-box; border-radius: 5px;">
+          Ar <svg width="20" height="20" viewBox="0 0 24 24" fill="white" style="vertical-align: middle; border: 1px solid white; padding: 1.5px; border-radius: 5px;">
             <polygon points="6,4 20,12 6,20" />
           </svg> na Play
         </a>
@@ -250,7 +279,6 @@
     </div>
   </header>
 
-  <!-- Form -->
   <div class="form-container">
     <h2>Share Your Collectible Stories With Us</h2>
 
@@ -262,16 +290,26 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST">
+    <form id="storyForm" method="POST" enctype="multipart/form-data">
       <input type="text" name="name" placeholder="Name" required />
       <input type="email" name="email" placeholder="Email" required />
       <input type="text" name="contact_number" placeholder="Whatsapp Number" required />
       <input type="text" name="message" placeholder="Message" required />
+
+      <label style="display:block; text-align:left; margin:0.5rem 0 0.25rem;">
+        Upload your collectible's images (Up to 5 Images):
+      </label>
+      <input type="file" id="imageUpload" accept="image/*" style="display:none;" />
+      <div style="text-align:left;">
+        <button type="button" id="addImageBtn">+ Add Image</button>
+      </div>
+
+      <div id="previewContainer"></div>
+
       <button type="submit">Submit</button>
     </form>
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>&copy; 2025 TcR Arena. All rights reserved.</p>
     <p>
@@ -282,23 +320,99 @@
     </p>
   </footer>
 
-</body>
-</html>
 <script>
-  // Get the toggle button and the nav menu
+  // nav toggle
   const navToggle = document.getElementById('navToggle');
   const navMenu = document.getElementById('navMenu');
-
-  // Toggle the 'active' class on click
   navToggle.addEventListener('click', () => {
     navMenu.classList.toggle('active');
   });
-
-  // Optional: allow toggling via keyboard for accessibility
   navToggle.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       navMenu.classList.toggle('active');
       e.preventDefault();
     }
   });
+
+  // Image upload with previews
+  const addImageBtn = document.getElementById("addImageBtn");
+  const imageUpload = document.getElementById("imageUpload");
+  const previewContainer = document.getElementById("previewContainer");
+  const form = document.getElementById("storyForm");
+  let selectedFiles = [];
+
+  addImageBtn.addEventListener("click", () => {
+    if (selectedFiles.length >= 5) {
+      alert("You can upload a maximum of 5 images.");
+      return;
+    }
+    imageUpload.click();
+  });
+
+  imageUpload.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    if (selectedFiles.length >= 5) {
+      alert("You can upload a maximum of 5 images.");
+      return;
+    }
+
+    selectedFiles.push(file);
+    renderPreviews();
+    this.value = "";
+  });
+
+  function renderPreviews() {
+    previewContainer.innerHTML = "";
+    selectedFiles.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const div = document.createElement("div");
+
+        const img = document.createElement("img");
+        img.src = e.target.result;
+
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "X";
+        removeBtn.addEventListener("click", () => {
+          selectedFiles.splice(index, 1);
+          renderPreviews();
+        });
+
+        div.appendChild(img);
+        div.appendChild(removeBtn);
+        previewContainer.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Intercept form submit and attach files manually
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    fetch(form.action, {
+      method: "POST",
+      body: formData,
+    }).then(response => {
+      if (response.ok) {
+        alert("Form submitted successfully!");
+        form.reset();
+        selectedFiles = [];
+        previewContainer.innerHTML = "";
+      } else {
+        alert("Failed to submit form.");
+      }
+    }).catch(err => {
+      alert("Error submitting form.");
+    });
+  });
 </script>
+</body>
+</html>

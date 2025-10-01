@@ -820,8 +820,7 @@
           </div>
           <a href="{{ url_for('view_memorabilia', item_id=item.id) }}">Read More</a>
           <div class="heart-container" data-item-id="{{ item.id }}">
-              <button class="heart-btn">❤️</button>
-              <!-- <span class="heart-count">{{ item.likes or 0 }}</span> -->
+              <button class="heart-btn">❤️</button>>
               <span class="heart-count">{{ (item.likes or 0) | format_likes }}</span>
 
             </div>

@@ -5,6 +5,7 @@
 <title>{{ league['@name'] }} - Teams & Players</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
     body {
         /* font-family: 'Montserrat', sans-serif; */
@@ -194,6 +195,22 @@
       color: #fff;
     }
 
+    .footer-social {
+      margin: 1rem 0;
+    }
+
+    .footer-social a {
+      display: inline-block;
+      margin: 0 10px;
+      font-size: 1.5rem;
+      color: #bbb;
+      transition: color 0.3s ease;
+    }
+
+    .footer-social a:hover {
+      color: #ffd700; /* gold hover effect */
+    }
+
 
     /* Responsive */
     @media(max-width: 1024px){
@@ -286,14 +303,25 @@
 
 <!-- Footer -->
 <footer>
-    <p>&copy; 2025 TcR Arena. All rights reserved.</p>
-    <p>
-      <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
-      <a href="{{ url_for('join') }}">Contact Us</a> |
-      <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
-      <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
-    </p>
+  <p>&copy; 2025 TcR Arena. All rights reserved.</p>
+
+  <div class="footer-social">
+    <a href="https://www.facebook.com/profile.php?id=61581405824523" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+    <a href="https://www.instagram.com/tcr_arena/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://whatsapp.com/channel/0029Vb6gHCKFnSz91C1SO63u" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+    <a href="https://www.youtube.com/@TCRArena" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://x.com/TcrArena" target="_blank" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+    <a href="https://www.tiktok.com/@tcrarena?_t=ZS-904YSYIhQTH&_r=1" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  </div>
+
+  <p>
+    <a href="{{ url_for('privacy') }}">Privacy Policy</a> |
+    <a href="{{ url_for('join') }}">Contact Us</a> |
+    <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
+    <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
+  </p>
 </footer>
+
 
 </body>
 </html>

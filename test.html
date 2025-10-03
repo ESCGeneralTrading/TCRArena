@@ -94,4 +94,29 @@
   <table>
     <th></th>
   </table>
+  <html>{% for i in range(2,10) %}</html>
+    <div>i+=1</div>
+    <p><pre>print(i)</pre></p>
 </html>
+<code>
+{% for i in range(2,0) %}
+  n=int(input("Enter the number:"))
+  n1=0
+  n2=1
+  count=0
+  if n!=0:
+      n3=n1+n2
+      n1=n2
+      m2=n3
+      count+=1
+{% endfor %}
+</code>
+n=123
+sum=0
+
+if n!=0:
+  dig=n%10
+  sum=sum**3+dig
+  n//=10
+
+print(sum)

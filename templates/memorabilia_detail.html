@@ -243,26 +243,39 @@
   
 
     .suggestion-content {
-      padding: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      /* justify-content: space-between;
-      height: 100%; */
+        padding: 0.8rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* ensures bottom spacing */
+        height: 100%; /* fill the card */
     }
+
 
     .suggestion-content h4 {
       font-size: 1rem;
       margin: 0 0 0.5rem;
+      color: #000;
+      font-weight: bold;
+      
     }
 
-    .suggestion-meta {
+    /* .suggestion-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 0.7rem;
       color: #555;
       margin-top: auto;
-    }
+    } */
+     .suggestion-meta {
+    display: flex;
+    justify-content: space-between; /* date left, read more right */
+    align-items: center;
+    font-size: 0.7rem;
+    color: #555;
+    margin-top: auto; /* optional if using space-between */
+}
+
     .suggestion-meta a {
       color: #0077cc;
       text-decoration: none;
@@ -464,7 +477,7 @@
 
     <a href="{{ url_for('memorabilia') }}" class="back-link">Back to Collectors Community</a>
 
-    {% if suggestions %}
+    <!-- {% if suggestions %}
       <div class="suggestions">
         <h3>You may also like</h3>
         <div class="suggestion-grid">
@@ -489,7 +502,44 @@
           {% endfor %}
         </div>
       </div>
+    {% endif %} -->
+    {% if suggestions %}
+      <div class="suggestions">
+        <h3>You may also like</h3>
+        <div class="suggestion-grid">
+          {% for s in suggestions %}
+            <div class="suggestion-item">
+              <a href="{% if s.__class__.__name__ == 'CollectibleStory' %}/collectible/{{ s.id }}{% else %}/memorabilia/{{ s.id }}{% endif %}">
+                {% if s.display_video %}
+                  <video controls>
+                    <source src="{{ s.display_video }}" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                {% elif s.display_image %}
+                  <img src="{{ s.display_image }}" alt="{{ s.title }}" />
+                {% elif s.image_url %}
+                  <img src="{{ s.image_url }}" alt="{{ s.title }}">
+                {% elif s.image_filename %}
+                  <img src="{{ url_for('static', filename='uploads/' + s.image_filename) }}" alt="{{ s.title }}">
+                {% else %}
+                  <p>No image available</p>
+                {% endif %}
+                <div class="suggestion-content">
+                  <h4>{{ s.title }}</h4>
+                  {% if s.date %}
+                    <div class="suggestion-meta">
+                      <span>{{ s.date }}</span>
+                      <span><a href="{% if s.__class__.__name__ == 'CollectibleStory' %}/collectible/{{ s.id }}{% else %}/memorabilia/{{ s.id }}{% endif %}">Read More</a></span>
+                    </div>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
     {% endif %}
+
   </div>
 
   <!-- Footer -->

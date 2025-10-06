@@ -107,7 +107,7 @@
     }
 
     /* subtabs */
-    .subtabs {
+    /* .subtabs {
         text-align: left;
         margin: 2rem 0;
     }
@@ -123,7 +123,43 @@
     .subtabs a.active {
         background-color: #021638;
         color: #fff;
+    } */
+
+    .subtabs {
+        display: flex;
+        justify-content: flex-start; /* align left */
+        gap: 0.5rem;                 /* smaller gap on all screens */
+        flex-wrap: nowrap;            /* prevent wrapping */
+        margin: 2rem 0;
+        overflow-x: auto;             /* allow horizontal scroll if needed */
+        padding-bottom: 0.5rem;       /* optional spacing for scroll */
     }
+
+    .subtabs a {
+        display: inline-block;
+        text-align: left;
+        padding: 6px 10px;           /* smaller padding for small screens */
+        text-decoration: none;
+        color: #021638;
+        font-weight: bold;
+        border-radius: 5px;
+        white-space: nowrap;
+        font-size: 1rem;           /* smaller font on small screens */
+    }
+
+    .subtabs a.active {
+        background-color: #021638;
+        color: #fff;
+    }
+
+    /* Optional: tweak further for very small screens */
+    @media (max-width: 480px) {
+        .subtabs a {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+    }
+
     .youtube-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);

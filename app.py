@@ -81,7 +81,6 @@ login_manager.login_view = 'login'
 
 
 # Models
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -92,7 +91,6 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
 
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -132,7 +130,6 @@ class TopFighter(db.Model):
     sources = db.Column(db.String(255))  # comma-separated
     credits = db.Column(db.String(255))  # image/video credit
 
-
 class FootballTable(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     league = db.Column(db.String(150), nullable=False)   # e.g., Premier League, Serie A
@@ -143,7 +140,6 @@ class FootballTable(db.Model):
     draw = db.Column(db.Integer, default=0)
     lost = db.Column(db.Integer, default=0)
     points = db.Column(db.Integer, default=0)
-
 
 class CricketRanking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -194,14 +190,12 @@ class Product(db.Model):
         else:
             return "/static/uploads/default-placeholder.png"
 
-
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), nullable=False)
     contact_number = db.Column(db.String(20), nullable=False)
     message = db.Column(db.String(200), nullable=False, server_default="")
-
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -269,8 +263,7 @@ class CollectibleStory(db.Model):
             return self.image_url
         else:
             return "/static/uploads/default-placeholder.png"
-
-        
+       
 class CollectorJoinee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=True)
@@ -359,7 +352,6 @@ class ArenaplayAdvertisement(db.Model):
             return self.video_url
         return None
 
-
 # Cricket Match Model
 class CricketMatchDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -405,7 +397,6 @@ class BoxingMatchDetail(db.Model):
     active = db.Column(db.Boolean, default=True)
 
 # Admin Views
-
 class MyAdminIndexView(AdminIndexView):
     @expose('/')
     @login_required
@@ -422,7 +413,6 @@ class MyAdminIndexView(AdminIndexView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
-
 
 class NewsAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -473,7 +463,6 @@ class NewsAdmin(ModelView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
-
 
 class ProductAdmin(ModelView):
     upload_path = os.path.join(os.path.dirname(__file__), 'static/uploads')
@@ -554,23 +543,17 @@ class BasketballMatchDetailAdmin(ModelView):
 
 admin.add_view(BasketballMatchDetailAdmin(BasketballMatchDetail, db.session))
 
-
 class Formula1MatchDetailAdmin(ModelView):
     # Columns to display in the list view
     column_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
-
     # Columns available in the add/edit form
     form_columns = ('title', 'line1', 'line2', 'line3', 'line4', 'line5', 'active')
-
     # Columns you can sort by
     column_sortable_list = ('title', 'active')
-
     # Columns searchable in the admin list view
     column_searchable_list = ('title', 'line1', 'line2', 'line3', 'line4', 'line5')
-
     # Pagination size
     page_size = 20
-
     # Only allow access to authenticated users
     def is_accessible(self):
         return current_user.is_authenticated
@@ -642,7 +625,6 @@ class Formula1RankingAdmin(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated    
     
-
 class BoxingRankingAdmin(ModelView):
     column_list = ('type', 'rank', 'boxer_name', 'titles')
     form_columns = ('type', 'rank', 'boxer_name', 'titles')
@@ -685,7 +667,6 @@ class MemorabiliaAdmin(ModelView):
             namegen=lambda obj, file_data: secure_filename(file_data.filename)
         )
     }
-
 
     column_list = ('id', 'title', 'subtitle', 'image_credit', 'date', 'likes', 'image_filename', 'image_url', 'video_filename', 'video_url')
     column_searchable_list = ['title', 'image_credit']
@@ -938,8 +919,6 @@ class ContactAdmin(ModelView):
 
 admin.add_view(ContactAdmin(Contact, db.session))
 
-
-
 from flask_admin.menu import MenuLink
 admin.add_link(MenuLink(name='Visit Site', category='', url='/'))
 admin.add_link(MenuLink(name='Logout', category='', url='logout/'))
@@ -961,8 +940,8 @@ admin.add_view(SubscriberAdmin(Subscriber, db.session))
 
 
 class YouTubeVideoAdmin(ModelView):
-    column_list = ('id', 'title', 'video_id', 'is_short')  # <-- added is_short
-    form_columns = ['title', 'video_id', 'is_short']      # <-- added is_short
+    column_list = ('id', 'title', 'video_id', 'is_short')  
+    form_columns = ['title', 'video_id', 'is_short']      
     column_searchable_list = ['title']
     page_size = 20
 
@@ -1441,14 +1420,12 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-
 # New route to show full news article
 @app.route('/news/<int:news_id>')
 def view_news(news_id):
     news = News.query.get_or_404(news_id)
     suggestions = News.query.filter(News.id != news_id, News.category == news.category).order_by(News.id.desc()).limit(3).all()
     return render_template('news_detail.html', news=news, suggestions=suggestions)
-
 
 @app.route('/blog')
 def blog():
@@ -1467,14 +1444,11 @@ def blog():
 
     return render_template('blog.html', news_items=news_items, categories=categories, pagination=pagination)
 
-
-
 def validate_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
 def validate_phone(phone):
     return re.match(r"^\+?\d{7,15}$", phone)
-
 
 # @app.route('/memorabilia')
 # def memorabilia():
@@ -1622,7 +1596,6 @@ def view_collectible(item_id):
         suggestions=suggestions
     )
 
-
 # --- Format Likes Helper ---
 def format_likes(num):
     if num is None:
@@ -1636,7 +1609,6 @@ def format_likes(num):
 
 # Register as Jinja filter
 app.jinja_env.filters['format_likes'] = format_likes
-
 
 @app.route('/like/memorabilia/<int:item_id>', methods=['POST'])
 def like_memorabilia(item_id):
@@ -1661,7 +1633,6 @@ def like_memorabilia(item_id):
     session['liked_memorabilia'] = liked_items
 
     return {"likes": item.likes}
-
 
 @app.route("/like/collector/<int:video_id>", methods=["POST"])
 def like_collector(video_id):
@@ -1707,7 +1678,6 @@ def like_collectible(item_id):
     session['liked_collectibles'] = liked_items
 
     return {"likes": item.likes}
-
 
 # Titan SMTP config
 app.config['MAIL_SERVER'] = 'smtp.titan.email'
@@ -1882,7 +1852,6 @@ def advertise():
             return redirect(request.args.get("next") or url_for('home'))
 
     return render_template('advertise.html')
-
 
 # @app.route('/share_collectible_stories', methods=['GET', 'POST'])
 # def share_collectible_stories():
@@ -2210,13 +2179,11 @@ def join_collectors():
     flash("Thank you for joining! Your 20% discount email has been sent.", "success")
     return redirect(request.referrer or url_for('home'))
 
-
 # @app.route('/videos')
 # def all_videos():
 #     shorts = YouTubeVideo.query.filter_by(is_short=True).order_by(YouTubeVideo.id.desc()).all()
 #     full_videos = YouTubeVideo.query.filter_by(is_short=False).order_by(YouTubeVideo.id.desc()).all()
 #     return render_template('all_videos.html', shorts=shorts, full_videos=full_videos)
-
 
 YOUTUBE_API_KEY = 'AIzaSyDg4UvVFz06U-64ydsG_gC3_qkN8sntrLU'
 CHANNEL_ID = 'UCjr5E_A1k7cKaTcvGjjl44A'
@@ -2284,11 +2251,9 @@ def all_videos():
         collector_videos=collector_videos
     )
 
-
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html")
-
 
 def create_admin():
     with app.app_context():
@@ -2306,7 +2271,6 @@ def create_admin():
         db.session.add(new_admin)
         db.session.commit()
         print(f"Admin user '{username}' created successfully.")
-
 
 if __name__ == '__main__':
     upload_folder = os.path.join(os.path.dirname(__file__), 'static/uploads')

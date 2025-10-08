@@ -444,7 +444,6 @@
       -webkit-line-clamp: 2;
     }
 
-    /* Responsive fallback */
     @media (max-width: 1024px) {
       .memorabilia-grid {
         grid-template-areas: unset;
@@ -466,7 +465,6 @@
       }
     }
 
-    /* Ensure .horizontal-card uses flexbox */
     .horizontal-card {
       display: flex;
       flex-direction: row;
@@ -478,7 +476,7 @@
       border: 1px solid #333;
     }
 
-  /* Video or image fills 40% width on desktop */
+  /* Video or image fills 60% width on desktop */
   .horizontal-card video,
   .horizontal-card img {
     width: 60%;
@@ -528,13 +526,11 @@
 
     /* Responsive changes for smaller screens */
     @media (max-width: 1024px) {
-      /* Stack horizontal card vertically */
       .horizontal-card {
         flex-direction: column;
         height: auto;
       }
 
-      /* Video/image full width and height auto */
       .horizontal-card video,
       .horizontal-card img {
         width: 100%;
@@ -547,7 +543,6 @@
         padding: 0.75rem 1rem;
       }
 
-      /* Smaller font size for controls */
       .video-control {
         font-size: 10px;
         padding: 3px 6px;
@@ -564,7 +559,6 @@
       }
     }
 
-    /* Mobile further tweaks */
     @media (max-width: 600px) {
       .horizontal-card video,
       .horizontal-card img {
@@ -586,7 +580,6 @@
         top: 5px;
       }
     }
-
 
     .shop-cards {
       display: flex;
@@ -695,7 +688,7 @@
       align-items: flex-start;
       flex-wrap: wrap;
       background-color: #2b2b2b; /* Black background */
-      color: #fff;            /* White text */
+      color: #fff;  
       padding: 1.5rem;
       border-radius: 10px;
     }
@@ -713,8 +706,8 @@
 
     .youtube-featured .youtube-embed iframe {
       width: 100%;
-      height: 500px; /* Portrait height */
-      aspect-ratio: 9 / 16; /* Portrait ratio */
+      height: 500px;
+      aspect-ratio: 9 / 16; 
       border-radius: 18px;
       border: none;
     }
@@ -735,7 +728,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 24px; /* Less spacing between cards */
+      gap: 24px; 
       padding: 20px 0;
     }
 
@@ -752,7 +745,7 @@
     }
 
     .youtube-card {
-        background: none; /* Remove dark card background */
+        background: none;
         padding: 0;
         box-shadow: none;
         border-radius: 0;
@@ -770,12 +763,12 @@
 
     .youtube-thumbnail iframe {
       width: 100%;
-      max-width: 300px;         /* Keeps vertical video compact */
+      max-width: 300px;         
       aspect-ratio: 9 / 16;
       height: auto;
       border: none;
-      border-radius: 12px;       /* Soft corners */
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Subtle modern shadow */
+      border-radius: 12px; 
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); 
     }
 
 
@@ -821,10 +814,9 @@
     .featured-cta .email-link a {
       color: #fff;
       text-decoration: underline;
-      word-break: break-word; /* keep it neat on small screens */
+      word-break: break-word; 
     }
 
-    /* Responsive Adjustments */
     @media (max-width: 768px) {
       .featured-cta {
         padding: 3rem 1.5rem;
@@ -919,7 +911,6 @@
       line-height: 1.4;
     }
 
-    /* responsive */
     @media (max-width: 900px) {
       .ad-card { flex-direction: column;background-color: #fff;border-radius: 0px;  gap: 12px; }
       .ad-media { flex-basis: auto; width: 100%; }
@@ -976,20 +967,8 @@
       color: #000;
     }
 
-    /* footer {
-      background: #000;
-      color: #fff;
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
-    }
-
-    footer a {
-      color: #ffd700;
-      text-decoration: underline;
-    } */
     footer {
-      background: #000000; /* Softer than pure black */
+      background: #000000; 
       color: #bbb;
       text-align: center;
       padding: 2rem 1rem;
@@ -1026,7 +1005,7 @@
     }
 
     .footer-social a:hover {
-      color: #ffd700; /* gold hover effect */
+      color: #ffd700; 
     }
 
 
@@ -1039,7 +1018,7 @@
         border-radius: 8px;
         overflow: hidden;
         font-size: 14px;
-        min-width: 800px; /* Ensure scroll on small screens */
+        min-width: 800px; 
     }
 
     .live-scores-table th, 
@@ -1089,7 +1068,6 @@
     .events-table tr:nth-child(even) td { background: #2a2a2a; }
     .events-table tr:nth-child(odd) td { background: #333; }
 
-    /* Responsive Styles */
     @media (max-width: 768px) {
         .live-scores-table {
             font-size: 12px;
@@ -1125,7 +1103,7 @@
         padding: 10px;
         scroll-behavior: smooth;
         justify-content: center;
-        align-items: flex-start; /* prevent stretching */
+        align-items: flex-start; 
     }
     #matches-container {
         display: flex;
@@ -1134,9 +1112,8 @@
         gap: 15px;
         padding: 10px 20px; /* left and right padding adds space before first and after last card */
         scroll-behavior: smooth;
-        justify-content: flex-start; /* keeps cards aligned from left */
+        justify-content: flex-start;
     }
-
 
     .scores-wrapper::-webkit-scrollbar,
     #matches-container::-webkit-scrollbar {
@@ -1233,7 +1210,7 @@
 
     .button-container button:hover {
         background-color: #0056b3;
-        border-color: #fff; /* optional: change border color on hover */
+        border-color: #fff; 
     }
 
     #match-date { display:block; margin:10px auto; color:#0c0c0c;}
@@ -1818,7 +1795,6 @@
       </form>
     </div>
 
-
     <!-- YouTube Section -->
     <section class="youtube-section">
       <p style=" font-size: 1.0rem;">LATEST ON TcR ARENA PLAY</p>
@@ -1911,7 +1887,6 @@
       <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
     </p>
   </footer>
-
 
   <!-- JS -->
   <script>

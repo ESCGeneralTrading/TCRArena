@@ -88,7 +88,7 @@
     /* Tablet + Mobile Nav */
      @media (max-width: 1024px) {
       .header-container {
-        flex-direction: row; /* keep row layout */
+        flex-direction: row;
         justify-content: space-between;
         align-items: center;
       }
@@ -151,13 +151,13 @@
     /* Mobile view adjustments */
     @media (max-width: 768px) {
       .tabs a {
-        font-size: 12px; /* reduce font size on mobile */
+        font-size: 12px; 
         padding: 4px 8px; 
         gap: 1px;
       }
 
       .tabs {
-        flex-direction: column; /* stack tabs vertically */
+        flex-direction: column; 
         align-items: center;
         
       }
@@ -199,10 +199,10 @@
 
     /* Shorts vertical aspect ratio */
     .youtube-card.shorts iframe {
-        width: 100%;          /* reduce width from 100% */
-        max-width: 300px;    /* optional: cap max size */
+        width: 100%;          
+        max-width: 300px;    
         aspect-ratio: 9 / 16;
-        margin: 0 auto;      /* center horizontally */
+        margin: 0 auto;   
         border-radius: 8px;
         border: none;
     }
@@ -347,7 +347,7 @@
     .featured-cta .email-link a {
       color: #fff;
       text-decoration: underline;
-      word-break: break-word; /* keep it neat on small screens */
+      word-break: break-word; 
     }
 
     /* Responsive Adjustments */
@@ -410,15 +410,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;           /* take full available width */
-      max-width: 100%;       /* never exceed container */
-      min-height: 200px;     /* keep some height for small devices */
+      width: 100%;           
+      max-width: 100%;       
+      min-height: 200px;    
     }
 
     .ad-video, .ad-image {
-      width: 100%;           /* scale with parent */
-      height: auto;          /* maintain aspect ratio */
-      max-width: 1150px;      /* optional: cap size for large screens */
+      width: 100%;           
+      height: auto;          
+      max-width: 1150px;      
       max-height: 500px; 
       object-fit: contain;
       display: block;
@@ -440,14 +440,14 @@
     .youtube-subscribe-card {
       background: #fff;
       box-shadow: 0 8px 14px rgba(0, 0, 0, 0.12);
-      padding: 60px 40px; /* taller card */
+      padding: 60px 40px; 
       display: flex;
       align-items: center;
       max-width: 1200px;
       margin: 18px auto;
       gap: 20px;
       box-sizing: border-box;
-      flex-wrap: nowrap; /* keep desktop horizontal */
+      flex-wrap: nowrap;  
     }
 
     .youtube-subscribe-card .logo {
@@ -576,19 +576,19 @@
     .tiktok-follow-card .logo {
       flex: 0 0 auto;
       width: 120px;
-      height: 120px;              /* make it a square for perfect circle */
-      border-radius: 50%;          /* circle shape */
-      background-color: #ffffff;   /* white background */
+      height: 120px;             
+      border-radius: 50%;          
+      background-color: #ffffff;   
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;            /* clip image inside circle */
+      overflow: hidden;            
     }
 
     .tiktok-follow-card .logo img {
-      width: 70%;                  /* scale image to fit nicely in circle */
+      width: 70%;                  
       height: 70%;
-      object-fit: contain;         /* maintain aspect ratio */
+      object-fit: contain;         
       display: block;
     }
 
@@ -597,7 +597,7 @@
       flex: 1 1 auto;
       display: flex;
       align-items: center;
-      justify-content: space-between; /* text left, button right on desktop */
+      justify-content: space-between; 
       gap: 20px;
     }
 
@@ -622,7 +622,7 @@
     }
 
     .tiktok-follow-card .follow-btn {
-      background-color: #e11111; /* TikTok dark */
+      background-color: #e11111; 
       color: #fff;
       font-weight: bold;
       font-size: 1rem;
@@ -722,7 +722,6 @@
       justify-content: center;
       padding: 0;
     }
-
 
     .video-carousel .carousel-item video { width: 100%; height: 100%; object-fit: cover; }
 
@@ -896,7 +895,7 @@
     }
 
     .footer-social a:hover {
-      color: #ffd700; /* gold hover effect */
+      color: #ffd700; 
     }
   </style>
 </head>

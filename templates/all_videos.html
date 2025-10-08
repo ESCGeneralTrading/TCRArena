@@ -898,7 +898,6 @@
     .footer-social a:hover {
       color: #ffd700; /* gold hover effect */
     }
-
   </style>
 </head>
 <body>
@@ -946,16 +945,13 @@
     </div>
   </header>
   <div class="container">
-
     <!-- Tabs Navigation -->
     <!-- <div class="tabs">
       <a href="{{ url_for('blog') }}">Blogs</a>
       <a href="{{ url_for('all_videos') }}">Arena Play</a>
       <a href="{{ url_for('memorabilia') }}">Collectors Community</a>
     </div> -->
-
     <h1>Arena Vault: Exclusive Plays & Highlights</h1>
-
 
 <div class="tabs">
     <a href="#" class="active" onclick="showTab('youtube', this)">YouTube</a>
@@ -1008,7 +1004,6 @@
           </a>
         </div>
       </section>
-
   </div>
 
   <!-- TikTok Tab -->
@@ -1044,7 +1039,7 @@
       </section>
   </div>
 
-    <script>
+  <script>
       function showTab(tab, el) {
           // Hide both tabs
           document.getElementById('youtube-tab').style.display = (tab === 'youtube') ? 'block' : 'none';
@@ -1054,11 +1049,11 @@
           document.querySelectorAll('.tabs a').forEach(a => a.classList.remove('active'));
           el.classList.add('active');
       }
-    </script>
+  </script>
 
-    </div>
+  </div>
 
-    <div class="video-carousel-wrapper">
+  <div class="video-carousel-wrapper">
       <!-- carousel loop -->
       <button class="carousel-nav prev">‹</button>
       <div class="video-carousel">
@@ -1088,7 +1083,7 @@
       </div>
       <button class="carousel-nav next">›</button>
     </div>
-  </div>
+</div>
   <!-- Fullscreen overlay -->
   <div class="video-overlay" id="video-overlay">
     <button class="close-overlay" id="close-overlay">✕</button>
@@ -1139,9 +1134,7 @@
       <a href="{{ url_for('advertise') }}">Advertise With Us</a> |
       <a href="{{ url_for('share_collectible_stories') }}">Share Your Collectible Stories</a>
     </p>
-  </footer>
-
-
+  </footer> 
 </body>
 </html>
 <script>

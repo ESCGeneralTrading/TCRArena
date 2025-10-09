@@ -1066,7 +1066,6 @@
             Get Matches
             </button>
 
-
             <div id="message" style="text-align:center;margin:10px;"></div>
 
             <h2 id="matches-title" style="display:none;"></h2>
@@ -1458,7 +1457,6 @@
         }
         </script>
 
-
         <!-- Boxing Match Section -->
         <div id="boxing-match-wrapper">
         <div id="boxing-match-bar" onclick="toggleBoxingMatchDetail()">
@@ -1835,7 +1833,7 @@ function showFighters(sport) {
     function toggleTableList() {
     const list = document.getElementById("table-list");
     list.style.display = (list.style.display === "block") ? "none" : "block";
-}
+    }
     // Close list if clicked outside
 
     document.addEventListener("click", function(event) {
@@ -2006,7 +2004,7 @@ function showFighters(sport) {
             .catch(err => {
                 container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
             });
-    }
+        }
     </script>
     <script>
     function fetchFootballTable(league) {
@@ -2083,8 +2081,7 @@ function showFighters(sport) {
         .catch(err => {
             container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
         });
-}
-
+    }
 </script>
 <script>  
     function fetchBoxing(type) {
@@ -2119,7 +2116,7 @@ function showFighters(sport) {
         .catch(err => {
             container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
         });
-}
+    }
 
 </script>
 
@@ -2156,7 +2153,7 @@ function showFighters(sport) {
         .catch(err => {
             container.innerHTML = `<p style="color:red;">Error loading data: ${err}</p>`;
         });
-}
+    }
 </script>
 </body>
 </html>

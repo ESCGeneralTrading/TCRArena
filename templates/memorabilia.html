@@ -369,13 +369,13 @@
       .images-grid, .videos-grid { grid-template-columns: 1fr; }
     }
 
-
     .images-grid-collectible {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1.8rem;
       margin: 0 1rem;
     }
+
     .images-grid-collectible .blog-post img {
       width: 100%;          
       height: 100%;    
@@ -390,6 +390,7 @@
       .images-grid-collectible { grid-template-columns: repeat(2, 1fr); }
       .videos-grid { grid-template-columns: 1fr; }
     }
+
     @media (max-width: 768px) {
       .images-grid-collectible, .videos-grid { grid-template-columns: 1fr; }
     }
@@ -408,6 +409,7 @@
       -webkit-overflow-scrolling: touch;
       padding: 1rem 0;
     }
+
     .video-carousel::-webkit-scrollbar { display: none; }
 
     .video-carousel .carousel-item {
@@ -422,6 +424,7 @@
       position: relative;
       margin: 0 0.5rem;
     }
+
     .video-control {
       font-size: 18px;       
       line-height: 1;         
@@ -622,6 +625,7 @@
       z-index: 9999;
       font-size: 1rem;
     }
+
     .like-notification.show {
       opacity: 1;
       transform: translateY(0);
@@ -721,7 +725,6 @@
     @media (max-width: 768px) {
       .remaining-videos-grid { grid-template-columns: 1fr; }
     }
-    
   </style>
 </head>
 <body>
@@ -770,84 +773,82 @@
 
     <div class="tab-content active" id="collectors">
       <div class="videos-section">
-  {% if videos %}
-    {% set first_video = videos[0] %}
-    {% set remaining_videos = videos[1:] %}
+      {% if videos %}
+        {% set first_video = videos[0] %}
+        {% set remaining_videos = videos[1:] %}
 
-    <!-- First Video Prominent Layout -->
-    <div class="featured-video">
-      <div class="featured-video-left">
-        <video id="video-1" autoplay muted loop playsinline>
-          <source src="{{ first_video.display_video }}" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <button class="video-control pause-btn" data-video-id="video-1">❚❚</button>
-        <button class="video-control mute-btn" data-video-id="video-1">🔇</button>
-        <input type="range" class="video-slider" data-video-id="video-1" min="0" max="100" value="0">
-      </div>
-      <div class="featured-video-right">
-        <h3>{{ first_video.title }}</h3>
-        <small>{{ first_video.date }} | {{ first_video.image_credit }}</small>
-        <p>{{ first_video.subtitle }}</p>
-        <a href="{{ url_for('view_memorabilia', item_id=first_video.id) }}" class="video-read-more">Read More</a>
-        <div class="video-heart-container" data-item-id="{{ first_video.id }}">
-          <button class="video-heart-btn">❤️</button>
-          <span class="video-heart-count">{{ (first_video.likes or 0) | format_likes }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Remaining Videos Grid -->
-    {% if remaining_videos %}
-      <div class="remaining-videos-grid">
-        {% for item in remaining_videos %}
-        <div class="blog-post">
-          <video preload="none" id="video-{{ loop.index + 1 }}" autoplay muted loop playsinline>
-            <source src="{{ item.display_video }}" type="video/mp4" />
+      <!-- First Video Prominent Layout -->
+      <div class="featured-video">
+        <div class="featured-video-left">
+          <video id="video-1" autoplay muted loop playsinline>
+            <source src="{{ first_video.display_video }}" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <button class="video-control pause-btn" data-video-id="video-{{ loop.index + 1 }}">❚❚</button>
-          <button class="video-control mute-btn" data-video-id="video-{{ loop.index + 1 }}">🔇</button>
-          <input type="range" class="video-slider" data-video-id="video-{{ loop.index + 1 }}" min="0" max="100" value="0">
-          <div class="video-post-content">
-            <h3>{{ item.title }}</h3>
-            <!-- <small>{{ item.date }} | {{ item.image_credit }}</small> -->
-            <!-- <p>{{ item.subtitle }}</p> -->
-            <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" class="video-read-more">Read More</a>
-            <div class="video-heart-container" data-item-id="{{ item.id }}">
-              <button class="video-heart-btn">❤️</button>
-              <span class="video-heart-count">{{ (item.likes or 0) | format_likes }}</span>
-            </div>
+          <button class="video-control pause-btn" data-video-id="video-1">❚❚</button>
+          <button class="video-control mute-btn" data-video-id="video-1">🔇</button>
+          <input type="range" class="video-slider" data-video-id="video-1" min="0" max="100" value="0">
+        </div>
+        <div class="featured-video-right">
+          <h3>{{ first_video.title }}</h3>
+          <small>{{ first_video.date }} | {{ first_video.image_credit }}</small>
+          <p>{{ first_video.subtitle }}</p>
+          <a href="{{ url_for('view_memorabilia', item_id=first_video.id) }}" class="video-read-more">Read More</a>
+          <div class="video-heart-container" data-item-id="{{ first_video.id }}">
+            <button class="video-heart-btn">❤️</button>
+            <span class="video-heart-count">{{ (first_video.likes or 0) | format_likes }}</span>
           </div>
         </div>
-        {% endfor %}
+      </div>
+
+      <!-- Remaining Videos Grid -->
+      {% if remaining_videos %}
+        <div class="remaining-videos-grid">
+          {% for item in remaining_videos %}
+          <div class="blog-post">
+            <video preload="none" id="video-{{ loop.index + 1 }}" autoplay muted loop playsinline>
+              <source src="{{ item.display_video }}" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <button class="video-control pause-btn" data-video-id="video-{{ loop.index + 1 }}">❚❚</button>
+            <button class="video-control mute-btn" data-video-id="video-{{ loop.index + 1 }}">🔇</button>
+            <input type="range" class="video-slider" data-video-id="video-{{ loop.index + 1 }}" min="0" max="100" value="0">
+            <div class="video-post-content">
+              <h3>{{ item.title }}</h3>
+              <!-- <small>{{ item.date }} | {{ item.image_credit }}</small> -->
+              <!-- <p>{{ item.subtitle }}</p> -->
+              <a href="{{ url_for('view_memorabilia', item_id=item.id) }}" class="video-read-more">Read More</a>
+              <div class="video-heart-container" data-item-id="{{ item.id }}">
+                <button class="video-heart-btn">❤️</button>
+                <span class="video-heart-count">{{ (item.likes or 0) | format_likes }}</span>
+              </div>
+            </div>
+          </div>
+      {% endfor %}
       
       </div>
       <!-- <hr style="box-shadow: 0 2px 5px rgba(0,0,0,0.3);gap: 100px;margin-top: 50px;"> -->
-       
-    {% endif %}
-    <!-- Pagination -->
-      {% if pagination %}
-      <div class="pagination">
-        {% if pagination.has_prev %}
-          <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
-        {% endif %}
-        {% for page_num in pagination.iter_pages() %}
-          {% if page_num %}
-            <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
-          {% endif %}
-        {% endfor %}
-        {% if pagination.has_next %}
-          <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
-        {% endif %}
-      </div>
+        
       {% endif %}
-  {% endif %}
-  
-</div>
+      <!-- Pagination -->
+        {% if pagination %}
+        <div class="pagination">
+          {% if pagination.has_prev %}
+            <a href="{{ url_for('memorabilia', page=pagination.prev_num) }}">« Prev</a>
+          {% endif %}
+          {% for page_num in pagination.iter_pages() %}
+            {% if page_num %}
+              <a href="{{ url_for('memorabilia', page=page_num) }}" class="{{ 'active' if page_num == pagination.page else '' }}">{{ page_num }}</a>
+            {% endif %}
+          {% endfor %}
+          {% if pagination.has_next %}
+            <a href="{{ url_for('memorabilia', page=pagination.next_num) }}">Next »</a>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endif %}  
+    </div>
 
-
-      <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collector’s Gallery: Icons, Artifacts & Stories</p>
+    <p style="text-align:left; color:#021638; margin-bottom:1.5rem;font-size:1.3rem;">Collector’s Gallery: Icons, Artifacts & Stories</p>
       <div class="images-grid">
         {% for item in images %}
         <!-- image loop -->
@@ -1011,7 +1012,6 @@
     </p>
   </footer>
 
-
   <script>
     // Tab switching
     document.querySelectorAll('.tab-link').forEach(link => {
@@ -1117,6 +1117,7 @@
         else { vid.pause(); btn.textContent = '▶'; }
       });
     });
+
     document.querySelectorAll('.mute-btn1').forEach(btn => {
       btn.addEventListener('click', () => {
         const vid = document.getElementById(btn.dataset.videoId);
@@ -1124,8 +1125,8 @@
         btn.textContent = vid.muted ? '🔇':'🔊' ;
       });
     });
-
   </script>
+
   <script>
     // --- Unified Like Logic for Memorabilia & Collector Videos ---
     function showNotification(msg) {
@@ -1140,7 +1141,6 @@
       if (num < 1_000_000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + "k";
       return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + "M";
     }
-
 
     // Handle memorabilia likes
     document.querySelectorAll('.heart-container').forEach(container => {
@@ -1244,8 +1244,6 @@
         // showNotification("Error liking this item!");
       });
     });
-  });
-
-
+    });
   </script>
   
